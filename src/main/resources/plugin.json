@@ -1,8 +1,8 @@
 {
 	"name" : "lucene-spatial",
-	"version" : "1.7",
-	"javaClass": "com.orientechnologies.lucene.OLuceneSpatialIndexPlugin",
+	"version" : "2.2",
+	"javaClass": "com.orientechnologies.spatial.OLuceneSpatialIndexPlugin",
 	"parameters" : {},
-	"description" : "This is the Lucene Spatial Index integration",
-	"copyrights" : "Orient Technologies LTD"
+	"description" : "This is the Spatial Index integration",
+	"copyrights" : "OrientDB LTD"
 }

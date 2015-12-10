@@ -75,7 +75,7 @@
                     <execution>
                         <id>make-assembly</id>
                         <!-- this is used for inheritance merges -->
-                        <!--<phase>package</phase>-->
+                        <phase>package</phase>
                         <!-- bind to the packaging phase -->
                         <goals>
                             <goal>single</goal>
@@ -158,17 +158,6 @@
             <version>1.13</version>
             <optional>true</optional>
         </dependency>
-
-        <!--<dependency>-->
-            <!--<groupId>org.geotools</groupId>-->
-            <!--<artifactId>gt-main</artifactId>-->
-            <!--<version>${geotools.version}</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.geotools</groupId>-->
-            <!--<artifactId>gt-api</artifactId>-->
-            <!--<version>${geotools.version}</version>-->
-        <!--</dependency>-->
 
         <dependency>
             <groupId>com.google.code.gson</groupId>

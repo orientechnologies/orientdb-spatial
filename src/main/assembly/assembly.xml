@@ -10,8 +10,8 @@
             <unpack>true</unpack>
             <includes>
                 <include>${groupId}:${artifactId}</include>
+                <include>com.vividsolutions:*</include>
                 <include>com.spatial4j:*</include>
-                <include>com.vividsolutions.jts:*</include>
             </includes>
 
         </dependencySet>

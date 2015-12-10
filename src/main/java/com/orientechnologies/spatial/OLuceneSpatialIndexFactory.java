@@ -71,8 +71,7 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
   public OLuceneSpatialIndexFactory(boolean manual) {
     spatialManager = new OLuceneSpatialManager(OShapeFactory.INSTANCE);
     if (!manual)
-      Orient.instance()
-            .addDbLifecycleListener(this);
+      Orient.instance().addDbLifecycleListener(this);
 
   }
 
@@ -149,8 +148,7 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
   @Override
   public void onDrop(final ODatabaseInternal iDatabase) {
     try {
-      OLogManager.instance()
-                 .debug(this, "Dropping Lucene indexes...");
+      OLogManager.instance().debug(this, "Dropping spatial indexes...");
       for (OIndex idx : iDatabase.getMetadata().getIndexManager().getIndexes()) {
 
         if (idx.getInternal() instanceof OLuceneSpatialIndex) {
@@ -159,8 +157,7 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
         }
       }
     } catch (Exception e) {
-      OLogManager.instance()
-                 .warn(this, "Error on dropping Lucene indexes", e);
+      OLogManager.instance().warn(this, "Error on dropping spatial indexes", e);
     }
   }
 
