@@ -78,7 +78,7 @@ public class OLuceneSpatialIndexPlugin extends OServerPluginAbstract implements 
   protected void registerFunctions() {
 
     for (String s : OSpatialFunctionsFactory.FUNCTIONS.keySet()) {
-      OSQLEngine.getInstance().registerFunction(s, (OSQLFunction) OLuceneFunctionsFactory.FUNCTIONS.get(s));
+      OSQLEngine.getInstance().registerFunction(s, (OSQLFunction) OSpatialFunctionsFactory.FUNCTIONS.get(s));
     }
 
   }
