@@ -10,8 +10,10 @@
             <unpack>true</unpack>
             <includes>
                 <include>${groupId}:${artifactId}</include>
-                <include>com.vividsolutions:*</include>
+                <include>org.apache.lucene:lucene-spatial</include>
+                <include>org.apache.lucene:lucene-spatial3d</include>
                 <include>com.spatial4j:*</include>
+                <include>com.vividsolutions:*</include>
             </includes>
 
         </dependencySet>

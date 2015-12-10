@@ -19,7 +19,7 @@
 package com.orientechnologies.spatial.strategy;
 
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
-import com.orientechnologies.lucene.query.SpatialQueryContext;
+import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.orient.core.index.OIndexEngineException;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 

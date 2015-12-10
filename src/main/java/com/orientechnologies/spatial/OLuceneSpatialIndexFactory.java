@@ -69,10 +69,10 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
   }
 
   public OLuceneSpatialIndexFactory(boolean manual) {
-    spatialManager = new OLuceneSpatialManager(OShapeFactory.INSTANCE);
     if (!manual)
       Orient.instance().addDbLifecycleListener(this);
 
+    spatialManager = new OLuceneSpatialManager(OShapeFactory.INSTANCE);
   }
 
   @Override

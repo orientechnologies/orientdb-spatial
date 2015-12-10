@@ -16,7 +16,7 @@
 
 package com.orientechnologies.spatial.operator;
 
-import com.orientechnologies.lucene.collections.OSpatialCompositeKey;
+import com.orientechnologies.spatial.collections.OSpatialCompositeKey;
 import com.orientechnologies.lucene.operator.OLuceneOperatorUtil;
 import com.orientechnologies.spatial.shape.OShapeFactory;
 import com.orientechnologies.orient.core.command.OCommandContext;

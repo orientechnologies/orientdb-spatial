@@ -31,11 +31,11 @@ import java.util.Map;
 
 public class OShapeFactory extends OComplexShapeBuilder {
 
+  public static final OShapeFactory INSTANCE = new OShapeFactory();
+
   private Map<String, OShapeBuilder> factories = new HashMap<String, OShapeBuilder>();
 
-  public static final OShapeFactory  INSTANCE  = new OShapeFactory();
-
-  protected OShapeOperation          operation;
+  protected OShapeOperation operation;
 
   protected OShapeFactory() {
     operation = new OShapeOperationImpl(this);

@@ -19,9 +19,9 @@
 package com.orientechnologies.spatial.engine;
 
 import com.orientechnologies.lucene.collections.LuceneResultSet;
-import com.orientechnologies.lucene.collections.OSpatialCompositeKey;
+import com.orientechnologies.spatial.collections.OSpatialCompositeKey;
 import com.orientechnologies.lucene.query.QueryContext;
-import com.orientechnologies.lucene.query.SpatialQueryContext;
+import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.lucene.tx.OLuceneTxChanges;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;

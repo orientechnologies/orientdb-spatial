@@ -53,6 +53,8 @@ public class OLuceneSpatialIndexPlugin extends OServerPluginAbstract implements 
   @Override
   public void startup() {
     super.startup();
+    OLogManager.instance().info(this, "Spatial index plugin startup");
+
     Orient.instance().addDbLifecycleListener(this);
 
     OIndexes.registerFactory(new OLuceneSpatialIndexFactory(true));

@@ -40,8 +40,9 @@ public abstract class OShapeBuilder<T extends Shape> {
   protected static final JtsSpatialContext SPATIAL_CONTEXT;
   protected static final GeometryFactory   GEOMETRY_FACTORY;
 
-  protected static Map<String, Integer>    capStyles   = new HashMap<String, Integer>();
-  protected static Map<String, Integer>    join        = new HashMap<String, Integer>();
+  protected static Map<String, Integer> capStyles = new HashMap<String, Integer>();
+  protected static Map<String, Integer> join      = new HashMap<String, Integer>();
+
   static {
 
     JtsSpatialContextFactory factory = new JtsSpatialContextFactory();
@@ -58,8 +59,9 @@ public abstract class OShapeBuilder<T extends Shape> {
     join.put("bevel", 3);
 
   }
-  public static final String               COORDINATES = "coordinates";
-  public static final String               BASE_CLASS  = "OShape";
+
+  public static final String COORDINATES = "coordinates";
+  public static final String BASE_CLASS  = "OShape";
 
   public abstract String getName();
 
