@@ -22,6 +22,7 @@ import com.orientechnologies.common.directmemory.ODirectMemoryPointer;
 import com.orientechnologies.common.serialization.types.OBinarySerializer;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.storage.impl.local.paginated.wal.OWALChangesTree;
+import com.orientechnologies.orient.core.storage.impl.local.paginated.wal.PointerWrapper;
 
 /**
  * Created by Enrico Risa on 04/09/15.
@@ -101,12 +102,12 @@ public class OLuceneMockSpatialSerializer implements OBinarySerializer<ODocument
   }
 
   @Override
-  public ODocument deserializeFromDirectMemoryObject(OWALChangesTree.PointerWrapper wrapper, long offset) {
+  public ODocument deserializeFromDirectMemoryObject(PointerWrapper wrapper, long offset) {
     return null;
   }
 
   @Override
-  public int getObjectSizeInDirectMemory(OWALChangesTree.PointerWrapper wrapper, long offset) {
+  public int getObjectSizeInDirectMemory(PointerWrapper wrapper, long offset) {
     return 0;
   }
 
