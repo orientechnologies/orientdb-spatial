@@ -27,6 +27,7 @@ import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
 import java.util.List;
 
@@ -51,6 +52,7 @@ public class LuceneSpatialMultiLineStringTest extends BaseSpatialLuceneTest {
     databaseDocumentTx.command(new OCommandSQL("CREATE INDEX Place.location ON Place(location) SPATIAL ENGINE LUCENE")).execute();
   }
 
+  @Test
   public void testWithIndex() {
 
     databaseDocumentTx.command(new OCommandSQL("insert into Place set name = 'Test' , location = ST_GeomFromText('" + WKT + "')"))
@@ -63,6 +65,7 @@ public class LuceneSpatialMultiLineStringTest extends BaseSpatialLuceneTest {
     testQueryMultiLineString();
   }
 
+  @Test
   public void testWithoutIndex() {
 
     databaseDocumentTx.command(new OCommandSQL("Drop INDEX Place.location")).execute();
