@@ -21,6 +21,7 @@ package com.orientechnologies.spatial;
 import com.orientechnologies.common.directmemory.ODirectMemoryPointer;
 import com.orientechnologies.common.serialization.types.OBinarySerializer;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.storage.impl.local.paginated.wal.OWALChangesTree;
 import com.orientechnologies.orient.core.storage.impl.local.paginated.wal.PointerWrapper;
 
 /**
