@@ -22,15 +22,14 @@ import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.List;
 
 /**
  * Created by Enrico Risa on 28/09/15.
  */
-@Test(groups = "embedded")
 public class LuceneSpatialContainsTest {
 
   @Test

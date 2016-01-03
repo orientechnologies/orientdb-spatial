@@ -26,10 +26,10 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,10 +40,9 @@ import java.util.Map;
  * Created by Enrico Risa on 07/08/15.
  */
 
-@Test(groups = "embedded")
 public class LuceneSpatialPolygonTest extends BaseSpatialLuceneTest {
 
-  @BeforeClass
+  @Before
   public void init() {
     initDB();
 
@@ -59,14 +58,33 @@ public class LuceneSpatialPolygonTest extends BaseSpatialLuceneTest {
 
   }
 
-  @Test(enabled = true)
-  public void testPolygonWithoutIndex() {
+  @After
+  public void deInit() {
+    deInitDB();
+  }
 
+  @Test
+  public void testPolygonWithoutIndex() throws IOException {
+    testIndexingPolygon();
     databaseDocumentTx.command(new OCommandSQL("drop index Place.location")).execute();
     queryPolygon();
   }
 
-  @Test(enabled = true)
+  protected void queryPolygon() {
+
+    String query = "select * from Place where location && 'POINT(13.383333 52.516667)'";
+    List<ODocument> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+
+    Assert.assertEquals(docs.size(), 1);
+
+    query = "select * from Place where location && 'POINT(12.5 41.9)'";
+    docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+
+    Assert.assertEquals(docs.size(), 0);
+
+  }
+
+  @Test
   public void testIndexingPolygon() throws IOException {
 
     InputStream systemResourceAsStream = ClassLoader.getSystemResourceAsStream("germany.json");
@@ -88,24 +106,5 @@ public class LuceneSpatialPolygonTest extends BaseSpatialLuceneTest {
     Assert.assertEquals(index.getSize(), 1);
     queryPolygon();
 
-  }
-
-  protected void queryPolygon() {
-
-    String query = "select * from Place where location && 'POINT(13.383333 52.516667)'";
-    List<ODocument> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
-
-    Assert.assertEquals(docs.size(), 1);
-
-    query = "select * from Place where location && 'POINT(12.5 41.9)'";
-    docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
-
-    Assert.assertEquals(docs.size(), 0);
-
-  }
-
-  @AfterClass
-  public void deInit() {
-    deInitDB();
   }
 }

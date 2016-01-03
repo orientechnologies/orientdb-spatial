@@ -18,22 +18,21 @@
 
 package com.orientechnologies.spatial;
 
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
-
 import com.orientechnologies.lucene.test.BaseLuceneTest;
 import com.orientechnologies.orient.core.metadata.schema.OSchemaProxy;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Assert;
+import org.testng.annotations.Test;
 
 /**
  * Created by Enrico Risa on 06/08/15.
  */
 
-@Test(groups = "embedded")
+@Test
 public class LuceneSpatialClassCreateTest extends BaseLuceneTest {
 
-  @BeforeClass
+  @Before
   public void init() {
     initDB();
   }
@@ -58,7 +57,7 @@ public class LuceneSpatialClassCreateTest extends BaseLuceneTest {
     Assert.assertNotNull(schema.getClass("OMultiPolygon"));
   }
 
-  @AfterClass
+  @After
   public void deInit() {
     deInitDB();
   }

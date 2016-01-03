@@ -28,9 +28,9 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.junit.Before;
+import org.junit.Assert;
+import org.junit.After;import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -46,7 +46,7 @@ import java.util.zip.ZipFile;
 /**
  * Created by enricorisa on 02/10/14.
  */
-@Test(groups = "embedded")
+@Test()
 public class LuceneSpatialQueryTest extends BaseLuceneTest {
 
   public LuceneSpatialQueryTest() {
@@ -57,7 +57,7 @@ public class LuceneSpatialQueryTest extends BaseLuceneTest {
     //super(remote);
   }
 
-  @BeforeClass
+  @Before
   public void init() {
     initDB();
     OSchema schema = databaseDocumentTx.getMetadata().getSchema();
@@ -139,7 +139,7 @@ public class LuceneSpatialQueryTest extends BaseLuceneTest {
 
   }
 
-  @AfterClass
+  @After
   public void deInit() {
     deInitDB();
   }

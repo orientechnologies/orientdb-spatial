@@ -32,11 +32,18 @@ import com.spatial4j.core.shape.Point;
 import com.spatial4j.core.shape.Rectangle;
 import com.spatial4j.core.shape.Shape;
 import com.spatial4j.core.shape.jts.JtsGeometry;
-import com.vividsolutions.jts.geom.*;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -48,10 +55,9 @@ import java.util.List;
  * Created by Enrico Risa on 06/08/15.
  */
 
-@Test(groups = "embedded")
 public class LuceneSpatialIOTest extends BaseSpatialLuceneTest {
 
-  @BeforeClass
+  @Before
   public void init() {
     initDB();
   }
@@ -113,7 +119,8 @@ public class LuceneSpatialIOTest extends BaseSpatialLuceneTest {
   }
 
   // RECTANGLE
-  @Test(enabled = false)
+  @Test
+  @Ignore
   public void testRectangleIO() {
 
     ODocument doc = rectangle();
@@ -273,7 +280,7 @@ public class LuceneSpatialIOTest extends BaseSpatialLuceneTest {
     Assert.assertEquals(m2, m1);
   }
 
-  @AfterClass
+  @After
   public void deInit() {
     deInitDB();
   }

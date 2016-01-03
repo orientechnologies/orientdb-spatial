@@ -37,7 +37,7 @@ import java.util.List;
  * Created by Enrico Risa on 05/10/15.
  */
 
-@Test(groups = "embedded")
+@Test()
 public class LuceneTransactionGeoQueryTest {
 
   private static String PWKT = "POINT(-160.2075374 21.9029803)";

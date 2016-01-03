@@ -20,10 +20,11 @@ package com.orientechnologies.spatial;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
-import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,28 +32,42 @@ import java.util.List;
 /**
  * Created by Enrico Risa on 13/08/15.
  */
-@Test(groups = "embedded")
 public class LuceneSpatialFunctionFromTextTest extends BaseSpatialLuceneTest {
 
-
-  @BeforeClass
-  @Override
+  @Before
   public void init() {
     super.init();
   }
 
-  @AfterClass
-  @Override
+  @After
   public void deInit() {
     super.deInit();
   }
-
 
   @Test
   public void geomFromTextLineStringTest() {
 
     ODocument point = lineStringDoc();
     checkFromText(point, "select ST_GeomFromText('" + LINESTRINGWKT + "') as geom");
+  }
+
+  protected void checkFromText(ODocument source, String query) {
+
+    List<ODocument> docs = databaseDocumentTx.command(new OCommandSQL(query)).execute();
+
+    Assert.assertEquals(docs.size(), 1);
+    ODocument geom = docs.get(0).field("geom");
+    assertGeometry(source, geom);
+
+  }
+
+  private void assertGeometry(ODocument source, ODocument geom) {
+    Assert.assertNotNull(geom);
+
+    Assert.assertNotNull(geom.field("coordinates"));
+
+    Assert.assertEquals(source.getClassName(), geom.getClassName());
+    Assert.assertEquals(geom.field("coordinates"), source.field("coordinates"));
   }
 
   @Test
@@ -77,7 +92,8 @@ public class LuceneSpatialFunctionFromTextTest extends BaseSpatialLuceneTest {
   }
 
   //TODO enable
-  @Test(enabled = false)
+  @Test
+  @Ignore
   public void geomFromTextRectangleTest() {
     ODocument polygon = rectangle();
     // RECTANGLE
@@ -124,25 +140,6 @@ public class LuceneSpatialFunctionFromTextTest extends BaseSpatialLuceneTest {
       i++;
     }
 
-  }
-
-  protected void checkFromText(ODocument source, String query) {
-
-    List<ODocument> docs = databaseDocumentTx.command(new OCommandSQL(query)).execute();
-
-    Assert.assertEquals(docs.size(), 1);
-    ODocument geom = docs.get(0).field("geom");
-    assertGeometry(source, geom);
-
-  }
-
-  private void assertGeometry(ODocument source, ODocument geom) {
-    Assert.assertNotNull(geom);
-
-    Assert.assertNotNull(geom.field("coordinates"));
-
-    Assert.assertEquals(source.getClassName(), geom.getClassName());
-    Assert.assertEquals(geom.field("coordinates"), source.field("coordinates"));
   }
 
 }

@@ -25,8 +25,8 @@ import com.spatial4j.core.context.jts.JtsSpatialContext;
 import com.spatial4j.core.shape.Shape;
 import com.spatial4j.core.shape.jts.JtsGeometry;
 import com.vividsolutions.jts.geom.*;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.junit.After;
+import org.junit.Before;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,12 +58,12 @@ public abstract class BaseSpatialLuceneTest extends BaseLuceneTest {
 
   protected static final String GEOMETRYCOLLECTION = "GEOMETRYCOLLECTION (POINT (4 6), LINESTRING (4 6, 7 10))";
 
-  @BeforeClass
+  @Before
   public void init() {
     initDB();
   }
 
-  @AfterClass
+  @After
   public void deInit() {
     deInitDB();
   }

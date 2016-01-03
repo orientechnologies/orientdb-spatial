@@ -26,8 +26,9 @@ import com.spatial4j.core.shape.Shape;
 import com.spatial4j.core.shape.jts.JtsGeometry;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.vividsolutions.jts.geom.Polygon;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.text.ParseException;
 import java.util.List;
@@ -35,7 +36,6 @@ import java.util.List;
 /**
  * Created by Enrico Risa on 28/09/15.
  */
-@Test(groups = "embedded")
 public class LuceneSpatialMiscFunctionsTest {
 
   @Test
@@ -57,7 +57,8 @@ public class LuceneSpatialMiscFunctionsTest {
   }
 
   // TODO reanable and check byte[]
-  @Test(enabled = false)
+  @Test
+  @Ignore
   public void testAsBinary() {
 
     OrientGraphNoTx graph = new OrientGraphNoTx("memory:functionsTest");

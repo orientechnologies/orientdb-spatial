@@ -25,8 +25,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
+import org.junit.After;import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -36,13 +35,12 @@ import java.util.List;
  * Created by Enrico Risa on 07/08/15.
  */
 
-@Test(groups = "embedded")
+@Test()
 public class LuceneSpatialPointTest extends BaseSpatialLuceneTest {
 
   private static String PWKT = "POINT(-160.2075374 21.9029803)";
 
 
-  @BeforeClass
   public void init() {
     initDB();
 
@@ -157,7 +155,7 @@ public class LuceneSpatialPointTest extends BaseSpatialLuceneTest {
     return city;
   }
 
-  @AfterClass
+  @After
   public void deInit() {
     deInitDB();
   }

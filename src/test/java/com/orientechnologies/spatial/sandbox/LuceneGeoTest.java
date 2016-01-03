@@ -35,8 +35,8 @@ import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
 import org.apache.lucene.spatial.query.SpatialArgs;
 import org.apache.lucene.spatial.query.SpatialOperation;
 import org.apache.lucene.store.RAMDirectory;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +46,6 @@ import java.util.Map;
 /**
  * Created by Enrico Risa on 01/10/15.
  */
-@Test
 public class LuceneGeoTest {
 
   @Test

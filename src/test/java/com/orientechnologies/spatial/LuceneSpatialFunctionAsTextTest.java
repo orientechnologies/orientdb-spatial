@@ -25,9 +25,10 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.spatial4j.core.shape.Shape;
 import com.vividsolutions.jts.geom.Geometry;
-import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.text.ParseException;
 import java.util.List;
@@ -35,12 +36,9 @@ import java.util.List;
 /**
  * Created by Enrico Risa on 14/08/15.
  */
-@Test(groups = "embedded")
 public class LuceneSpatialFunctionAsTextTest extends BaseSpatialLuceneTest {
 
-
-  @BeforeClass
-  @Override
+  @Before
   public void init() {
     super.init();
 
@@ -67,11 +65,31 @@ public class LuceneSpatialFunctionAsTextTest extends BaseSpatialLuceneTest {
 
   }
 
+  protected void createLocation(String name, ODocument geometry) {
+    ODocument doc = new ODocument("Location");
+    doc.field("name", name);
+    doc.field("geometry", geometry);
+    databaseDocumentTx.save(doc);
+  }
+
   @Test
   public void testPoint() {
 
     queryAndAssertGeom("OPoint", POINTWKT);
 
+  }
+
+  protected void queryAndAssertGeom(String name, String wkt) {
+    List<ODocument> results = databaseDocumentTx.command(
+        new OCommandSQL("select *, ST_AsText(geometry) as text from Location where name = ? ")).execute(name);
+
+    Assert.assertEquals(1, results.size());
+    ODocument doc = results.iterator().next();
+
+    String asText = doc.field("text");
+
+    Assert.assertNotNull(asText);
+    Assert.assertEquals(asText, wkt);
   }
 
   @Test
@@ -91,7 +109,8 @@ public class LuceneSpatialFunctionAsTextTest extends BaseSpatialLuceneTest {
     queryAndAssertGeom("OMultiLineString", MULTILINESTRINGWKT);
   }
 
-  @Test(enabled = false)
+  @Test
+  @Ignore
   public void testRectangle() {
     queryAndAssertGeom("ORectangle", RECTANGLEWKT);
   }
@@ -121,25 +140,5 @@ public class LuceneSpatialFunctionAsTextTest extends BaseSpatialLuceneTest {
   @Test
   public void testMultiPolygon() {
     queryAndAssertGeom("OMultiPolygon", MULTIPOLYGONWKT);
-  }
-
-  protected void queryAndAssertGeom(String name, String wkt) {
-    List<ODocument> results = databaseDocumentTx.command(
-        new OCommandSQL("select *, ST_AsText(geometry) as text from Location where name = ? ")).execute(name);
-
-    Assert.assertEquals(1, results.size());
-    ODocument doc = results.iterator().next();
-
-    String asText = doc.field("text");
-
-    Assert.assertNotNull(asText);
-    Assert.assertEquals(asText, wkt);
-  }
-
-  protected void createLocation(String name, ODocument geometry) {
-    ODocument doc = new ODocument("Location");
-    doc.field("name", name);
-    doc.field("geometry", geometry);
-    databaseDocumentTx.save(doc);
   }
 }
