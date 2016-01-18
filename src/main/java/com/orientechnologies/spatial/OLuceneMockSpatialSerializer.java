@@ -18,11 +18,11 @@
 
 package com.orientechnologies.spatial;
 
-import com.orientechnologies.common.directmemory.ODirectMemoryPointer;
 import com.orientechnologies.common.serialization.types.OBinarySerializer;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.storage.impl.local.paginated.wal.OWALChangesTree;
-import com.orientechnologies.orient.core.storage.impl.local.paginated.wal.PointerWrapper;
+import com.orientechnologies.orient.core.storage.impl.local.paginated.wal.OWALChanges;
+
+import java.nio.ByteBuffer;
 
 /**
  * Created by Enrico Risa on 04/09/15.
@@ -86,33 +86,34 @@ public class OLuceneMockSpatialSerializer implements OBinarySerializer<ODocument
     return 0;
   }
 
-  @Override
-  public void serializeInDirectMemoryObject(ODocument object, ODirectMemoryPointer pointer, long offset, Object... hints) {
-
-  }
-
-  @Override
-  public ODocument deserializeFromDirectMemoryObject(ODirectMemoryPointer pointer, long offset) {
-    return null;
-  }
-
-  @Override
-  public int getObjectSizeInDirectMemory(ODirectMemoryPointer pointer, long offset) {
-    return 0;
-  }
-
-  @Override
-  public ODocument deserializeFromDirectMemoryObject(PointerWrapper wrapper, long offset) {
-    return null;
-  }
-
-  @Override
-  public int getObjectSizeInDirectMemory(PointerWrapper wrapper, long offset) {
-    return 0;
-  }
 
   @Override
   public ODocument preprocess(ODocument value, Object... hints) {
     return null;
+  }
+
+  @Override
+  public void serializeInByteBufferObject(ODocument object, ByteBuffer buffer, Object... hints) {
+
+  }
+
+  @Override
+  public ODocument deserializeFromByteBufferObject(ByteBuffer buffer) {
+    return null;
+  }
+
+  @Override
+  public int getObjectSizeInByteBuffer(ByteBuffer buffer) {
+    return 0;
+  }
+
+  @Override
+  public ODocument deserializeFromByteBufferObject(ByteBuffer buffer, OWALChanges walChanges, int offset) {
+    return null;
+  }
+
+  @Override
+  public int getObjectSizeInByteBuffer(ByteBuffer buffer, OWALChanges walChanges, int offset) {
+    return 0;
   }
 }
