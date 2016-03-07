@@ -28,7 +28,7 @@ import java.io.IOException;
  */
 public interface OLuceneSpatialIndexContainer {
 
-  public IndexSearcher searcher() throws IOException;
+  IndexSearcher searcher() throws IOException;
 
-  public SpatialStrategy strategy();
+  SpatialStrategy strategy();
 }

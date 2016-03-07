@@ -18,14 +18,16 @@
 
 package com.orientechnologies.spatial.engine;
 
+import com.orientechnologies.common.log.OLogManager;
 import com.orientechnologies.lucene.OLuceneIndexType;
 import com.orientechnologies.lucene.engine.OLuceneIndexEngineAbstract;
-import com.orientechnologies.spatial.factory.OSpatialStrategyFactory;
+import com.orientechnologies.lucene.engine.OLuceneIndexWriterFactory;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.index.OIndexCursor;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.index.OIndexKeyCursor;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.spatial.factory.OSpatialStrategyFactory;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilder;
 import com.spatial4j.core.context.SpatialContext;
@@ -36,7 +38,6 @@ import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.spatial.SpatialStrategy;
@@ -65,6 +66,11 @@ public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngi
   }
 
   @Override
+  public IndexWriter openIndexWriter(Directory directory) throws IOException {
+    return createIndexWriter(directory);
+  }
+
+  @Override
   public void initIndex(String indexType, OIndexDefinition indexDefinition, boolean isAutomatic, ODocument metadata) {
     super.initIndex(indexType, indexDefinition, isAutomatic, metadata);
 
@@ -74,17 +80,12 @@ public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngi
   protected abstract SpatialStrategy createSpatialStrategy(OIndexDefinition indexDefinition, ODocument metadata);
 
   @Override
-  public IndexWriter openIndexWriter(Directory directory) throws IOException {
-    IndexWriterConfig iwc = new IndexWriterConfig(indexAnalyzer());
-    iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-    return new IndexWriter(directory, iwc);
-  }
-
-  @Override
   public IndexWriter createIndexWriter(Directory directory) throws IOException {
-    IndexWriterConfig iwc = new IndexWriterConfig(indexAnalyzer());
-    iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-    return new IndexWriter(directory, iwc);
+    OLuceneIndexWriterFactory fc = new OLuceneIndexWriterFactory();
+
+    OLogManager.instance().debug(this, "Creating Lucene index in '%s'...", directory);
+
+    return fc.createIndexWriter(directory, metadata, indexAnalyzer());
   }
 
   @Override
@@ -100,34 +101,6 @@ public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngi
   @Override
   public boolean remove(Object key) {
     return false;
-  }
-
-  protected Document newGeoDocument(OIdentifiable oIdentifiable, Shape shape) {
-
-    FieldType ft = new FieldType();
-    ft.setIndexOptions(IndexOptions.DOCS);
-    ft.setStored(true);
-
-    Document doc = new Document();
-
-    doc.add(OLuceneIndexType
-        .createField(RID, oIdentifiable.getIdentity().toString(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
-    for (IndexableField f : strategy.createIndexableFields(shape)) {
-      doc.add(f);
-    }
-
-    doc.add(new StoredField(strategy.getFieldName(), ctx.toString(shape)));
-    return doc;
-  }
-
-  @Override
-  public Document buildDocument(Object key, OIdentifiable value) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public Query buildQuery(Object query) {
-    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -170,6 +143,34 @@ public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngi
   @Override
   public boolean hasRangeQuerySupport() {
     return false;
+  }
+
+  protected Document newGeoDocument(OIdentifiable oIdentifiable, Shape shape) {
+
+    FieldType ft = new FieldType();
+    ft.setIndexOptions(IndexOptions.DOCS);
+    ft.setStored(true);
+
+    Document doc = new Document();
+
+    doc.add(OLuceneIndexType
+        .createField(RID, oIdentifiable.getIdentity().toString(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+    for (IndexableField f : strategy.createIndexableFields(shape)) {
+      doc.add(f);
+    }
+
+    doc.add(new StoredField(strategy.getFieldName(), ctx.toString(shape)));
+    return doc;
+  }
+
+  @Override
+  public Document buildDocument(Object key, OIdentifiable value) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public Query buildQuery(Object query) {
+    throw new UnsupportedOperationException();
   }
 
   @Override
