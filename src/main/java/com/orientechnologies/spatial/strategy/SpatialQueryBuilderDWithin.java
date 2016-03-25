@@ -47,7 +47,6 @@ public class SpatialQueryBuilderDWithin extends SpatialQueryBuilderAbstract {
   public SpatialQueryContext build(Map<String, Object> query) throws Exception {
     Shape shape = parseShape(query);
 
-    System.out.println("qui:: " + shape);
     SpatialStrategy strategy = manager.strategy();
     if (isOnlyBB(strategy)) {
       shape = shape.getBoundingBox();

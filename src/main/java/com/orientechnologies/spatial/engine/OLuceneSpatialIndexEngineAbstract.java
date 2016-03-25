@@ -71,8 +71,8 @@ public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngi
   }
 
   @Override
-  public void initIndex(String indexType, OIndexDefinition indexDefinition, boolean isAutomatic, ODocument metadata) {
-    super.initIndex(indexType, indexDefinition, isAutomatic, metadata);
+  public void init(String indexName, String indexType, OIndexDefinition indexDefinition, boolean isAutomatic, ODocument metadata) {
+    super.init(indexName, indexType, indexDefinition, isAutomatic, metadata);
 
     strategy = createSpatialStrategy(indexDefinition, metadata);
   }
@@ -86,11 +86,6 @@ public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngi
     OLogManager.instance().debug(this, "Creating Lucene index in '%s'...", directory);
 
     return fc.createIndexWriter(directory, metadata, indexAnalyzer());
-  }
-
-  @Override
-  public void init() {
-
   }
 
   @Override

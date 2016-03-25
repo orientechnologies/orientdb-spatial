@@ -39,18 +39,19 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 
 import java.io.IOException;
+import java.util.Set;
 
 /**
  * Created by Enrico Risa on 04/09/15.
  */
 public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
 
-//  private final String             name;
+  //  private final String             name;
   private final Boolean            durableInNonTxMode;
   private final OStorage           storage;
   private final int                version;
+  private final String             indexName;
   private       OLuceneIndexEngine delegate;
-  private final       String             indexName;
 
   public OLuceneSpatialIndexEngineDelegate(String name, Boolean durableInNonTxMode, OStorage storage, int version) {
 
@@ -61,8 +62,18 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
   }
 
   @Override
-  public void init() {
-    delegate.init();
+  public void init(String indexName, String indexType, OIndexDefinition indexDefinition, boolean isAutomatic, ODocument metadata) {
+    if (delegate == null) {
+      if (OClass.INDEX_TYPE.SPATIAL.name().equalsIgnoreCase(indexType)) {
+        if (indexDefinition.getFields().size() > 1) {
+          delegate = new OLuceneLegacySpatialIndexEngine(indexName, OShapeFactory.INSTANCE);
+        } else {
+          delegate = new OLuceneGeoSpatialIndexEngine(indexName, OShapeFactory.INSTANCE);
+        }
+
+      }
+    }
+    delegate.init(indexName, indexType, indexDefinition, isAutomatic, metadata);
   }
 
   @Override
@@ -72,7 +83,8 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
 
   @Override
   public void create(OBinarySerializer valueSerializer, boolean isAutomatic, OType[] keyTypes, boolean nullPointerSupport,
-      OBinarySerializer keySerializer, int keySize) {
+      OBinarySerializer keySerializer, int keySize, Set<String> clustersToIndex, ODocument metadata) {
+
   }
 
   @Override
@@ -186,21 +198,6 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
   @Override
   public String getName() {
     return delegate.getName();
-  }
-
-  @Override
-  public void initIndex(String indexType, OIndexDefinition indexDefinition, boolean isAutomatic, ODocument metadata) {
-    if (delegate == null) {
-      if (OClass.INDEX_TYPE.SPATIAL.name().equalsIgnoreCase(indexType)) {
-        if (indexDefinition.getFields().size() > 1) {
-          delegate = new OLuceneLegacySpatialIndexEngine(indexName, OShapeFactory.INSTANCE);
-        } else {
-          delegate = new OLuceneGeoSpatialIndexEngine(indexName, OShapeFactory.INSTANCE);
-        }
-
-      }
-      delegate.initIndex(indexType, indexDefinition, isAutomatic, metadata);
-    }
   }
 
   @Override
