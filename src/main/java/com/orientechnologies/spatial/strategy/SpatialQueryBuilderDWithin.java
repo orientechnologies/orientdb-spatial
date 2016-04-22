@@ -21,9 +21,7 @@ package com.orientechnologies.spatial.strategy;
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
 import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
-import com.orientechnologies.spatial.shape.OShapeFactory;
 import com.spatial4j.core.shape.Shape;
-import com.vividsolutions.jts.geom.Geometry;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.spatial.SpatialStrategy;
@@ -48,16 +46,16 @@ public class SpatialQueryBuilderDWithin extends SpatialQueryBuilderAbstract {
     Shape shape = parseShape(query);
 
     SpatialStrategy strategy = manager.strategy();
+
+    Number distance = (Number) query.get("distance");
+    if (distance != null) {
+      shape = shape.getBuffered(distance.doubleValue(), factory.context());
+    }
     if (isOnlyBB(strategy)) {
       shape = shape.getBoundingBox();
+
     }
-    SpatialArgs args1 = new SpatialArgs(SpatialOperation.IsWithin, shape);
-
-//    SpatialArgs args2 = new SpatialArgs(SpatialOperation., shape);
-
-
-
-    Geometry geo = OShapeFactory.INSTANCE.toGeometry(shape);
+    SpatialArgs args1 = new SpatialArgs(SpatialOperation.Intersects, shape);
 
     Filter filter = strategy.makeFilter(args1);
     return new SpatialQueryContext(null, manager.searcher(), new MatchAllDocsQuery(), filter);

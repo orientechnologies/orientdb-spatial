@@ -27,6 +27,7 @@ import com.orientechnologies.spatial.strategy.SpatialQueryBuilderDWithin;
 import com.spatial4j.core.shape.Shape;
 
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * Created by Enrico Risa on 12/08/15.
@@ -47,9 +48,9 @@ public class OSTDWithinFunction extends OSpatialFunctionAbstract {
 
     Shape shape1 = factory.fromObject(iParams[1]);
 
-    Double distance = (Double) iParams[2];
+    Number distance = (Number) iParams[2];
 
-    return factory.operation().isWithInDistance(shape, shape1, distance);
+    return factory.operation().isWithInDistance(shape, shape1, distance.doubleValue());
   }
 
   @Override
@@ -69,6 +70,17 @@ public class OSTDWithinFunction extends OSpatialFunctionAbstract {
 
     Collection resultSet = results(target, args, ctx);
     return resultSet == null ? -1 : resultSet.size();
+  }
+
+  @Override
+  protected void onAfterParsing(Map<String, Object> params, OExpression[] args, OCommandContext ctx) {
+
+    OExpression number = args[2];
+
+    Number parsedNumber = (Number) number.execute(null, ctx);
+
+    params.put("distance", parsedNumber.doubleValue());
+
   }
 
   @Override

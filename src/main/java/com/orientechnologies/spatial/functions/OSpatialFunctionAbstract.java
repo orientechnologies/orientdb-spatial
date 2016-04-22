@@ -81,9 +81,15 @@ public abstract class OSpatialFunctionAbstract extends OSQLFunctionAbstract impl
         shape = args[1].execute(null, ctx);
       }
       queryParams.put(SpatialQueryBuilderAbstract.SHAPE, shape);
+
+      onAfterParsing(queryParams, args, ctx);
+
       return (LuceneResultSet) oIndex.get(queryParams);
     }
     return null;
+  }
+
+  protected void onAfterParsing(Map<String, Object> params, OExpression[] args, OCommandContext ctx) {
   }
 
   protected abstract String operator();
