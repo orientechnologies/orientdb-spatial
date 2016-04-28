@@ -24,9 +24,9 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import org.testng.Assert;
-import org.junit.After;import org.testng.annotations.BeforeClass;
-import org.testng.annotations.Test;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,11 +35,9 @@ import java.util.List;
  * Created by Enrico Risa on 07/08/15.
  */
 
-@Test()
 public class LuceneSpatialPointTest extends BaseSpatialLuceneTest {
 
   private static String PWKT = "POINT(-160.2075374 21.9029803)";
-
 
   public void init() {
     initDB();
@@ -77,7 +75,7 @@ public class LuceneSpatialPointTest extends BaseSpatialLuceneTest {
         .execute();
   }
 
-  @Test(enabled = true)
+  @Test
   public void testPointWithoutIndex() {
 
     databaseDocumentTx.command(new OCommandSQL("Drop INDEX City.location")).execute();
@@ -85,7 +83,7 @@ public class LuceneSpatialPointTest extends BaseSpatialLuceneTest {
 
   }
 
-  @Test(enabled = true)
+  @Test
   public void testIndexingPoint() {
 
     queryPoint();
@@ -93,20 +91,23 @@ public class LuceneSpatialPointTest extends BaseSpatialLuceneTest {
 
   protected void queryPoint() {
     // TODO remove = true when parser will support index function without expression
-    String query = "select * from City where  ST_WITHIN(location,{ 'shape' : { 'type' : 'ORectangle' , 'coordinates' : [12.314015,41.8262816,12.6605063,41.963125]} })"
-        + " = true";
+    String query =
+        "select * from City where  ST_WITHIN(location,{ 'shape' : { 'type' : 'ORectangle' , 'coordinates' : [12.314015,41.8262816,12.6605063,41.963125]} })"
+            + " = true";
     List<ODocument> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(1, docs.size());
 
-    query = "select * from City where  ST_WITHIN(location,'POLYGON ((12.314015 41.8262816, 12.314015 41.963125, 12.6605063 41.963125, 12.6605063 41.8262816, 12.314015 41.8262816))')"
-        + " = true";
+    query =
+        "select * from City where  ST_WITHIN(location,'POLYGON ((12.314015 41.8262816, 12.314015 41.963125, 12.6605063 41.963125, 12.6605063 41.8262816, 12.314015 41.8262816))')"
+            + " = true";
     docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(1, docs.size());
 
-    query = "select * from City where  ST_WITHIN(location,ST_GeomFromText('POLYGON ((12.314015 41.8262816, 12.314015 41.963125, 12.6605063 41.963125, 12.6605063 41.8262816, 12.314015 41.8262816))'))"
-        + " = true";
+    query =
+        "select * from City where  ST_WITHIN(location,ST_GeomFromText('POLYGON ((12.314015 41.8262816, 12.314015 41.963125, 12.6605063 41.963125, 12.6605063 41.8262816, 12.314015 41.8262816))'))"
+            + " = true";
     docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
     Assert.assertEquals(1, docs.size());
 

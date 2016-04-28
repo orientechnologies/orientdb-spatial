@@ -18,7 +18,6 @@
 
 package com.orientechnologies.spatial;
 
-
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
@@ -27,8 +26,8 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,6 @@ import java.util.List;
  * Created by Enrico Risa on 05/10/15.
  */
 
-@Test()
 public class LuceneTransactionGeoQueryTest {
 
   private static String PWKT = "POINT(-160.2075374 21.9029803)";

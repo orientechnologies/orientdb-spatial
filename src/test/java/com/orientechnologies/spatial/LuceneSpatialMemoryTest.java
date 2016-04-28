@@ -27,8 +27,8 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.spatial4j.core.context.jts.JtsSpatialContext;
 import com.spatial4j.core.shape.Point;
 import com.spatial4j.core.shape.Shape;
-import org.testng.Assert;
-import org.testng.annotations.Test;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.List;
 
@@ -59,9 +59,8 @@ public class LuceneSpatialMemoryTest {
 
       db.save(document);
 
-      List<?> query = db
-          .query(new OSQLSynchQuery<ODocument>(
-              "SELECT FROM Point WHERE [latitude, longitude] WITHIN [[42.26531323615103,-83.71986351411135],[42.29239784478525,-83.7662120858887]]"));
+      List<?> query = db.query(new OSQLSynchQuery<ODocument>(
+          "SELECT FROM Point WHERE [latitude, longitude] WITHIN [[42.26531323615103,-83.71986351411135],[42.29239784478525,-83.7662120858887]]"));
 
       Assert.assertEquals(query.size(), 1);
     } finally {
@@ -84,7 +83,7 @@ public class LuceneSpatialMemoryTest {
       // "POLYGON((-83.757293 42.281164, -83.749274 42.281164, -83.749274 42.275227, -83.757293 42.275227, -83.757293 42.281164))");
 
       Shape parse = JtsSpatialContext.GEO
-          .makeRectangle(-83.7662120858887,-83.71986351411135, 42.26531323615103, 42.29239784478525);
+          .makeRectangle(-83.7662120858887, -83.71986351411135, 42.26531323615103, 42.29239784478525);
       Point point = JtsSpatialContext.GEO.makePoint(-83.7605452, 42.2814837);
 
       point.relate(parse);

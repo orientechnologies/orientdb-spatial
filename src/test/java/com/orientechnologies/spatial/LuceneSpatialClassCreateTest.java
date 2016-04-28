@@ -21,15 +21,14 @@ package com.orientechnologies.spatial;
 import com.orientechnologies.lucene.test.BaseLuceneTest;
 import com.orientechnologies.orient.core.metadata.schema.OSchemaProxy;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Assert;
-import org.testng.annotations.Test;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by Enrico Risa on 06/08/15.
  */
 
-@Test
 public class LuceneSpatialClassCreateTest extends BaseLuceneTest {
 
   @Before
@@ -55,6 +54,7 @@ public class LuceneSpatialClassCreateTest extends BaseLuceneTest {
     Assert.assertNotNull(schema.getClass("OPolygon"));
 
     Assert.assertNotNull(schema.getClass("OMultiPolygon"));
+
   }
 
   @After
