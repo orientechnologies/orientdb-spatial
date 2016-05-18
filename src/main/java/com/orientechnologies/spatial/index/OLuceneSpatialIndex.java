@@ -17,6 +17,7 @@
 package com.orientechnologies.spatial.index;
 
 import com.orientechnologies.lucene.index.OLuceneIndexNotUnique;
+import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.storage.impl.local.OAbstractPaginatedStorage;
 import com.orientechnologies.spatial.shape.OShapeFactory;
@@ -31,6 +32,14 @@ public class OLuceneSpatialIndex extends OLuceneIndexNotUnique {
       String valueContainerAlgorithm, ODocument metadata) {
     super(name, typeId, algorithm, version, storage, valueContainerAlgorithm, metadata);
 
+  }
+
+  @Override
+  public OLuceneIndexNotUnique put(Object key, OIdentifiable singleValue) {
+    if (key == null) {
+      return this;
+    }
+    return super.put(key, singleValue);
   }
 
   @Override
