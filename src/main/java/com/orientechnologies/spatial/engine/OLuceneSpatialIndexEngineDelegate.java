@@ -264,4 +264,13 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
     return delegate.deleteQuery(key, value);
   }
 
+  @Override
+  public void freeze(boolean throwException) {
+    delegate.freeze(throwException);
+  }
+
+  @Override
+  public void release() {
+    delegate.release();
+  }
 }
