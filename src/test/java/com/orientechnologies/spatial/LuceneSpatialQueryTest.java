@@ -40,6 +40,8 @@ import java.util.TimerTask;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 /**
  * Created by enricorisa on 02/10/14.
  */
@@ -143,7 +145,11 @@ public class LuceneSpatialQueryTest extends BaseLuceneTest {
 
     // WHY ? 0.2749329729746763
     // Assert.assertEquals(0.27504313167833594, docs.get(0).field("$distance"));
-    Assert.assertEquals(0.2749329729746763, docs.get(0).field("$distance"));
+//    Assert.assertEquals(, docs.get(0).field("$distance"));
+
+
+    assertThat(docs.get(0).<Float>field("$distance")).isEqualTo(0.2749329729746763);
+
   }
 
   @Test

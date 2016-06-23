@@ -26,12 +26,16 @@ import com.spatial4j.core.shape.Shape;
 import com.spatial4j.core.shape.jts.JtsGeometry;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.text.ParseException;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Enrico Risa on 28/09/15.
@@ -145,7 +149,8 @@ public class LuceneSpatialMiscFunctionsTest {
           .execute();
       ODocument next = execute.iterator().next();
 
-      Assert.assertEquals(next.field("ST_Distance"), 0.0015056772638228177);
+//      Assert.assertEquals(next.field("ST_Distance"), 0.0015056772638228177);
+      assertThat(next.<PackedCoordinateSequence.Float>field("ST_Distance")).isEqualTo(0.0015056772638228177);
 
       execute = db
           .command(
@@ -154,7 +159,9 @@ public class LuceneSpatialMiscFunctionsTest {
           .execute();
       next = execute.iterator().next();
 
-      Assert.assertEquals(next.field("ST_Distance"), 0.44204072210600415);
+//      Assert.assertEquals(next.field("ST_Distance"), 0.44204072210600415);
+
+      assertThat(next.<PackedCoordinateSequence.Float>field("ST_Distance")).isEqualTo(0.44204072210600415);
     } finally {
       graph.drop();
     }

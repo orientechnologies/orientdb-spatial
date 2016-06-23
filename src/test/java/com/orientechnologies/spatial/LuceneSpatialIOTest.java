@@ -86,7 +86,7 @@ public class LuceneSpatialIOTest extends BaseSpatialLuceneTest {
 
     ODocument parsed = builder.toDoc(p2);
 
-    Assert.assertEquals(doc.field("coordinates"), parsed.field("coordinates"));
+    Assert.assertEquals(doc.<OPointShapeBuilder>field("coordinates"), parsed.field("coordinates"));
   }
 
   // MULTIPOINT

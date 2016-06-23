@@ -20,6 +20,8 @@ package com.orientechnologies.spatial;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.spatial.shape.legacy.OPointLegecyBuilder;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -67,7 +69,9 @@ public class LuceneSpatialFunctionFromTextTest extends BaseSpatialLuceneTest {
     Assert.assertNotNull(geom.field("coordinates"));
 
     Assert.assertEquals(source.getClassName(), geom.getClassName());
-    Assert.assertEquals(geom.field("coordinates"), source.field("coordinates"));
+    Assert.assertEquals(geom.<OPointLegecyBuilder>field("coordinates"), source.field("coordinates"));
+
+
   }
 
   @Test

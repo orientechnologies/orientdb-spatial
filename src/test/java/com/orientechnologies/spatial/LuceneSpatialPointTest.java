@@ -24,12 +24,15 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Enrico Risa on 07/08/15.
@@ -130,7 +133,9 @@ public class LuceneSpatialPointTest extends BaseSpatialLuceneTest {
 
     Assert.assertEquals(1, docs.size());
 
-    Assert.assertEquals(1.6229442709302933, docs.get(0).field("$distance"));
+    //    Assert.assertEquals(1.6229442709302933, docs.get(0).field("$distance"));
+
+    assertThat(docs.get(0).<Double>field("$distance")).isEqualTo(1.6229442709302933);
   }
 
   @Test
