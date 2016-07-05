@@ -205,11 +205,6 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
   }
 
   @Override
-  public void acquireAtomicExclusiveLock() {
-
-  }
-
-  @Override
   public String indexName() {
     return indexName;
   }
