@@ -19,7 +19,6 @@
 package com.orientechnologies.spatial.functions;
 
 import com.orientechnologies.lucene.collections.LuceneResultSet;
-import com.orientechnologies.spatial.index.OLuceneSpatialIndex;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
@@ -28,10 +27,12 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.functions.OIndexableSQLFunction;
 import com.orientechnologies.orient.core.sql.functions.OSQLFunctionAbstract;
 import com.orientechnologies.orient.core.sql.parser.*;
+import com.orientechnologies.spatial.index.OLuceneSpatialIndex;
 import com.orientechnologies.spatial.shape.OShapeFactory;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilderAbstract;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -67,7 +68,7 @@ public abstract class OSpatialFunctionAbstract extends OSQLFunctionAbstract impl
     return ODatabaseRecordThreadLocal.INSTANCE.get();
   }
 
-  protected LuceneResultSet results(OFromClause target, OExpression[] args, OCommandContext ctx) {
+  protected LuceneResultSet results(OFromClause target, OExpression[] args, OCommandContext ctx, Object rightValue) {
     OIndex oIndex = searchForIndex(target, args);
     if (oIndex != null) {
       Map<String, Object> queryParams = new HashMap<String, Object>();
@@ -82,14 +83,20 @@ public abstract class OSpatialFunctionAbstract extends OSQLFunctionAbstract impl
       }
       queryParams.put(SpatialQueryBuilderAbstract.SHAPE, shape);
 
-      onAfterParsing(queryParams, args, ctx);
+      onAfterParsing(queryParams, args, ctx, rightValue);
 
+      Set<String> indexes = (Set<String>) ctx.getVariable("involvedIndexes");
+      if (indexes == null) {
+        indexes = new HashSet<String>();
+        ctx.setVariable("involvedIndexes", indexes);
+      }
+      indexes.add(oIndex.getName());
       return (LuceneResultSet) oIndex.get(queryParams);
     }
     return null;
   }
 
-  protected void onAfterParsing(Map<String, Object> params, OExpression[] args, OCommandContext ctx) {
+  protected void onAfterParsing(Map<String, Object> params, OExpression[] args, OCommandContext ctx, Object rightValue) {
   }
 
   protected abstract String operator();
