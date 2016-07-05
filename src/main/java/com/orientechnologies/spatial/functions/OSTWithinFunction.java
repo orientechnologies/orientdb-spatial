@@ -59,14 +59,14 @@ public class OSTWithinFunction extends OSpatialFunctionAbstract {
   @Override
   public Iterable<OIdentifiable> searchFromTarget(OFromClause target, OBinaryCompareOperator operator, Object rightValue,
       OCommandContext ctx, OExpression... args) {
-    return results(target, args, ctx);
+    return results(target, args, ctx, rightValue);
   }
 
   @Override
   public long estimate(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
       OExpression... args) {
 
-    Collection resultSet = results(target, args, ctx);
+    Collection resultSet = results(target, args, ctx, rightValue);
     return resultSet == null ? -1 : resultSet.size();
   }
 
