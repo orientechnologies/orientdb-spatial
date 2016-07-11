@@ -273,4 +273,9 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
   public void release() {
     delegate.release();
   }
+
+  @Override
+  public void acquireAtomicExclusiveLock() {
+    // do nothing
+  }
 }
