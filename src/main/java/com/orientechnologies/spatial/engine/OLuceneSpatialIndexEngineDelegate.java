@@ -275,7 +275,7 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
   }
 
   @Override
-  public void acquireAtomicExclusiveLock() {
-    // do nothing
+  public boolean acquireAtomicExclusiveLock(Object key) {
+    return true; // do nothing
   }
 }
