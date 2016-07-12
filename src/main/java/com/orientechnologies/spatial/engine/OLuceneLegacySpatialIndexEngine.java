@@ -18,10 +18,8 @@
 
 package com.orientechnologies.spatial.engine;
 
-import com.orientechnologies.lucene.collections.LuceneResultSet;
-import com.orientechnologies.spatial.collections.OSpatialCompositeKey;
+import com.orientechnologies.lucene.collections.LuceneResultSetFactory;
 import com.orientechnologies.lucene.query.QueryContext;
-import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.lucene.tx.OLuceneTxChanges;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
@@ -31,6 +29,8 @@ import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.index.OIndexEngineException;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.spatial.collections.OSpatialCompositeKey;
+import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import com.orientechnologies.spatial.shape.legacy.OShapeBuilderLegacy;
 import com.orientechnologies.spatial.shape.legacy.OShapeBuilderLegacyImpl;
@@ -57,49 +57,51 @@ import java.util.Set;
  */
 public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAbstract {
 
-  OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE; ;
+  OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE;;
 
   public OLuceneLegacySpatialIndexEngine(String indexName, OShapeBuilder factory) {
     super(indexName, factory);
   }
 
-  private Object legacySearch(Object key) throws IOException {
+  private Object legacySearch(Object key, OLuceneTxChanges changes) throws IOException {
     if (key instanceof OSpatialCompositeKey) {
       final OSpatialCompositeKey newKey = (OSpatialCompositeKey) key;
 
       final SpatialOperation strategy = newKey.getOperation() != null ? newKey.getOperation() : SpatialOperation.Intersects;
 
       if (SpatialOperation.Intersects.equals(strategy))
-        return searchIntersect(newKey, newKey.getMaxDistance(), newKey.getContext());
+        return searchIntersect(newKey, newKey.getMaxDistance(), newKey.getContext(), changes);
       else if (SpatialOperation.IsWithin.equals(strategy))
-        return searchWithin(newKey, newKey.getContext());
+        return searchWithin(newKey, newKey.getContext(), changes);
 
     } else if (key instanceof OCompositeKey) {
-      return searchIntersect((OCompositeKey) key, 0, null);
+      return searchIntersect((OCompositeKey) key, 0, null, changes);
     }
     throw new OIndexEngineException("Unknown key" + key, null);
 
   }
 
-  public Object searchIntersect(OCompositeKey key, double distance, OCommandContext context) throws IOException {
+  public Object searchIntersect(OCompositeKey key, double distance, OCommandContext context, OLuceneTxChanges changes)
+      throws IOException {
 
     double lat = ((Double) OType.convert(((OCompositeKey) key).getKeys().get(0), Double.class)).doubleValue();
     double lng = ((Double) OType.convert(((OCompositeKey) key).getKeys().get(1), Double.class)).doubleValue();
     SpatialOperation operation = SpatialOperation.Intersects;
 
     Point p = ctx.makePoint(lng, lat);
-    SpatialArgs args = new SpatialArgs(operation, ctx.makeCircle(lng, lat,
-        DistanceUtils.dist2Degrees(distance, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
+    SpatialArgs args = new SpatialArgs(operation,
+        ctx.makeCircle(lng, lat, DistanceUtils.dist2Degrees(distance, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
     Filter filter = strategy.makeFilter(args);
     IndexSearcher searcher = searcher();
     ValueSource valueSource = strategy.makeDistanceValueSource(p);
     Sort distSort = new Sort(valueSource.getSortField(false)).rewrite(searcher);
 
-    return new LuceneResultSet(this,
-        new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter, distSort).setSpatialArgs(args));
+    QueryContext queryContext = new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter, distSort)
+        .setSpatialArgs(args).setChanges(changes);
+    return LuceneResultSetFactory.INSTANCE.create(this, queryContext);
   }
 
-  public Object searchWithin(OSpatialCompositeKey key, OCommandContext context) throws IOException {
+  public Object searchWithin(OSpatialCompositeKey key, OCommandContext context, OLuceneTxChanges changes) throws IOException {
 
     Set<OIdentifiable> result = new HashSet<OIdentifiable>();
 
@@ -111,7 +113,9 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
 
     Filter filter = strategy.makeFilter(args);
 
-    return new LuceneResultSet(this, new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter));
+    QueryContext queryContext = new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter).setChanges(changes);
+    return LuceneResultSetFactory.INSTANCE.create(this, queryContext);
+
   }
 
   @Override
@@ -133,7 +137,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
   @Override
   public Object getInTx(Object key, OLuceneTxChanges changes) {
     try {
-      return legacySearch(key);
+      return legacySearch(key, changes);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -158,6 +162,11 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
 
     }
 
+  }
+
+  @Override
+  public Document buildDocument(Object key, OIdentifiable value) {
+    return newGeoDocument(value, legacyBuilder.makeShape((OCompositeKey) key, ctx));
   }
 
   @Override
