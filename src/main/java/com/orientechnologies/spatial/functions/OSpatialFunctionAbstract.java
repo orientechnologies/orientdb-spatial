@@ -1,103 +1,39 @@
 /*
+ * Copyright 2015 OrientDB LTD (info(at)orientdb.com)
  *
- *  * Copyright 2014 Orient Technologies.
- *  *
- *  * Licensed under the Apache License, Version 2.0 (the "License");
- *  * you may not use this file except in compliance with the License.
- *  * You may obtain a copy of the License at
- *  *
- *  *      http://www.apache.org/licenses/LICENSE-2.0
- *  *
- *  * Unless required by applicable law or agreed to in writing, software
- *  * distributed under the License is distributed on an "AS IS" BASIS,
- *  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  * See the License for the specific language governing permissions and
- *  * limitations under the License.
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
  *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ *   For more information: http://www.orientdb.com
  */
 
 package com.orientechnologies.spatial.functions;
 
-import com.orientechnologies.lucene.collections.LuceneResultSet;
-import com.orientechnologies.orient.core.command.OCommandContext;
-import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
-import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
-import com.orientechnologies.orient.core.index.OIndex;
-import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.sql.functions.OIndexableSQLFunction;
 import com.orientechnologies.orient.core.sql.functions.OSQLFunctionAbstract;
-import com.orientechnologies.orient.core.sql.parser.*;
-import com.orientechnologies.spatial.index.OLuceneSpatialIndex;
-import com.orientechnologies.spatial.shape.OShapeFactory;
-import com.orientechnologies.spatial.strategy.SpatialQueryBuilderAbstract;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
- * Created by Enrico Risa on 31/08/15.
+ * Created by Enrico Risa on 22/07/16.
  */
-public abstract class OSpatialFunctionAbstract extends OSQLFunctionAbstract implements OIndexableSQLFunction {
-
-  OShapeFactory factory = OShapeFactory.INSTANCE;
+public abstract class OSpatialFunctionAbstract extends OSQLFunctionAbstract {
 
   public OSpatialFunctionAbstract(String iName, int iMinParams, int iMaxParams) {
     super(iName, iMinParams, iMaxParams);
   }
 
-  protected OIndex searchForIndex(OFromClause target, OExpression[] args) {
-
-    // TODO Check if target is a class otherwise exception
-
-    OFromItem item = target.getItem();
-    OBaseIdentifier identifier = item.getIdentifier();
-    String fieldName = args[0].toString();
-
-    Set<OIndex<?>> indexes = getDb().getMetadata().getIndexManager().getClassInvolvedIndexes(identifier.toString(), fieldName);
-    for (OIndex<?> index : indexes) {
-      if (index.getInternal() instanceof OLuceneSpatialIndex) {
-        return index;
-      }
+  boolean containsNull(Object[] params) {
+    for (Object param : params) {
+      if (param == null)
+        return true;
     }
-    return null;
+    return false;
   }
-
-  protected ODatabaseDocumentInternal getDb() {
-    return ODatabaseRecordThreadLocal.INSTANCE.get();
-  }
-
-  protected LuceneResultSet results(OFromClause target, OExpression[] args, OCommandContext ctx, Object rightValue) {
-    OIndex oIndex = searchForIndex(target, args);
-    if (oIndex != null) {
-      Map<String, Object> queryParams = new HashMap<String, Object>();
-      queryParams.put(SpatialQueryBuilderAbstract.GEO_FILTER, operator());
-      Object shape;
-      if (args[1].getValue() instanceof OJson) {
-        OJson json = (OJson) args[1].getValue();
-        ODocument doc = new ODocument().fromJSON(json.toString());
-        shape = doc.toMap();
-      } else {
-        shape = args[1].execute(null, ctx);
-      }
-      queryParams.put(SpatialQueryBuilderAbstract.SHAPE, shape);
-
-      onAfterParsing(queryParams, args, ctx, rightValue);
-
-      Set<String> indexes = (Set<String>) ctx.getVariable("involvedIndexes");
-      if (indexes == null) {
-        indexes = new HashSet<String>();
-        ctx.setVariable("involvedIndexes", indexes);
-      }
-      indexes.add(oIndex.getName());
-      return (LuceneResultSet) oIndex.get(queryParams);
-    }
-    return null;
-  }
-
-  protected void onAfterParsing(Map<String, Object> params, OExpression[] args, OCommandContext ctx, Object rightValue) {
-  }
-
-  protected abstract String operator();
 }

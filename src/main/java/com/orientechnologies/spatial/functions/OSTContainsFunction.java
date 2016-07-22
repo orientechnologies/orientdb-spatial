@@ -33,11 +33,11 @@ import java.util.Collection;
 /**
  * Created by Enrico Risa on 12/08/15.
  */
-public class OSTContainsFunction extends OSpatialFunctionAbstract {
+public class OSTContainsFunction extends OSpatialFunctionAbstractIndexable {
 
   public static final String NAME    = "st_contains";
 
-  OShapeFactory factory = OShapeFactory.INSTANCE;
+  OShapeFactory              factory = OShapeFactory.INSTANCE;
 
   public OSTContainsFunction() {
     super(NAME, 2, 2);
@@ -46,6 +46,10 @@ public class OSTContainsFunction extends OSpatialFunctionAbstract {
   @Override
   public Object execute(Object iThis, OIdentifiable iCurrentRecord, Object iCurrentResult, Object[] iParams,
       OCommandContext iContext) {
+
+    if (containsNull(iParams)) {
+      return null;
+    }
 
     Shape shape = factory.fromObject(iParams[0]);
 

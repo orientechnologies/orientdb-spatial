@@ -31,7 +31,7 @@ import java.util.Collection;
 /**
  * Created by Enrico Risa on 12/08/15.
  */
-public class OSTIntersectsFunction extends OSpatialFunctionAbstract {
+public class OSTIntersectsFunction extends OSpatialFunctionAbstractIndexable {
 
   public static final String NAME = "st_intersects";
 
@@ -43,6 +43,9 @@ public class OSTIntersectsFunction extends OSpatialFunctionAbstract {
   public Object execute(Object iThis, OIdentifiable iCurrentRecord, Object iCurrentResult, Object[] iParams,
       OCommandContext iContext) {
 
+    if (containsNull(iParams)) {
+      return null;
+    }
     Shape shape = factory.fromObject(iParams[0]);
 
     Shape shape1 = factory.fromObject(iParams[1]);
