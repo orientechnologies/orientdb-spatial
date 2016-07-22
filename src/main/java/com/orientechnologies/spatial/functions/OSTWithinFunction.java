@@ -32,7 +32,7 @@ import java.util.Collection;
 /**
  * Created by Enrico Risa on 12/08/15.
  */
-public class OSTWithinFunction extends OSpatialFunctionAbstract {
+public class OSTWithinFunction extends OSpatialFunctionAbstractIndexable {
 
   public static final String NAME = "st_within";
 
@@ -44,6 +44,9 @@ public class OSTWithinFunction extends OSpatialFunctionAbstract {
   public Object execute(Object iThis, OIdentifiable iCurrentRecord, Object iCurrentResult, Object[] iParams,
       OCommandContext iContext) {
 
+    if (containsNull(iParams)) {
+      return null;
+    }
     Shape shape = factory.fromObject(iParams[0]);
 
     Shape shape1 = factory.fromObject(iParams[1]);

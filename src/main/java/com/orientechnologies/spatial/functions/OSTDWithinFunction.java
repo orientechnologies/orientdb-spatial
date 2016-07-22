@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Created by Enrico Risa on 12/08/15.
  */
-public class OSTDWithinFunction extends OSpatialFunctionAbstract {
+public class OSTDWithinFunction extends OSpatialFunctionAbstractIndexable {
 
   public static final String NAME = "st_dwithin";
 
@@ -44,6 +44,9 @@ public class OSTDWithinFunction extends OSpatialFunctionAbstract {
   public Object execute(Object iThis, OIdentifiable iCurrentRecord, Object iCurrentResult, Object[] iParams,
       OCommandContext iContext) {
 
+    if (containsNull(iParams)) {
+      return null;
+    }
     Shape shape = factory.fromObject(iParams[0]);
 
     Shape shape1 = factory.fromObject(iParams[1]);

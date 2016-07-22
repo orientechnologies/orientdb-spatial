@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Created by Enrico Risa on 25/09/15.
  */
-public class OSTDistanceSphereFunction extends OSpatialFunctionAbstract {
+public class OSTDistanceSphereFunction extends OSpatialFunctionAbstractIndexable {
 
   public static final String NAME    = "st_distance_sphere";
   OShapeFactory              factory = OShapeFactory.INSTANCE;
@@ -44,6 +44,10 @@ public class OSTDistanceSphereFunction extends OSpatialFunctionAbstract {
   @Override
   public Object execute(Object iThis, OIdentifiable iCurrentRecord, Object iCurrentResult, Object[] iParams,
       OCommandContext iContext) {
+
+    if (containsNull(iParams)) {
+      return null;
+    }
     Shape shape = factory.fromObject(iParams[0]);
 
     Shape shape1 = factory.fromObject(iParams[1]);
