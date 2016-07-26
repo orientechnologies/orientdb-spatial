@@ -278,4 +278,9 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
   public boolean acquireAtomicExclusiveLock(Object key) {
     return true; // do nothing
   }
+
+  @Override
+  public String getIndexNameByKey(Object key) {
+    return delegate.getIndexNameByKey(key);
+  }
 }
