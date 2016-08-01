@@ -22,6 +22,7 @@ import com.orientechnologies.lucene.collections.LuceneResultSet;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
+import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.functions.OIndexableSQLFunction;
@@ -51,10 +52,10 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
     // TODO Check if target is a class otherwise exception
 
     OFromItem item = target.getItem();
-    OBaseIdentifier identifier = item.getIdentifier();
+    OIdentifier identifier = item.getIdentifier();
     String fieldName = args[0].toString();
 
-    Set<OIndex<?>> indexes = getDb().getMetadata().getIndexManager().getClassInvolvedIndexes(identifier.toString(), fieldName);
+    Set<OIndex<?>> indexes = getDb().getMetadata().getIndexManager().getClassInvolvedIndexes(identifier.getStringValue(), fieldName);
     for (OIndex<?> index : indexes) {
       if (index.getInternal() instanceof OLuceneSpatialIndex) {
         return index;
@@ -80,7 +81,7 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
         ODocument doc = new ODocument().fromJSON(json.toString());
         shape = doc.toMap();
       } else {
-        shape = args[1].execute(null, ctx);
+        shape = args[1].execute((OIdentifiable) null, ctx);
       }
       queryParams.put(SpatialQueryBuilderAbstract.SHAPE, shape);
 
@@ -101,4 +102,25 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
   }
 
   protected abstract String operator();
+
+
+  // TODO implement for 3.0
+
+  @Override
+  public boolean canExecuteWithoutIndex(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
+      OExpression... args) {
+    return true;
+  }
+
+  @Override
+  public boolean allowsIndexedExecution(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
+      OExpression... args) {
+    return true;
+  }
+
+  @Override
+  public boolean shouldExecuteAfterSearch(OFromClause target, OBinaryCompareOperator operator, Object rightValue,
+      OCommandContext ctx, OExpression... args) {
+    return true;
+  }
 }

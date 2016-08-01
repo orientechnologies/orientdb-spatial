@@ -80,7 +80,7 @@ public class OSTDWithinFunction extends OSpatialFunctionAbstractIndexable {
 
     OExpression number = args[2];
 
-    Number parsedNumber = (Number) number.execute(null, ctx);
+    Number parsedNumber = (Number) number.execute((OIdentifiable) null, ctx);
 
     params.put("distance", parsedNumber.doubleValue());
 
