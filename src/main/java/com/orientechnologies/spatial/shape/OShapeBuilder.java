@@ -21,7 +21,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.spatial4j.core.context.SpatialContext;
 import com.spatial4j.core.context.jts.JtsSpatialContext;
 import com.spatial4j.core.context.jts.JtsSpatialContextFactory;
-import com.spatial4j.core.io.jts.JtsWktShapeParser;
+import com.spatial4j.core.context.jts.ValidationRule;
 import com.spatial4j.core.shape.Rectangle;
 import com.spatial4j.core.shape.Shape;
 import com.spatial4j.core.shape.jts.JtsGeometry;
@@ -37,9 +37,10 @@ import java.util.Map;
 
 public abstract class OShapeBuilder<T extends Shape> {
 
+  public static final String COORDINATES = "coordinates";
+  public static final String BASE_CLASS  = "OShape";
   protected static final JtsSpatialContext SPATIAL_CONTEXT;
   protected static final GeometryFactory   GEOMETRY_FACTORY;
-
   protected static Map<String, Integer> capStyles = new HashMap<String, Integer>();
   protected static Map<String, Integer> join      = new HashMap<String, Integer>();
 
@@ -47,7 +48,8 @@ public abstract class OShapeBuilder<T extends Shape> {
 
     JtsSpatialContextFactory factory = new JtsSpatialContextFactory();
     factory.geo = true;
-    factory.validationRule = JtsWktShapeParser.ValidationRule.none;
+    factory.validationRule = ValidationRule.none;
+
     SPATIAL_CONTEXT = new JtsSpatialContext(factory);
     GEOMETRY_FACTORY = SPATIAL_CONTEXT.getGeometryFactory();
     capStyles.put("round", 1);
@@ -59,9 +61,6 @@ public abstract class OShapeBuilder<T extends Shape> {
     join.put("bevel", 3);
 
   }
-
-  public static final String COORDINATES = "coordinates";
-  public static final String BASE_CLASS  = "OShape";
 
   public abstract String getName();
 

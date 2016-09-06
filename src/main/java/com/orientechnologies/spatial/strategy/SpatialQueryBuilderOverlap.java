@@ -22,8 +22,11 @@ import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
 import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import com.spatial4j.core.shape.Shape;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.query.SpatialArgs;
 import org.apache.lucene.spatial.query.SpatialOperation;
@@ -47,8 +50,11 @@ public class SpatialQueryBuilderOverlap extends SpatialQueryBuilderAbstract {
     Shape shape = parseShape(query);
     SpatialStrategy strategy = manager.strategy();
     SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, shape.getBoundingBox());
-    Filter filter = strategy.makeFilter(args);
-    return new SpatialQueryContext(null, manager.searcher(), new MatchAllDocsQuery(), filter);
+    Query filterQuery = strategy.makeQuery(args);
+    BooleanQuery q = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
+        .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
+
+    return new SpatialQueryContext(null, manager.searcher(), q);
   }
 
   @Override

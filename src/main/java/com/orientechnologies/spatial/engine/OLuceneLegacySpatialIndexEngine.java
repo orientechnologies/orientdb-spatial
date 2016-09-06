@@ -39,7 +39,13 @@ import com.spatial4j.core.shape.Point;
 import com.spatial4j.core.shape.Shape;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queries.function.ValueSource;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
@@ -57,7 +63,8 @@ import java.util.Set;
  */
 public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAbstract {
 
-  OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE;;
+  OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE;
+  ;
 
   public OLuceneLegacySpatialIndexEngine(String indexName, OShapeBuilder factory) {
     super(indexName, factory);
@@ -91,13 +98,16 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
     Point p = ctx.makePoint(lng, lat);
     SpatialArgs args = new SpatialArgs(operation,
         ctx.makeCircle(lng, lat, DistanceUtils.dist2Degrees(distance, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
-    Filter filter = strategy.makeFilter(args);
+    Query filterQuery = strategy.makeQuery(args);
+
     IndexSearcher searcher = searcher();
     ValueSource valueSource = strategy.makeDistanceValueSource(p);
     Sort distSort = new Sort(valueSource.getSortField(false)).rewrite(searcher);
 
-    QueryContext queryContext = new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter, distSort)
-        .setSpatialArgs(args).setChanges(changes);
+    BooleanQuery q = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
+        .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
+
+    QueryContext queryContext = new SpatialQueryContext(context, searcher, q, distSort).setSpatialArgs(args).setChanges(changes);
     return LuceneResultSetFactory.INSTANCE.create(this, queryContext);
   }
 
@@ -111,9 +121,13 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
     SpatialArgs args = new SpatialArgs(SpatialOperation.IsWithin, shape);
     IndexSearcher searcher = searcher();
 
-    Filter filter = strategy.makeFilter(args);
+    Query filterQuery = strategy.makeQuery(args);
 
-    QueryContext queryContext = new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter).setChanges(changes);
+    BooleanQuery query = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
+        .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD)
+        .build();
+
+    QueryContext queryContext = new SpatialQueryContext(context, searcher, query).setChanges(changes);
     return LuceneResultSetFactory.INSTANCE.create(this, queryContext);
 
   }

@@ -25,9 +25,12 @@ import com.spatial4j.core.distance.DistanceUtils;
 import com.spatial4j.core.shape.Point;
 import com.spatial4j.core.shape.Shape;
 import org.apache.lucene.queries.function.ValueSource;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.query.SpatialArgs;
@@ -61,11 +64,19 @@ public class SpatialQueryBuilderDistanceSphere extends SpatialQueryBuilderAbstra
 
     SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, factory.context().makeCircle((Point) shape,
         DistanceUtils.dist2Degrees(distance.doubleValue() / 1000, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
-    Filter filter = strategy.makeFilter(args);
+    //    Filter filter = strategy.makeFilter(args);
+
+    Query filterQuery = strategy.makeQuery(args);
+
     IndexSearcher searcher = manager.searcher();
     ValueSource valueSource = strategy.makeDistanceValueSource((Point) shape);
     Sort distSort = new Sort(valueSource.getSortField(false)).rewrite(searcher);
-    return new SpatialQueryContext(null, searcher, new MatchAllDocsQuery(), filter, distSort).setSpatialArgs(args);
+
+
+    BooleanQuery q = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
+        .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
+
+    return new SpatialQueryContext(null, searcher, q, distSort).setSpatialArgs(args);
   }
 
   @Override

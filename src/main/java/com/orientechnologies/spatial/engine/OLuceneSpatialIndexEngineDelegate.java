@@ -47,7 +47,6 @@ import java.util.Set;
  */
 public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
 
-  //  private final String             name;
   private final Boolean            durableInNonTxMode;
   private final OStorage           storage;
   private final int                version;

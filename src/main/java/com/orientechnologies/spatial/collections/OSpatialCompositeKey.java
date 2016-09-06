@@ -23,7 +23,7 @@ import java.util.List;
 
 public class OSpatialCompositeKey extends OLuceneCompositeKey {
 
-  private double           maxDistance;
+  private double maxDistance;
 
   private SpatialOperation operation;
 
