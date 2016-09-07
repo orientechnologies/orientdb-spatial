@@ -18,9 +18,9 @@
 
 package com.orientechnologies.spatial.strategy;
 
+import com.orientechnologies.orient.core.index.OIndexEngineException;
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
 import com.orientechnologies.spatial.query.SpatialQueryContext;
-import com.orientechnologies.orient.core.index.OIndexEngineException;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 
 import java.util.HashMap;
@@ -39,13 +39,17 @@ public class SpatialQueryBuilder extends SpatialQueryBuilderAbstract {
   }
 
   private void initOperators(OLuceneSpatialIndexContainer manager, OShapeBuilder factory) {
-    operators.put("within", new SpatialQueryBuilderWithin(manager, factory));
-    operators.put("contains", new SpatialQueryBuilderContains(manager, factory));
-    operators.put("near", new SpatialQueryBuilderNear(manager, factory));
-    operators.put(SpatialQueryBuilderDWithin.NAME, new SpatialQueryBuilderDWithin(manager, factory));
-    operators.put("intersects", new SpatialQueryBuilderIntersects(manager, factory));
-    operators.put(SpatialQueryBuilderDistanceSphere.NAME, new SpatialQueryBuilderDistanceSphere(manager, factory));
-    operators.put("&&", new SpatialQueryBuilderOverlap(manager, factory));
+    addOperator(new SpatialQueryBuilderWithin(manager, factory));
+    addOperator(new SpatialQueryBuilderContains(manager, factory));
+    addOperator(new SpatialQueryBuilderNear(manager, factory));
+    addOperator(new SpatialQueryBuilderDWithin(manager, factory));
+    addOperator(new SpatialQueryBuilderIntersects(manager, factory));
+    addOperator(new SpatialQueryBuilderDistanceSphere(manager, factory));
+    addOperator(new SpatialQueryBuilderOverlap(manager, factory));
+  }
+
+  private void addOperator(SpatialQueryBuilderAbstract builder) {
+    operators.put(builder.getName(), builder);
   }
 
   public SpatialQueryContext build(Map<String, Object> query) throws Exception {
@@ -63,10 +67,10 @@ public class SpatialQueryBuilder extends SpatialQueryBuilderAbstract {
   private SpatialQueryBuilderAbstract parseOperation(Map<String, Object> query) {
 
     String operator = (String) query.get(GEO_FILTER);
-    SpatialQueryBuilderAbstract spatialQueryBuilderAbstract = operators.get(operator);
-    if (spatialQueryBuilderAbstract == null) {
+    SpatialQueryBuilderAbstract spatialQueryBuilder = operators.get(operator);
+    if (spatialQueryBuilder == null) {
       throw new OIndexEngineException("Operator " + operator + " not supported.", null);
     }
-    return spatialQueryBuilderAbstract;
+    return spatialQueryBuilder;
   }
 }

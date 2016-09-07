@@ -34,9 +34,6 @@ import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import com.orientechnologies.spatial.shape.legacy.OShapeBuilderLegacy;
 import com.orientechnologies.spatial.shape.legacy.OShapeBuilderLegacyImpl;
-import com.spatial4j.core.distance.DistanceUtils;
-import com.spatial4j.core.shape.Point;
-import com.spatial4j.core.shape.Shape;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queries.function.ValueSource;
 import org.apache.lucene.search.BooleanClause;
@@ -51,6 +48,9 @@ import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
 import org.apache.lucene.spatial.query.SpatialArgs;
 import org.apache.lucene.spatial.query.SpatialOperation;
+import org.locationtech.spatial4j.distance.DistanceUtils;
+import org.locationtech.spatial4j.shape.Point;
+import org.locationtech.spatial4j.shape.Shape;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -124,8 +124,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
     Query filterQuery = strategy.makeQuery(args);
 
     BooleanQuery query = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
-        .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD)
-        .build();
+        .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
     QueryContext queryContext = new SpatialQueryContext(context, searcher, query).setChanges(changes);
     return LuceneResultSetFactory.INSTANCE.create(this, queryContext);

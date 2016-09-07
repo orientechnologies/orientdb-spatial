@@ -30,8 +30,6 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.spatial.factory.OSpatialStrategyFactory;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilder;
-import com.spatial4j.core.context.SpatialContext;
-import com.spatial4j.core.shape.Shape;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
@@ -42,6 +40,8 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.store.Directory;
+import org.locationtech.spatial4j.context.SpatialContext;
+import org.locationtech.spatial4j.shape.Shape;
 
 import java.io.IOException;
 
@@ -148,8 +148,8 @@ public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngi
 
     Document doc = new Document();
 
-    doc.add(OLuceneIndexType
-        .createField(RID, oIdentifiable.getIdentity().toString(), Field.Store.YES));
+    doc.add(OLuceneIndexType.createField(RID, oIdentifiable.getIdentity().toString(), Field.Store.YES));
+
     for (IndexableField f : strategy.createIndexableFields(shape)) {
       doc.add(f);
     }

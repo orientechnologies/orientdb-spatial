@@ -19,7 +19,6 @@
 package com.orientechnologies.spatial.operator;
 
 import com.orientechnologies.lucene.collections.OLuceneAbstractResultSet;
-import com.orientechnologies.spatial.collections.OSpatialCompositeKey;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
@@ -29,9 +28,10 @@ import com.orientechnologies.orient.core.index.OIndexCursorCollectionValue;
 import com.orientechnologies.orient.core.index.OIndexCursorSingleValue;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.filter.OSQLFilterCondition;
+import com.orientechnologies.spatial.collections.OSpatialCompositeKey;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilderAbstract;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilderOverlap;
-import com.spatial4j.core.shape.Shape;
+import org.locationtech.spatial4j.shape.Shape;
 import org.apache.lucene.spatial.query.SpatialOperation;
 
 import java.util.Collection;
@@ -63,15 +63,14 @@ public class OLuceneOverlapOperator extends OLuceneSpatialOperator {
 
     long start = System.currentTimeMillis();
     OLuceneAbstractResultSet indexResult = (OLuceneAbstractResultSet) index.get(queryParams);
-    if (indexResult == null || indexResult instanceof OIdentifiable)
-      cursor = new OIndexCursorSingleValue((OIdentifiable) indexResult, new OSpatialCompositeKey(keyParams));
-    else
-      cursor = new OIndexCursorCollectionValue(((Collection<OIdentifiable>) indexResult), new OSpatialCompositeKey(
-          keyParams));
-
     if (indexResult != null)
       indexResult.sendLookupTime(iContext, start);
-    return cursor;
+
+    if (indexResult == null || indexResult instanceof OIdentifiable)
+      return new OIndexCursorSingleValue((OIdentifiable) indexResult, new OSpatialCompositeKey(keyParams));
+
+    return new OIndexCursorCollectionValue(((Collection<OIdentifiable>) indexResult), new OSpatialCompositeKey(keyParams));
+
   }
 
   @Override

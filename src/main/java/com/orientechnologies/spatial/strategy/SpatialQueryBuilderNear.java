@@ -21,21 +21,21 @@ package com.orientechnologies.spatial.strategy;
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
 import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
-import com.spatial4j.core.distance.DistanceUtils;
-import com.spatial4j.core.shape.Point;
-import com.spatial4j.core.shape.Shape;
 import org.apache.lucene.queries.function.ValueSource;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.spatial.query.SpatialArgs;
 import org.apache.lucene.spatial.query.SpatialOperation;
+import org.locationtech.spatial4j.distance.DistanceUtils;
+import org.locationtech.spatial4j.shape.Point;
+import org.locationtech.spatial4j.shape.Shape;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by Enrico Risa on 11/08/15.
@@ -52,17 +52,12 @@ public class SpatialQueryBuilderNear extends SpatialQueryBuilderAbstract {
   public SpatialQueryContext build(Map<String, Object> query) throws Exception {
     Shape shape = parseShape(query);
 
-    double distance = 0;
-
-    Number n = (Number) query.get(MAX_DISTANCE);
-    if (n != null) {
-      distance = n.doubleValue();
-    }
+    double distance = Optional.ofNullable(query.get(MAX_DISTANCE)).map(Number.class::cast).map(n -> n.doubleValue()).orElse(0D);
 
     Point p = (Point) shape;
 
-    SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, factory.context().makeCircle(p.getX(), p.getY(),
-        DistanceUtils.dist2Degrees(distance, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
+    SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects,
+        factory.context().makeCircle(p.getX(), p.getY(), DistanceUtils.dist2Degrees(distance, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
     Query filterQuery = manager.strategy().makeQuery(args);
     ValueSource valueSource = manager.strategy().makeDistanceValueSource(p);
     IndexSearcher searcher = manager.searcher();

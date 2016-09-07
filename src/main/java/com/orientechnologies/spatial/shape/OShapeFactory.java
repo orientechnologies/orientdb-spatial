@@ -18,12 +18,16 @@ package com.orientechnologies.spatial.shape;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.spatial4j.core.shape.Point;
-import com.spatial4j.core.shape.Rectangle;
-import com.spatial4j.core.shape.Shape;
-import com.spatial4j.core.shape.ShapeCollection;
-import com.spatial4j.core.shape.jts.JtsGeometry;
+import org.locationtech.spatial4j.shape.Point;
+import org.locationtech.spatial4j.shape.Rectangle;
+import org.locationtech.spatial4j.shape.ShapeCollection;
+import org.locationtech.spatial4j.shape.jts.JtsGeometry;
 import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.spatial4j.shape.Point;
+import org.locationtech.spatial4j.shape.Rectangle;
+import org.locationtech.spatial4j.shape.Shape;
+import org.locationtech.spatial4j.shape.ShapeCollection;
+import org.locationtech.spatial4j.shape.jts.JtsGeometry;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -32,10 +36,8 @@ import java.util.Map;
 public class OShapeFactory extends OComplexShapeBuilder {
 
   public static final OShapeFactory INSTANCE = new OShapeFactory();
-
-  private Map<String, OShapeBuilder> factories = new HashMap<String, OShapeBuilder>();
-
   protected OShapeOperation operation;
+  private Map<String, OShapeBuilder> factories = new HashMap<String, OShapeBuilder>();
 
   protected OShapeFactory() {
     operation = new OShapeOperationImpl(this);

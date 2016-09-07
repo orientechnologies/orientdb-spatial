@@ -18,10 +18,19 @@
 
 package com.orientechnologies.spatial.shape;
 
-import com.spatial4j.core.shape.*;
-import com.spatial4j.core.shape.jts.JtsGeometry;
-import com.spatial4j.core.shape.jts.JtsPoint;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.spatial4j.shape.Point;
+import org.locationtech.spatial4j.shape.Rectangle;
+import org.locationtech.spatial4j.shape.Shape;
+import org.locationtech.spatial4j.shape.ShapeCollection;
+import org.locationtech.spatial4j.shape.jts.JtsGeometry;
+import org.locationtech.spatial4j.shape.jts.JtsPoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -156,7 +165,7 @@ public abstract class OComplexShapeBuilder<T extends Shape> extends OShapeBuilde
   }
 
   protected boolean isPoint(Shape shape) {
-    return shape instanceof com.spatial4j.core.shape.Point;
+    return shape instanceof Point;
   }
 
   protected boolean isPolygon(Shape shape) {

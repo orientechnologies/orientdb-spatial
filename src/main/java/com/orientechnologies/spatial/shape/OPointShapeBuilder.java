@@ -22,7 +22,7 @@ import com.orientechnologies.orient.core.metadata.schema.OProperty;
 import com.orientechnologies.orient.core.metadata.schema.OSchemaProxy;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.spatial4j.core.shape.Point;
+import org.locationtech.spatial4j.shape.Point;
 
 import java.util.ArrayList;
 import java.util.List;

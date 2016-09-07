@@ -34,6 +34,7 @@ public abstract class OSpatialFunctionAbstract extends OSQLFunctionAbstract {
       if (param == null)
         return true;
     }
+
     return false;
   }
 }

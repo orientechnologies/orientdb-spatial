@@ -25,8 +25,8 @@ import com.orientechnologies.orient.core.sql.parser.OExpression;
 import com.orientechnologies.orient.core.sql.parser.OFromClause;
 import com.orientechnologies.spatial.shape.OShapeFactory;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilderContains;
-import com.spatial4j.core.shape.Shape;
-import com.spatial4j.core.shape.SpatialRelation;
+import org.locationtech.spatial4j.shape.Shape;
+import org.locationtech.spatial4j.shape.SpatialRelation;
 
 import java.util.Collection;
 
@@ -35,9 +35,9 @@ import java.util.Collection;
  */
 public class OSTContainsFunction extends OSpatialFunctionAbstractIndexable {
 
-  public static final String NAME    = "st_contains";
+  public static final String NAME = "st_contains";
 
-  OShapeFactory              factory = OShapeFactory.INSTANCE;
+  OShapeFactory factory = OShapeFactory.INSTANCE;
 
   public OSTContainsFunction() {
     super(NAME, 2, 2);

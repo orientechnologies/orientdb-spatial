@@ -22,15 +22,15 @@ import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.sql.functions.OSQLFunctionAbstract;
 import com.orientechnologies.spatial.shape.OShapeFactory;
-import com.spatial4j.core.shape.Shape;
-import com.spatial4j.core.shape.SpatialRelation;
+import org.locationtech.spatial4j.shape.Shape;
+import org.locationtech.spatial4j.shape.SpatialRelation;
 
 /**
  * Created by Enrico Risa on 25/09/15.
  */
 public class OSTEqualsFunction extends OSQLFunctionAbstract {
 
-  public static final String NAME    = "st_equals";
+  public static final String NAME = "st_equals";
   OShapeFactory factory = OShapeFactory.INSTANCE;
 
   public OSTEqualsFunction() {

@@ -35,7 +35,7 @@ public class OSTGeomFromTextFunction extends OSQLFunctionAbstract {
   OShapeFactory factory = OShapeFactory.INSTANCE;
 
   public OSTGeomFromTextFunction() {
-    super("", 1, 1);
+    super(NAME, 1, 1);
   }
 
   @Override

@@ -21,8 +21,8 @@ import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.storage.impl.local.OAbstractPaginatedStorage;
 import com.orientechnologies.spatial.shape.OShapeFactory;
-import com.spatial4j.core.shape.Shape;
 import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.spatial4j.shape.Shape;
 
 public class OLuceneSpatialIndex extends OLuceneIndexNotUnique {
 

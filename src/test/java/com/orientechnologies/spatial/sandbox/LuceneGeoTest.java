@@ -20,9 +20,6 @@ package com.orientechnologies.spatial.sandbox;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.spatial.shape.OMultiPolygonShapeBuilder;
-import com.spatial4j.core.context.jts.JtsSpatialContext;
-import com.spatial4j.core.shape.Shape;
-import com.spatial4j.core.shape.SpatialRelation;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -43,6 +40,9 @@ import org.apache.lucene.spatial.query.SpatialOperation;
 import org.apache.lucene.store.RAMDirectory;
 import org.junit.Assert;
 import org.junit.Test;
+import org.locationtech.spatial4j.context.jts.JtsSpatialContext;
+import org.locationtech.spatial4j.shape.Shape;
+import org.locationtech.spatial4j.shape.SpatialRelation;
 
 import java.io.IOException;
 import java.io.InputStream;

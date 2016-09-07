@@ -24,11 +24,11 @@ import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OProperty;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
-import com.spatial4j.core.context.SpatialContext;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.bbox.BBoxStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
+import org.locationtech.spatial4j.context.SpatialContext;
 
 /**
  * Created by Enrico Risa on 02/10/15.
@@ -59,7 +59,7 @@ public class OSpatialStrategyFactory {
       strategy = recursivePrefixTreeStrategy;
 
     } else {
-      strategy = new BBoxStrategy(ctx, "location");
+      strategy = BBoxStrategy.newInstance(ctx, "location");
     }
     return strategy;
   }

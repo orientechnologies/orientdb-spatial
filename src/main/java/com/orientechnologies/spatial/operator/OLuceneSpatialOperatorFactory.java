@@ -28,10 +28,12 @@ public class OLuceneSpatialOperatorFactory implements OQueryOperatorFactory {
   public static final Set<OQueryOperator> OPERATORS;
 
   static {
-    final Set<OQueryOperator> operators = new HashSet<OQueryOperator>();
-    operators.add(new OLuceneNearOperator());
-    operators.add(new OLuceneWithinOperator());
-    operators.add(new OLuceneOverlapOperator());
+    final Set<OQueryOperator> operators = new HashSet<OQueryOperator>() {{
+      add(new OLuceneNearOperator());
+      add(new OLuceneWithinOperator());
+      add(new OLuceneOverlapOperator());
+    }};
+
     OPERATORS = Collections.unmodifiableSet(operators);
   }
 

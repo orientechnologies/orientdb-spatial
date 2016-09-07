@@ -18,7 +18,7 @@
 
 package com.orientechnologies.spatial.shape;
 
-import com.spatial4j.core.shape.Shape;
+import org.locationtech.spatial4j.shape.Shape;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**

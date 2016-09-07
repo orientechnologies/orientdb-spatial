@@ -22,7 +22,7 @@ import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.sql.functions.OSQLFunctionAbstract;
 import com.orientechnologies.spatial.shape.OShapeFactory;
-import com.spatial4j.core.shape.Shape;
+import org.locationtech.spatial4j.shape.Shape;
 
 import java.util.Map;
 
@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class OSTBufferFunction extends OSQLFunctionAbstract {
 
-  public static final String NAME    = "ST_Buffer";
+  public static final String NAME = "ST_Buffer";
 
   OShapeFactory factory = OShapeFactory.INSTANCE;
 

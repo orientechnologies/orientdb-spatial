@@ -36,10 +36,6 @@ public class SpatialQueryContext extends QueryContext {
     super(context, searcher, query);
   }
 
-  //    public SpatialQueryContext(OCommandContext context, IndexSearcher searcher, Query query, Query filter) {
-  //        super(context, searcher, query, filter);
-  //    }
-  //
   public SpatialQueryContext(OCommandContext context, IndexSearcher searcher, Query query, Sort sort) {
     super(context, searcher, query, sort);
   }

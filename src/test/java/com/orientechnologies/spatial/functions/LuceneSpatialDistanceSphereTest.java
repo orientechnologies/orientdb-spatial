@@ -21,10 +21,10 @@ package com.orientechnologies.spatial.functions;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
-import com.spatial4j.core.distance.DistanceUtils;
 import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import org.junit.Assert;
 import org.junit.Test;
+import org.locationtech.spatial4j.distance.DistanceUtils;
 
 import java.util.List;
 
@@ -40,10 +40,9 @@ public class LuceneSpatialDistanceSphereTest {
     try {
       ODatabaseDocumentTx db = graph.getRawGraph();
 
-      List<ODocument> execute = db
-          .command(new OCommandSQL(
-              "select ST_Distance(ST_GEOMFROMTEXT('POINT(12.4662748 41.8914114)'),ST_GEOMFROMTEXT('POINT(12.4664632 41.8904382)')) as distanceDeg, \n"
-                  + "ST_Distance_Sphere(ST_GEOMFROMTEXT('POINT(12.4662748 41.8914114)'),ST_GEOMFROMTEXT('POINT(12.4664632 41.8904382)')) as distanceMeter"))
+      List<ODocument> execute = db.command(new OCommandSQL(
+          "select ST_Distance(ST_GEOMFROMTEXT('POINT(12.4662748 41.8914114)'),ST_GEOMFROMTEXT('POINT(12.4664632 41.8904382)')) as distanceDeg, \n"
+              + "ST_Distance_Sphere(ST_GEOMFROMTEXT('POINT(12.4662748 41.8914114)'),ST_GEOMFROMTEXT('POINT(12.4664632 41.8904382)')) as distanceMeter"))
           .execute();
 
       Assert.assertEquals(1, execute.size());
@@ -88,17 +87,13 @@ public class LuceneSpatialDistanceSphereTest {
           .execute();
 
       db.command(new OCommandSQL("create index Place.l on Place (Location) SPATIAL engine lucene")).execute();
-      List<ODocument> execute = db
-          .command(new OCommandSQL(
-              "SELECT from Place where ST_Distance_Sphere(location, ST_GeomFromText('POINT(12.468933 41.890303)')) < 50"))
-          .execute();
+      List<ODocument> execute = db.command(new OCommandSQL(
+          "SELECT from Place where ST_Distance_Sphere(location, ST_GeomFromText('POINT(12.468933 41.890303)')) < 50")).execute();
 
       Assert.assertEquals(2, execute.size());
 
-      execute = db
-          .command(new OCommandSQL(
-              "SELECT from Place where ST_Distance_Sphere(location, ST_GeomFromText('POINT(12.468933 41.890303)')) > 50"))
-          .execute();
+      execute = db.command(new OCommandSQL(
+          "SELECT from Place where ST_Distance_Sphere(location, ST_GeomFromText('POINT(12.468933 41.890303)')) > 50")).execute();
 
       Assert.assertEquals(1, execute.size());
 

@@ -71,9 +71,9 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
           delegate = new OLuceneGeoSpatialIndexEngine(indexName, OShapeFactory.INSTANCE);
         }
 
+        delegate.init(indexName, indexType, indexDefinition, isAutomatic, metadata);
       }
     }
-    delegate.init(indexName, indexType, indexDefinition, isAutomatic, metadata);
   }
 
   @Override

@@ -18,16 +18,16 @@
 
 package com.orientechnologies.spatial.shape;
 
-import com.spatial4j.core.shape.Shape;
+import org.locationtech.spatial4j.shape.Shape;
 
 /**
  * Created by Enrico Risa on 29/09/15.
  */
 public interface OShapeOperation {
 
-  public double distance(Shape s1, Shape s2);
+  public double distance(Shape shapes1, Shape s2);
 
   public boolean isWithInDistance(Shape s1, Shape s2, Double dist);
 
-  public boolean intersect(Shape s1,Shape s2);
+  public boolean intersect(Shape s1, Shape s2);
 }

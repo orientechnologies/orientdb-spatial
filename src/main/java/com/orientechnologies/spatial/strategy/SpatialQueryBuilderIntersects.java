@@ -21,10 +21,9 @@ package com.orientechnologies.spatial.strategy;
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
 import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
-import com.spatial4j.core.shape.Shape;
+import org.locationtech.spatial4j.shape.Shape;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.spatial.SpatialStrategy;
@@ -52,7 +51,9 @@ public class SpatialQueryBuilderIntersects extends SpatialQueryBuilderAbstract {
     if (isOnlyBB(strategy)) {
       shape = shape.getBoundingBox();
     }
+
     SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, shape);
+
     Query filterQuery = strategy.makeQuery(args);
 
     BooleanQuery q = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)

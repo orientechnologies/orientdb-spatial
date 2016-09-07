@@ -20,6 +20,7 @@ package com.orientechnologies.spatial.functions;
 import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.exception.OCommandExecutionException;
 import com.orientechnologies.orient.core.sql.functions.OSQLFunction;
+import com.orientechnologies.orient.core.sql.functions.OSQLFunctionAbstract;
 import com.orientechnologies.orient.core.sql.functions.OSQLFunctionFactory;
 
 import java.util.HashMap;
@@ -31,24 +32,25 @@ public class OSpatialFunctionsFactory implements OSQLFunctionFactory {
   public static final Map<String, Object> FUNCTIONS = new HashMap<String, Object>();
 
   static {
-    register(OSTGeomFromTextFunction.NAME, new OSTGeomFromTextFunction());
-    register(OSTAsTextFunction.NAME, new OSTAsTextFunction());
-    register(OSTWithinFunction.NAME, new OSTWithinFunction());
-    register(OSTDWithinFunction.NAME, new OSTDWithinFunction());
-    register(OSTEqualsFunction.NAME, new OSTEqualsFunction());
-    register(OSTAsBinaryFunction.NAME, new OSTAsBinaryFunction());
-    register(OSTEnvelopFunction.NAME, new OSTEnvelopFunction());
-    register(OSTBufferFunction.NAME, new OSTBufferFunction());
-    register(OSTDistanceFunction.NAME, new OSTDistanceFunction());
-    register(OSTDistanceSphereFunction.NAME, new OSTDistanceSphereFunction());
-    register(OSTDisjointFunction.NAME, new OSTDisjointFunction());
-    register(OSTIntersectsFunction.NAME, new OSTIntersectsFunction());
-    register(OSTContainsFunction.NAME, new OSTContainsFunction());
-    register(OSTSrid.NAME, new OSTSrid());
+    register(new OSTGeomFromTextFunction());
+    register(new OSTAsTextFunction());
+    register(new OSTWithinFunction());
+    register(new OSTDWithinFunction());
+    register(new OSTEqualsFunction());
+    register(new OSTAsBinaryFunction());
+    register(new OSTEnvelopFunction());
+    register(new OSTBufferFunction());
+    register(new OSTDistanceFunction());
+    register(new OSTDistanceSphereFunction());
+    register(new OSTDisjointFunction());
+    register(new OSTIntersectsFunction());
+    register(new OSTContainsFunction());
+    register(new OSTSrid());
+
   }
 
-  public static void register(final String iName, final Object iImplementation) {
-    FUNCTIONS.put(iName.toLowerCase(), iImplementation);
+  private static void register(final OSQLFunctionAbstract function) {
+    FUNCTIONS.put(function.getName().toLowerCase(), function);
   }
 
   @Override
@@ -65,12 +67,13 @@ public class OSpatialFunctionsFactory implements OSQLFunctionFactory {
   public OSQLFunction createFunction(String name) throws OCommandExecutionException {
     final Object obj = FUNCTIONS.get(name);
 
-    if (obj == null)
+    if (obj == null) {
       throw new OCommandExecutionException("Unknown function name :" + name);
+    }
 
-    if (obj instanceof OSQLFunction)
+    if (obj instanceof OSQLFunction) {
       return (OSQLFunction) obj;
-    else {
+    } else {
       // it's a class
       final Class<?> clazz = (Class<?>) obj;
       try {

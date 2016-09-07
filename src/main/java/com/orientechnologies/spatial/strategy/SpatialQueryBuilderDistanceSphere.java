@@ -21,13 +21,9 @@ package com.orientechnologies.spatial.strategy;
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
 import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
-import com.spatial4j.core.distance.DistanceUtils;
-import com.spatial4j.core.shape.Point;
-import com.spatial4j.core.shape.Shape;
 import org.apache.lucene.queries.function.ValueSource;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
@@ -35,6 +31,9 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.query.SpatialArgs;
 import org.apache.lucene.spatial.query.SpatialOperation;
+import org.locationtech.spatial4j.distance.DistanceUtils;
+import org.locationtech.spatial4j.shape.Point;
+import org.locationtech.spatial4j.shape.Shape;
 
 import java.util.Map;
 
@@ -62,8 +61,8 @@ public class SpatialQueryBuilderDistanceSphere extends SpatialQueryBuilderAbstra
     // Filter filter = strategy.makeFilter(args1);
     // return new SpatialQueryContext(null, manager.searcher(), new MatchAllDocsQuery(), filter);
 
-    SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, factory.context().makeCircle((Point) shape,
-        DistanceUtils.dist2Degrees(distance.doubleValue() / 1000, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
+    SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, factory.context()
+        .makeCircle((Point) shape, DistanceUtils.dist2Degrees(distance.doubleValue() / 1000, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
     //    Filter filter = strategy.makeFilter(args);
 
     Query filterQuery = strategy.makeQuery(args);
@@ -71,7 +70,6 @@ public class SpatialQueryBuilderDistanceSphere extends SpatialQueryBuilderAbstra
     IndexSearcher searcher = manager.searcher();
     ValueSource valueSource = strategy.makeDistanceValueSource((Point) shape);
     Sort distSort = new Sort(valueSource.getSortField(false)).rewrite(searcher);
-
 
     BooleanQuery q = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
