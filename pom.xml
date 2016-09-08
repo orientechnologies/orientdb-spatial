@@ -33,5 +33,6 @@
 
     <modules>
       <module>spatial</module>
+      <module>osgi</module>
     </modules>
 </project>

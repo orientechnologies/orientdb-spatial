@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~
+  ~  *  Copyright 2016 OrientDB LTD (info(at)orientdb.com)
+  ~  *
+  ~  *  Licensed under the Apache License, Version 2.0 (the "License");
+  ~  *  you may not use this file except in compliance with the License.
+  ~  *  You may obtain a copy of the License at
+  ~  *
+  ~  *       http://www.apache.org/licenses/LICENSE-2.0
+  ~  *
+  ~  *  Unless required by applicable law or agreed to in writing, software
+  ~  *  distributed under the License is distributed on an "AS IS" BASIS,
+  ~  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~  *  See the License for the specific language governing permissions and
+  ~  *  limitations under the License.
+  ~  *
+  ~  * For more information: http://www.orientdb.com
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>orientdb-osgi-spatial</artifactId>
+        <groupId>com.orientechnologies</groupId>
+        <version>2.2.9-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>orientdb-osgi-spatial-bundle</artifactId>
+    <packaging>bundle</packaging>
+    <name>OrientDB OSGi Spatial Bundle</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <version>${osgi.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.orientechnologies</groupId>
+            <artifactId>orientdb-spatial</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-spatial</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-spatial3d</artifactId>
+            <version>${lucene.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.spatial4j</groupId>
+            <artifactId>spatial4j</artifactId>
+            <version>0.4.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vividsolutions</groupId>
+            <artifactId>jts</artifactId>
+            <version>1.13</version>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+
+                <configuration>
+                    <instructions>
+                        <Bundle-Activator>com.orientechnologies.orient.osgi.spatial.OOsgiSpatialBundleActivator</Bundle-Activator>
+
+                        <Embed-Dependency>
+                            orientdb-spatial,
+                            lucene-spatial,
+                            lucene-spatial3d,
+                            spatial4j,
+                            jts
+                        </Embed-Dependency>
+                        <Embed-Transitive>false</Embed-Transitive>
+
+                        <Import-Package>
+                            org.osgi.framework,
+                            com.orientechnologies.*,
+                            org.apache.lucene.*
+                        </Import-Package>
+
+                        <Export-Package>
+                            !
+                        </Export-Package>
+
+                        <_exportcontents>
+                            com.orientechnologies.*
+                        </_exportcontents>
+                    </instructions>
+                </configuration>
+
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
