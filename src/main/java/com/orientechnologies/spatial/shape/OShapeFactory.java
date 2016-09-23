@@ -18,10 +18,6 @@ package com.orientechnologies.spatial.shape;
 
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import org.locationtech.spatial4j.shape.Point;
-import org.locationtech.spatial4j.shape.Rectangle;
-import org.locationtech.spatial4j.shape.ShapeCollection;
-import org.locationtech.spatial4j.shape.jts.JtsGeometry;
 import com.vividsolutions.jts.geom.Geometry;
 import org.locationtech.spatial4j.shape.Point;
 import org.locationtech.spatial4j.shape.Rectangle;
@@ -36,7 +32,9 @@ import java.util.Map;
 public class OShapeFactory extends OComplexShapeBuilder {
 
   public static final OShapeFactory INSTANCE = new OShapeFactory();
+
   protected OShapeOperation operation;
+
   private Map<String, OShapeBuilder> factories = new HashMap<String, OShapeBuilder>();
 
   protected OShapeFactory() {

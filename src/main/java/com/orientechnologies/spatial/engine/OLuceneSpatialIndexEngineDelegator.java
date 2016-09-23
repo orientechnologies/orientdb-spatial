@@ -45,7 +45,7 @@ import java.util.Set;
 /**
  * Created by Enrico Risa on 04/09/15.
  */
-public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
+public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine {
 
   private final Boolean            durableInNonTxMode;
   private final OStorage           storage;
@@ -53,7 +53,7 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
   private final String             indexName;
   private       OLuceneIndexEngine delegate;
 
-  public OLuceneSpatialIndexEngineDelegate(String name, Boolean durableInNonTxMode, OStorage storage, int version) {
+  public OLuceneSpatialIndexEngineDelegator(String name, Boolean durableInNonTxMode, OStorage storage, int version) {
 
     this.indexName = name;
     this.durableInNonTxMode = durableInNonTxMode;

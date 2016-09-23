@@ -19,7 +19,7 @@
 package com.orientechnologies.spatial.engine;
 
 import com.orientechnologies.common.log.OLogManager;
-import com.orientechnologies.lucene.collections.LuceneResultSetFactory;
+import com.orientechnologies.lucene.collections.OLuceneResultSetFactory;
 import com.orientechnologies.lucene.query.QueryContext;
 import com.orientechnologies.lucene.tx.OLuceneTxChanges;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
@@ -75,7 +75,7 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
   private Object newGeoSearch(Map<String, Object> key, OLuceneTxChanges changes) throws Exception {
 
     QueryContext queryContext = queryStrategy.build(key).setChanges(changes);
-    return LuceneResultSetFactory.INSTANCE.create(this, queryContext);
+    return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
 
   }
 

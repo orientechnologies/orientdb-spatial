@@ -30,6 +30,7 @@ import org.locationtech.spatial4j.context.jts.ValidationRule;
 import org.locationtech.spatial4j.shape.Rectangle;
 import org.locationtech.spatial4j.shape.Shape;
 import org.locationtech.spatial4j.shape.jts.JtsGeometry;
+import org.locationtech.spatial4j.shape.jts.JtsShapeFactory;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public abstract class OShapeBuilder<T extends Shape> {
   public static final String BASE_CLASS  = "OShape";
   protected static final JtsSpatialContext SPATIAL_CONTEXT;
   protected static final GeometryFactory   GEOMETRY_FACTORY;
+  protected static final JtsShapeFactory   SHAPE_FACTORY;
   protected static Map<String, Integer> capStyles = new HashMap<String, Integer>();
   protected static Map<String, Integer> join      = new HashMap<String, Integer>();
 
@@ -51,7 +53,9 @@ public abstract class OShapeBuilder<T extends Shape> {
     factory.validationRule = ValidationRule.none;
 
     SPATIAL_CONTEXT = new JtsSpatialContext(factory);
-    GEOMETRY_FACTORY = SPATIAL_CONTEXT.getGeometryFactory();
+
+    SHAPE_FACTORY = new JtsShapeFactory(SPATIAL_CONTEXT, factory);
+    GEOMETRY_FACTORY = SHAPE_FACTORY.getGeometryFactory();
     capStyles.put("round", 1);
     capStyles.put("flat", 2);
     capStyles.put("square", 1);
@@ -81,12 +85,13 @@ public abstract class OShapeBuilder<T extends Shape> {
   public abstract void initClazz(ODatabaseDocumentTx db);
 
   public String asText(T shape) {
-    return SPATIAL_CONTEXT.getGeometryFrom(shape).toText();
+    return SHAPE_FACTORY.getGeometryFrom(shape).toText();
   }
 
   public byte[] asBinary(T shape) {
     WKBWriter writer = new WKBWriter();
-    Geometry geom = SPATIAL_CONTEXT.getGeometryFrom(shape);
+
+    Geometry geom = SHAPE_FACTORY.getGeometryFrom(shape);
     return writer.write(geom);
   }
 
@@ -118,11 +123,11 @@ public abstract class OShapeBuilder<T extends Shape> {
   }
 
   Geometry toGeometry(Shape shape) {
-    return SPATIAL_CONTEXT.getGeometryFrom(shape);
+    return SHAPE_FACTORY.getGeometryFrom(shape);
   }
 
   public JtsGeometry toShape(Geometry geometry) {
-    return SPATIAL_CONTEXT.makeShape(geometry);
+    return SHAPE_FACTORY.makeShape(geometry);
   }
 
   protected OClass superClass(ODatabaseDocumentTx db) {
@@ -133,8 +138,8 @@ public abstract class OShapeBuilder<T extends Shape> {
     T entity = (T) SPATIAL_CONTEXT.getWktShapeParser().parse(wkt);
 
     if (entity instanceof Rectangle) {
-      Geometry geometryFrom = SPATIAL_CONTEXT.getGeometryFrom(entity);
-      entity = (T) SPATIAL_CONTEXT.makeShape(geometryFrom);
+      Geometry geometryFrom = SHAPE_FACTORY.getGeometryFrom(entity);
+      entity = (T) SHAPE_FACTORY.makeShape(geometryFrom);
     }
     return entity;
   }

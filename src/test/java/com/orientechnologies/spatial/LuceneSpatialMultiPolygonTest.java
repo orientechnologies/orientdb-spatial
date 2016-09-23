@@ -49,21 +49,21 @@ public class LuceneSpatialMultiPolygonTest extends BaseSpatialLuceneTest {
   @Before
   public void initMore() {
 
-    OSchema schema = databaseDocumentTx.getMetadata().getSchema();
+    OSchema schema = db.getMetadata().getSchema();
     OClass v = schema.getClass("V");
     OClass oClass = schema.createClass("Place");
     oClass.setSuperClass(v);
     oClass.createProperty("location", OType.EMBEDDED, schema.getClass("OMultiPolygon"));
     oClass.createProperty("name", OType.STRING);
 
-    databaseDocumentTx.command(new OCommandSQL("CREATE INDEX Place.location ON Place(location) SPATIAL ENGINE LUCENE")).execute();
+    db.command(new OCommandSQL("CREATE INDEX Place.location ON Place(location) SPATIAL ENGINE LUCENE")).execute();
 
   }
 
   @Test
   public void testMultiPolygonWithoutIndex() throws IOException {
     testIndexingMultiPolygon();
-    databaseDocumentTx.command(new OCommandSQL("DROP INDEX Place.location")).execute();
+    db.command(new OCommandSQL("DROP INDEX Place.location")).execute();
     queryMultiPolygon();
   }
 
@@ -71,7 +71,7 @@ public class LuceneSpatialMultiPolygonTest extends BaseSpatialLuceneTest {
   protected void queryMultiPolygon() {
 
     String query = "select * from Place where location && 'POLYGON((-162.5537109375 62.11416112594049,-161.87255859375 61.80428390136847,-161.455078125 61.92861247439052,-160.7958984375 62.03183469254472,-160.24658203125 62.196264616146884,-160.64208984375 62.63376960786813,-160.2685546875 63.00513377927512,-159.9609375 63.450509218001095,-159.4775390625 63.860035895395306,-158.97216796875 64.28275952823394,-158.79638671875 64.54844014422517,-158.4228515625 64.77412531292873,-157.43408203125 64.95146502589559,-156.77490234375 64.87693823228864,-155.85205078125 64.79284777557432,-155.41259765625 64.94216049820734,-154.18212890625 64.92354174306496,-154.8193359375 64.76475920891367,-155.56640625 64.65211223878966,-156.51123046875 64.58618480339979,-157.17041015625 64.5578812115091,-157.763671875 64.69910544204765,-158.04931640625 64.33039136366138,-158.26904296875 64.05297838071347,-158.62060546875 63.68524808030714,-159.06005859375 63.361982464431236,-159.45556640625 62.96521201337507,-159.5654296875 62.63376960786813,-159.521484375 62.27814559876582,-160.77392578125 61.53316997618228,-162.53173828125 61.4597705702975,-162.861328125 61.762728830472696,-163.14697265625 62.12443624549497,-162.5537109375 62.11416112594049))' ";
-    List<ODocument> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+    List<ODocument> docs = db.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(docs.size(), 1);
 
@@ -83,7 +83,7 @@ public class LuceneSpatialMultiPolygonTest extends BaseSpatialLuceneTest {
         + "((-156.60736083984375 20.499064283413055,-156.7034912109375 20.4964915991075,-156.71722412109375 20.532505247689578,-156.67327880859375 20.57879605371868,-156.59637451171875 20.609648794045206,-156.5386962890625 20.607077970830282,-156.52496337890625 20.560795740208448,-156.54144287109375 20.514499482150526,-156.5716552734375 20.50678207718623,-156.60736083984375 20.499064283413055)),"
         + "((-155.928955078125 20.25704380463238,-155.7476806640625 20.2725032501349,-155.58837890625 20.17456745043183,-155.3741455078125 20.12299755620777,-155.2093505859375 19.99916046737026,-154.9786376953125 19.808054128088585,-154.786376953125 19.580493479202527,-154.7259521484375 19.49248592618279,-154.9346923828125 19.331878440818787,-155.3851318359375 19.129599439736833,-155.5224609375 18.932268511298087,-155.7806396484375 18.916679786648565,-155.93994140625 19.062117883514667,-156.0003662109375 19.25929414046391,-156.0113525390625 19.54943746814108,-156.192626953125 19.766703551716972,-155.950927734375 19.921712747556207,-155.9344482421875 20.13847031245115,-155.928955078125 20.25704380463238))"
         + ")' ";
-    docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+    docs = db.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(docs.size(), 1);
   }
@@ -96,9 +96,9 @@ public class LuceneSpatialMultiPolygonTest extends BaseSpatialLuceneTest {
     ODocument italy = new ODocument("Place");
     italy.field("name", "Italy");
     italy.field("location", location);
-    databaseDocumentTx.save(italy);
+    db.save(italy);
 
-    OIndex<?> index = databaseDocumentTx.getMetadata().getIndexManager().getIndex("Place.location");
+    OIndex<?> index = db.getMetadata().getIndexManager().getIndex("Place.location");
 
     Assert.assertEquals(index.getSize(), 1);
 
@@ -107,11 +107,11 @@ public class LuceneSpatialMultiPolygonTest extends BaseSpatialLuceneTest {
     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
     OIOUtils.copyStream(systemResourceAsStream, outputStream, -1);
-    databaseDocumentTx.command(
+    db.command(
         new OCommandSQL("insert into Place set name = 'Test' , location = ST_GeomFromText('" + outputStream.toString() + "')"))
         .execute();
 
-    databaseDocumentTx
+    db
         .command(new OCommandSQL("insert into Place set name = 'Test1' , location = ST_GeomFromText('" + MULTIWKT + "')"))
         .execute();
 

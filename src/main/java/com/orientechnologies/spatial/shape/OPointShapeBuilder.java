@@ -41,32 +41,11 @@ public class OPointShapeBuilder extends OShapeBuilder<Point> {
     return OShapeType.POINT;
   }
 
-//  @Override
-//  public Point makeShape(OCompositeKey key, SpatialContext ctx) {
-//    double lat = ((Double) OType.convert(((OCompositeKey) key).getKeys().get(0), Double.class)).doubleValue();
-//    double lng = ((Double) OType.convert(((OCompositeKey) key).getKeys().get(1), Double.class)).doubleValue();
-//    return ctx.makePoint(lng, lat);
-//
-//  }
-//
-//  @Override
-//  public boolean canHandle(OCompositeKey key) {
-//
-//    boolean canHandle = key.getKeys().size() == 2;
-//    for (Object o : key.getKeys()) {
-//      if (!(o instanceof Number)) {
-//        canHandle = false;
-//        break;
-//      }
-//    }
-//    return canHandle;
-//  }
-
   @Override
   public void initClazz(ODatabaseDocumentTx db) {
 
     OSchemaProxy schema = db.getMetadata().getSchema();
-    OClass point = schema.createAbstractClass(getName(),superClass(db));
+    OClass point = schema.createAbstractClass(getName(), superClass(db));
     OProperty coordinates = point.createProperty(COORDINATES, OType.EMBEDDEDLIST, OType.DOUBLE);
     coordinates.setMin("2");
     coordinates.setMin("2");
@@ -76,7 +55,7 @@ public class OPointShapeBuilder extends OShapeBuilder<Point> {
   public Point fromDoc(ODocument document) {
     validate(document);
     List<Number> coordinates = document.field(COORDINATES);
-    Point point = SPATIAL_CONTEXT.makePoint(coordinates.get(0).doubleValue(), coordinates.get(1).doubleValue());
+    Point point = SHAPE_FACTORY.pointXY(coordinates.get(0).doubleValue(), coordinates.get(1).doubleValue());
     return point;
   }
 

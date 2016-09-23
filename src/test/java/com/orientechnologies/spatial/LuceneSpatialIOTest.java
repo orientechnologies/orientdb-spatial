@@ -28,10 +28,6 @@ import com.orientechnologies.spatial.shape.OPointShapeBuilder;
 import com.orientechnologies.spatial.shape.OPolygonShapeBuilder;
 import com.orientechnologies.spatial.shape.ORectangleShapeBuilder;
 import com.orientechnologies.spatial.shape.OShapeFactory;
-import org.locationtech.spatial4j.shape.Point;
-import org.locationtech.spatial4j.shape.Rectangle;
-import org.locationtech.spatial4j.shape.Shape;
-import org.locationtech.spatial4j.shape.jts.JtsGeometry;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
@@ -41,9 +37,12 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.locationtech.spatial4j.shape.Point;
+import org.locationtech.spatial4j.shape.Rectangle;
+import org.locationtech.spatial4j.shape.Shape;
+import org.locationtech.spatial4j.shape.jts.JtsGeometry;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -56,11 +55,6 @@ import java.util.List;
  */
 
 public class LuceneSpatialIOTest extends BaseSpatialLuceneTest {
-
-  @Before
-  public void init() {
-    initDB();
-  }
 
   // POINT
   @Test
@@ -280,8 +274,4 @@ public class LuceneSpatialIOTest extends BaseSpatialLuceneTest {
     Assert.assertEquals(m2, m1);
   }
 
-  @After
-  public void deInit() {
-    deInitDB();
-  }
 }

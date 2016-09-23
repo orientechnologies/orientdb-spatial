@@ -35,16 +35,16 @@ import org.locationtech.spatial4j.context.SpatialContext;
  */
 public class OSpatialStrategyFactory {
 
-  private OShapeBuilder factory;
+  private final OShapeBuilder factory;
 
   public OSpatialStrategyFactory(OShapeBuilder factory) {
     this.factory = factory;
   }
 
-  public SpatialStrategy createStrategy(SpatialContext ctx, ODatabaseDocumentInternal db, OIndexDefinition indexDefinition,
+  public SpatialStrategy createStrategy(SpatialContext ctx,
+      ODatabaseDocumentInternal db,
+      OIndexDefinition indexDefinition,
       ODocument metadata) {
-
-    SpatialStrategy strategy;
 
     OClass aClass = db.getMetadata().getSchema().getClass(indexDefinition.getClassName());
 
@@ -53,15 +53,13 @@ public class OSpatialStrategyFactory {
     OClass linkedClass = property.getLinkedClass();
 
     if ("OPoint".equalsIgnoreCase(linkedClass.getName())) {
-      RecursivePrefixTreeStrategy recursivePrefixTreeStrategy = new RecursivePrefixTreeStrategy(new GeohashPrefixTree(ctx, 11),
+      RecursivePrefixTreeStrategy strategy = new RecursivePrefixTreeStrategy(new GeohashPrefixTree(ctx, 11),
           "location");
-      recursivePrefixTreeStrategy.setDistErrPct(0);
-      strategy = recursivePrefixTreeStrategy;
+      strategy.setDistErrPct(0);
+      return strategy;
 
-    } else {
-      strategy = BBoxStrategy.newInstance(ctx, "location");
     }
-    return strategy;
-  }
+    return BBoxStrategy.newInstance(ctx, "location");
 
+  }
 }

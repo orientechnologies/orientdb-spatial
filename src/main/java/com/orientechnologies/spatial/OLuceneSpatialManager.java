@@ -18,25 +18,27 @@
 
 package com.orientechnologies.spatial;
 
-import com.orientechnologies.spatial.shape.OShapeBuilder;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.spatial.shape.OShapeBuilder;
+
+import static com.orientechnologies.spatial.shape.OShapeBuilder.*;
 
 /**
  * Created by Enrico Risa on 06/08/15.
  */
 public class OLuceneSpatialManager {
 
-  private OShapeBuilder shapeFactory;
+  private final OShapeBuilder shapeBuilder;
 
-  public OLuceneSpatialManager(OShapeBuilder oShapeBuilder) {
-    shapeFactory = oShapeBuilder;
+  public OLuceneSpatialManager(OShapeBuilder shapeBuilder) {
+    this.shapeBuilder = shapeBuilder;
   }
 
   public void init(ODatabaseDocumentTx db) {
 
-    if (db.getMetadata().getSchema().getClass("OShape") == null) {
-      db.getMetadata().getSchema().createAbstractClass("OShape");
-      shapeFactory.initClazz(db);
+    if (db.getMetadata().getSchema().getClass(BASE_CLASS) == null) {
+      db.getMetadata().getSchema().createAbstractClass(BASE_CLASS);
+      shapeBuilder.initClazz(db);
     }
   }
 }

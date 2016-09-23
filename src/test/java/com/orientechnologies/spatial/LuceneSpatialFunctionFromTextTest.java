@@ -21,7 +21,6 @@ package com.orientechnologies.spatial;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.spatial.shape.legacy.OPointLegecyBuilder;
-import org.assertj.core.api.Assertions;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,15 +35,6 @@ import java.util.List;
  */
 public class LuceneSpatialFunctionFromTextTest extends BaseSpatialLuceneTest {
 
-  @Before
-  public void init() {
-    super.init();
-  }
-
-  @After
-  public void deInit() {
-    super.deInit();
-  }
 
   @Test
   public void geomFromTextLineStringTest() {
@@ -55,7 +45,7 @@ public class LuceneSpatialFunctionFromTextTest extends BaseSpatialLuceneTest {
 
   protected void checkFromText(ODocument source, String query) {
 
-    List<ODocument> docs = databaseDocumentTx.command(new OCommandSQL(query)).execute();
+    List<ODocument> docs = db.command(new OCommandSQL(query)).execute();
 
     Assert.assertEquals(docs.size(), 1);
     ODocument geom = docs.get(0).field("geom");
@@ -124,7 +114,7 @@ public class LuceneSpatialFunctionFromTextTest extends BaseSpatialLuceneTest {
 
   protected void checkFromCollectionText(ODocument source, String query) {
 
-    List<ODocument> docs = databaseDocumentTx.command(new OCommandSQL(query)).execute();
+    List<ODocument> docs = db.command(new OCommandSQL(query)).execute();
 
     Assert.assertEquals(docs.size(), 1);
     ODocument geom = docs.get(0).field("geom");

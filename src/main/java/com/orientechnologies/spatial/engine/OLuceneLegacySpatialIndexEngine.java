@@ -18,7 +18,7 @@
 
 package com.orientechnologies.spatial.engine;
 
-import com.orientechnologies.lucene.collections.LuceneResultSetFactory;
+import com.orientechnologies.lucene.collections.OLuceneResultSetFactory;
 import com.orientechnologies.lucene.query.QueryContext;
 import com.orientechnologies.lucene.tx.OLuceneTxChanges;
 import com.orientechnologies.orient.core.command.OCommandContext;
@@ -108,7 +108,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
     QueryContext queryContext = new SpatialQueryContext(context, searcher, q, distSort).setSpatialArgs(args).setChanges(changes);
-    return LuceneResultSetFactory.INSTANCE.create(this, queryContext);
+    return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
   }
 
   public Object searchWithin(OSpatialCompositeKey key, OCommandContext context, OLuceneTxChanges changes) throws IOException {
@@ -127,7 +127,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
     QueryContext queryContext = new SpatialQueryContext(context, searcher, query).setChanges(changes);
-    return LuceneResultSetFactory.INSTANCE.create(this, queryContext);
+    return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
 
   }
 
