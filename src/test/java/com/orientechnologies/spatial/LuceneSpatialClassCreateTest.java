@@ -19,7 +19,7 @@
 package com.orientechnologies.spatial;
 
 import com.orientechnologies.lucene.test.BaseLuceneTest;
-import com.orientechnologies.orient.core.metadata.schema.OSchemaProxy;
+import com.orientechnologies.orient.core.metadata.schema.OSchema;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -32,7 +32,7 @@ public class LuceneSpatialClassCreateTest extends BaseLuceneTest {
   @Test
   public void testClasses() {
 
-    OSchemaProxy schema = db.getMetadata().getSchema();
+    OSchema schema = db.getMetadata().getSchema();
 
     Assert.assertNotNull(schema.getClass("OPoint"));
 

@@ -15,7 +15,7 @@
  */
 package com.orientechnologies.spatial.shape;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.vividsolutions.jts.geom.Geometry;
@@ -38,13 +38,13 @@ import java.util.Map;
 
 public abstract class OShapeBuilder<T extends Shape> {
 
-  public static final String COORDINATES = "coordinates";
-  public static final String BASE_CLASS  = "OShape";
+  public static final String               COORDINATES = "coordinates";
+  public static final String               BASE_CLASS  = "OShape";
   protected static final JtsSpatialContext SPATIAL_CONTEXT;
   protected static final GeometryFactory   GEOMETRY_FACTORY;
   protected static final JtsShapeFactory   SHAPE_FACTORY;
-  protected static Map<String, Integer> capStyles = new HashMap<String, Integer>();
-  protected static Map<String, Integer> join      = new HashMap<String, Integer>();
+  protected static Map<String, Integer>    capStyles   = new HashMap<String, Integer>();
+  protected static Map<String, Integer>    join        = new HashMap<String, Integer>();
 
   static {
 
@@ -82,7 +82,7 @@ public abstract class OShapeBuilder<T extends Shape> {
     return fromDoc(doc);
   }
 
-  public abstract void initClazz(ODatabaseDocumentTx db);
+  public abstract void initClazz(ODatabaseInternal db);
 
   public String asText(T shape) {
     return SHAPE_FACTORY.getGeometryFrom(shape).toText();
@@ -130,7 +130,7 @@ public abstract class OShapeBuilder<T extends Shape> {
     return SHAPE_FACTORY.makeShape(geometry);
   }
 
-  protected OClass superClass(ODatabaseDocumentTx db) {
+  protected OClass superClass(ODatabaseInternal db) {
     return db.getMetadata().getSchema().getClass(BASE_CLASS);
   }
 

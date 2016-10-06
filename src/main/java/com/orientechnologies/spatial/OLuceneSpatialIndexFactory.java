@@ -19,10 +19,8 @@ package com.orientechnologies.spatial;
 import com.orientechnologies.common.log.OLogManager;
 import com.orientechnologies.common.serialization.types.OBinarySerializer;
 import com.orientechnologies.orient.core.Orient;
-import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
 import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.db.ODatabaseLifecycleListener;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.exception.OConfigurationException;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.index.OIndexEngine;
@@ -32,7 +30,6 @@ import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.storage.OStorage;
-import com.orientechnologies.orient.core.storage.impl.local.OAbstractPaginatedStorage;
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexEngineDelegator;
 import com.orientechnologies.spatial.index.OLuceneSpatialIndex;
 import com.orientechnologies.spatial.shape.OShapeFactory;
@@ -43,7 +40,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static com.orientechnologies.lucene.OLuceneIndexFactory.*;
+import static com.orientechnologies.lucene.OLuceneIndexFactory.LUCENE_ALGORITHM;
 
 public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifecycleListener {
 
@@ -91,19 +88,15 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
   }
 
   @Override
-  public OIndexInternal<?> createIndex(String name, ODatabaseDocumentInternal database, String indexType, String algorithm,
-      String valueContainerAlgorithm, ODocument metadata, int version)
-      throws OConfigurationException {
-
-    OAbstractPaginatedStorage storage = (OAbstractPaginatedStorage) database.getStorage()
-        .getUnderlying();
+  public OIndexInternal<?> createIndex(String name, OStorage storage, String indexType, String algorithm,
+      String valueContainerAlgorithm, ODocument metadata, int version) throws OConfigurationException {
 
     OBinarySerializer<?> objectSerializer = storage.getComponentsFactory().binarySerializerFactory
         .getObjectSerializer(OLuceneMockSpatialSerializer.INSTANCE.getId());
 
     if (objectSerializer == null) {
-      storage.getComponentsFactory().binarySerializerFactory
-          .registerSerializer(OLuceneMockSpatialSerializer.INSTANCE, OType.EMBEDDED);
+      storage.getComponentsFactory().binarySerializerFactory.registerSerializer(OLuceneMockSpatialSerializer.INSTANCE,
+          OType.EMBEDDED);
     }
 
     if (metadata == null)
@@ -131,12 +124,12 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
 
   @Override
   public void onCreate(ODatabaseInternal iDatabase) {
-    spatialManager.init((ODatabaseDocumentTx) iDatabase);
+    spatialManager.init(iDatabase);
   }
 
   @Override
   public void onOpen(ODatabaseInternal iDatabase) {
-    spatialManager.init((ODatabaseDocumentTx) iDatabase);
+    spatialManager.init(iDatabase);
   }
 
   @Override

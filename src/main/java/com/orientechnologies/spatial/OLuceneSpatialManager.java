@@ -18,10 +18,10 @@
 
 package com.orientechnologies.spatial;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 
-import static com.orientechnologies.spatial.shape.OShapeBuilder.*;
+import static com.orientechnologies.spatial.shape.OShapeBuilder.BASE_CLASS;
 
 /**
  * Created by Enrico Risa on 06/08/15.
@@ -34,7 +34,7 @@ public class OLuceneSpatialManager {
     this.shapeBuilder = shapeBuilder;
   }
 
-  public void init(ODatabaseDocumentTx db) {
+  public void init(ODatabaseInternal db) {
 
     if (db.getMetadata().getSchema().getClass(BASE_CLASS) == null) {
       db.getMetadata().getSchema().createAbstractClass(BASE_CLASS);

@@ -16,10 +16,10 @@
 
 package com.orientechnologies.spatial.shape;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OProperty;
-import com.orientechnologies.orient.core.metadata.schema.OSchemaProxy;
+import com.orientechnologies.orient.core.metadata.schema.OSchema;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import org.locationtech.spatial4j.shape.Point;
@@ -43,9 +43,9 @@ public class ORectangleShapeBuilder extends OShapeBuilder<Rectangle> {
   }
 
   @Override
-  public void initClazz(ODatabaseDocumentTx db) {
+  public void initClazz(ODatabaseInternal db) {
 
-    OSchemaProxy schema = db.getMetadata().getSchema();
+    OSchema schema = db.getMetadata().getSchema();
     OClass rectangle = schema.createAbstractClass(getName(), superClass(db));
     OProperty coordinates = rectangle.createProperty(COORDINATES, OType.EMBEDDEDLIST, OType.DOUBLE);
     coordinates.setMin("4");

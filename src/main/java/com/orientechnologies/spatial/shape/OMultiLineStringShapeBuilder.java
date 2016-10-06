@@ -18,14 +18,14 @@
 
 package com.orientechnologies.spatial.shape;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
-import com.orientechnologies.orient.core.metadata.schema.OSchemaProxy;
+import com.orientechnologies.orient.core.metadata.schema.OSchema;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import org.locationtech.spatial4j.shape.jts.JtsGeometry;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
+import org.locationtech.spatial4j.shape.jts.JtsGeometry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,9 +55,9 @@ public class OMultiLineStringShapeBuilder extends OComplexShapeBuilder<JtsGeomet
   }
 
   @Override
-  public void initClazz(ODatabaseDocumentTx db) {
-    OSchemaProxy schema = db.getMetadata().getSchema();
-    OClass lineString = schema.createAbstractClass(getName(),superClass(db));
+  public void initClazz(ODatabaseInternal db) {
+    OSchema schema = db.getMetadata().getSchema();
+    OClass lineString = schema.createAbstractClass(getName(), superClass(db));
     lineString.createProperty(COORDINATES, OType.EMBEDDEDLIST, OType.EMBEDDEDLIST);
   }
 

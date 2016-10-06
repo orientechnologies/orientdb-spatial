@@ -16,7 +16,7 @@
 
 package com.orientechnologies.spatial.shape;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.vividsolutions.jts.geom.Geometry;
 import org.locationtech.spatial4j.shape.Point;
@@ -31,9 +31,9 @@ import java.util.Map;
 
 public class OShapeFactory extends OComplexShapeBuilder {
 
-  public static final OShapeFactory INSTANCE = new OShapeFactory();
+  public static final OShapeFactory  INSTANCE  = new OShapeFactory();
 
-  protected OShapeOperation operation;
+  protected OShapeOperation          operation;
 
   private Map<String, OShapeBuilder> factories = new HashMap<String, OShapeBuilder>();
 
@@ -60,7 +60,7 @@ public class OShapeFactory extends OComplexShapeBuilder {
   }
 
   @Override
-  public void initClazz(ODatabaseDocumentTx db) {
+  public void initClazz(ODatabaseInternal db) {
     for (OShapeBuilder f : factories.values()) {
       f.initClazz(db);
     }

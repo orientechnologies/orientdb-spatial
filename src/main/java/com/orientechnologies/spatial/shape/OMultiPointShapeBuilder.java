@@ -18,14 +18,14 @@
 
 package com.orientechnologies.spatial.shape;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
-import com.orientechnologies.orient.core.metadata.schema.OSchemaProxy;
+import com.orientechnologies.orient.core.metadata.schema.OSchema;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import org.locationtech.spatial4j.shape.jts.JtsGeometry;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.MultiPoint;
+import org.locationtech.spatial4j.shape.jts.JtsGeometry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,9 +56,9 @@ public class OMultiPointShapeBuilder extends OComplexShapeBuilder<JtsGeometry> {
   }
 
   @Override
-  public void initClazz(ODatabaseDocumentTx db) {
+  public void initClazz(ODatabaseInternal db) {
 
-    OSchemaProxy schema = db.getMetadata().getSchema();
+    OSchema schema = db.getMetadata().getSchema();
     OClass multiPoint = schema.createAbstractClass(getName(),superClass(db));
     multiPoint.createProperty(COORDINATES, OType.EMBEDDEDLIST, OType.EMBEDDEDLIST);
   }
