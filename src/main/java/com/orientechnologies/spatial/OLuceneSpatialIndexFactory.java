@@ -30,6 +30,7 @@ import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.storage.OStorage;
+import com.orientechnologies.orient.core.storage.impl.local.OAbstractPaginatedStorage;
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexEngineDelegator;
 import com.orientechnologies.spatial.index.OLuceneSpatialIndex;
 import com.orientechnologies.spatial.shape.OShapeFactory;
@@ -91,6 +92,9 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
   public OIndexInternal<?> createIndex(String name, OStorage storage, String indexType, String algorithm,
       String valueContainerAlgorithm, ODocument metadata, int version) throws OConfigurationException {
 
+
+    OAbstractPaginatedStorage pagStorage = (OAbstractPaginatedStorage) storage.getUnderlying();
+
     OBinarySerializer<?> objectSerializer = storage.getComponentsFactory().binarySerializerFactory
         .getObjectSerializer(OLuceneMockSpatialSerializer.INSTANCE.getId());
 
@@ -104,7 +108,7 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
 
     if (OClass.INDEX_TYPE.SPATIAL.toString().equals(indexType)) {
 
-      return new OLuceneSpatialIndex(name, indexType, LUCENE_ALGORITHM, version, storage, valueContainerAlgorithm, metadata);
+      return new OLuceneSpatialIndex(name, indexType, LUCENE_ALGORITHM, version, pagStorage, valueContainerAlgorithm, metadata);
     }
     throw new OConfigurationException("Unsupported type : " + algorithm);
   }

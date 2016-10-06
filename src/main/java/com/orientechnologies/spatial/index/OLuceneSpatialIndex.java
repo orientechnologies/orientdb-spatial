@@ -19,7 +19,6 @@ package com.orientechnologies.spatial.index;
 import com.orientechnologies.lucene.index.OLuceneIndexNotUnique;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.record.impl.ODocument;
-import com.orientechnologies.orient.core.storage.OStorage;
 import com.orientechnologies.orient.core.storage.impl.local.OAbstractPaginatedStorage;
 import com.orientechnologies.spatial.shape.OShapeFactory;
 import com.vividsolutions.jts.geom.Geometry;
@@ -29,7 +28,7 @@ public class OLuceneSpatialIndex extends OLuceneIndexNotUnique {
 
   OShapeFactory shapeFactory = OShapeFactory.INSTANCE;
 
-  public OLuceneSpatialIndex(String name, String typeId, String algorithm, int version, OStorage storage,
+  public OLuceneSpatialIndex(String name, String typeId, String algorithm, int version, OAbstractPaginatedStorage storage,
       String valueContainerAlgorithm, ODocument metadata) {
     super(name, typeId, algorithm, version, storage, valueContainerAlgorithm, metadata);
 
