@@ -67,9 +67,9 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
     if (delegate == null) {
       if (OClass.INDEX_TYPE.SPATIAL.name().equalsIgnoreCase(indexType)) {
         if (indexDefinition.getFields().size() > 1) {
-          delegate = new OLuceneLegacySpatialIndexEngine(indexName, OShapeFactory.INSTANCE);
+          delegate = new OLuceneLegacySpatialIndexEngine(storage, indexName, OShapeFactory.INSTANCE);
         } else {
-          delegate = new OLuceneGeoSpatialIndexEngine(indexName, OShapeFactory.INSTANCE);
+          delegate = new OLuceneGeoSpatialIndexEngine(storage, indexName, OShapeFactory.INSTANCE);
         }
       }
       delegate.init(indexName, indexType, indexDefinition, isAutomatic, metadata);

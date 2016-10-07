@@ -81,6 +81,8 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
       }
     };
 
+    server.startup();
+
     databaseDocumentTx = new ODatabaseDocumentTx(URL);
 
     dropIfExists();

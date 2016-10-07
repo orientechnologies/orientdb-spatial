@@ -27,6 +27,7 @@ import com.orientechnologies.orient.core.index.OIndexCursor;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.index.OIndexKeyCursor;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.storage.OStorage;
 import com.orientechnologies.spatial.factory.OSpatialStrategyFactory;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilder;
@@ -50,15 +51,15 @@ import java.io.IOException;
  */
 public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngineAbstract implements OLuceneSpatialIndexContainer {
 
-  protected final OShapeBuilder   factory;
-  protected       SpatialContext  ctx;
-  protected       SpatialStrategy strategy;
+  protected final OShapeBuilder     factory;
+  protected SpatialContext          ctx;
+  protected SpatialStrategy         strategy;
 
   protected OSpatialStrategyFactory strategyFactory;
   protected SpatialQueryBuilder     queryStrategy;
 
-  public OLuceneSpatialIndexEngineAbstract(String indexName, OShapeBuilder factory) {
-    super(indexName);
+  public OLuceneSpatialIndexEngineAbstract(OStorage storage, String indexName, OShapeBuilder factory) {
+    super(storage, indexName);
     this.ctx = factory.context();
     this.factory = factory;
     strategyFactory = new OSpatialStrategyFactory(factory);
@@ -148,8 +149,8 @@ public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngi
 
     Document doc = new Document();
 
-    doc.add(OLuceneIndexType
-        .createField(RID, oIdentifiable.getIdentity().toString(), Field.Store.YES, Field.Index.NOT_ANALYZED_NO_NORMS));
+    doc.add(OLuceneIndexType.createField(RID, oIdentifiable.getIdentity().toString(), Field.Store.YES,
+        Field.Index.NOT_ANALYZED_NO_NORMS));
     for (IndexableField f : strategy.createIndexableFields(shape)) {
       doc.add(f);
     }
