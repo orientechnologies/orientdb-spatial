@@ -29,6 +29,7 @@ import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.index.OIndexEngineException;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.storage.OStorage;
 import com.orientechnologies.spatial.collections.OSpatialCompositeKey;
 import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
@@ -63,11 +64,10 @@ import java.util.Set;
  */
 public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAbstract {
 
-  OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE;
-  ;
+  OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE;;
 
-  public OLuceneLegacySpatialIndexEngine(String indexName, OShapeBuilder factory) {
-    super(indexName, factory);
+  public OLuceneLegacySpatialIndexEngine(OStorage storage, String indexName, OShapeBuilder factory) {
+    super(storage, indexName, factory);
   }
 
   private Object legacySearch(Object key, OLuceneTxChanges changes) throws IOException {

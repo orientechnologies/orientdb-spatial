@@ -26,6 +26,7 @@ import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.id.OContextualRecordId;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.storage.OStorage;
 import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import org.apache.lucene.document.Document;
@@ -40,8 +41,8 @@ import java.util.Map;
 
 public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstract {
 
-  public OLuceneGeoSpatialIndexEngine(String name, OShapeBuilder factory) {
-    super(name, factory);
+  public OLuceneGeoSpatialIndexEngine(OStorage storage, String name, OShapeBuilder factory) {
+    super(storage,name, factory);
   }
 
   @Override

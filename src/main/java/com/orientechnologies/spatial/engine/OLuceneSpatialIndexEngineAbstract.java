@@ -27,6 +27,7 @@ import com.orientechnologies.orient.core.index.OIndexCursor;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.index.OIndexKeyCursor;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.storage.OStorage;
 import com.orientechnologies.spatial.factory.OSpatialStrategyFactory;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilder;
@@ -57,8 +58,8 @@ public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngi
   protected OSpatialStrategyFactory strategyFactory;
   protected SpatialQueryBuilder     queryStrategy;
 
-  public OLuceneSpatialIndexEngineAbstract(String indexName, OShapeBuilder factory) {
-    super(indexName);
+  public OLuceneSpatialIndexEngineAbstract(OStorage storage,String indexName, OShapeBuilder factory) {
+    super(storage,indexName);
     this.ctx = factory.context();
     this.factory = factory;
     strategyFactory = new OSpatialStrategyFactory(factory);

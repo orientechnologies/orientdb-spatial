@@ -47,11 +47,11 @@ import java.util.Set;
  */
 public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine {
 
-  private final Boolean            durableInNonTxMode;
-  private final OStorage           storage;
-  private final int                version;
-  private final String             indexName;
-  private       OLuceneIndexEngine delegate;
+  private final Boolean      durableInNonTxMode;
+  private final OStorage     storage;
+  private final int          version;
+  private final String       indexName;
+  private OLuceneIndexEngine delegate;
 
   public OLuceneSpatialIndexEngineDelegator(String name, Boolean durableInNonTxMode, OStorage storage, int version) {
 
@@ -66,9 +66,9 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine {
     if (delegate == null) {
       if (OClass.INDEX_TYPE.SPATIAL.name().equalsIgnoreCase(indexType)) {
         if (indexDefinition.getFields().size() > 1) {
-          delegate = new OLuceneLegacySpatialIndexEngine(indexName, OShapeFactory.INSTANCE);
+          delegate = new OLuceneLegacySpatialIndexEngine(storage, indexName, OShapeFactory.INSTANCE);
         } else {
-          delegate = new OLuceneGeoSpatialIndexEngine(indexName, OShapeFactory.INSTANCE);
+          delegate = new OLuceneGeoSpatialIndexEngine(storage, indexName, OShapeFactory.INSTANCE);
         }
 
         delegate.init(indexName, indexType, indexDefinition, isAutomatic, metadata);
@@ -103,8 +103,8 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine {
   public void load(String indexName, OBinarySerializer valueSerializer, boolean isAutomatic, OBinarySerializer keySerializer,
       OType[] keyTypes, boolean nullPointerSupport, int keySize, Map<String, String> engineProperties) {
     if (delegate != null)
-      delegate
-          .load(indexName, valueSerializer, isAutomatic, keySerializer, keyTypes, nullPointerSupport, keySize, engineProperties);
+      delegate.load(indexName, valueSerializer, isAutomatic, keySerializer, keyTypes, nullPointerSupport, keySize,
+          engineProperties);
 
   }
 
