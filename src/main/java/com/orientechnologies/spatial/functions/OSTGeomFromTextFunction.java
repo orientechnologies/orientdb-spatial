@@ -18,12 +18,12 @@
 
 package com.orientechnologies.spatial.functions;
 
-import com.orientechnologies.spatial.shape.OShapeFactory;
+import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
+import com.orientechnologies.orient.core.exception.OCommandExecutionException;
 import com.orientechnologies.orient.core.sql.functions.OSQLFunctionAbstract;
-
-import java.text.ParseException;
+import com.orientechnologies.spatial.shape.OShapeFactory;
 
 /**
  * Created by Enrico Risa on 13/08/15.
@@ -32,7 +32,7 @@ public class OSTGeomFromTextFunction extends OSQLFunctionAbstract {
 
   public static final String NAME    = "ST_GeomFromText";
 
-  OShapeFactory factory = OShapeFactory.INSTANCE;
+  OShapeFactory              factory = OShapeFactory.INSTANCE;
 
   public OSTGeomFromTextFunction() {
     super(NAME, 1, 1);
@@ -41,12 +41,12 @@ public class OSTGeomFromTextFunction extends OSQLFunctionAbstract {
   @Override
   public Object execute(Object iThis, OIdentifiable iCurrentRecord, Object iCurrentResult, Object[] iParams,
       OCommandContext iContext) {
+    String geom = (String) iParams[0];
     try {
-      return factory.toDoc((String) iParams[0]);
-    } catch (ParseException e) {
-      e.printStackTrace();
+      return factory.toDoc(geom);
+    } catch (Exception e) {
+      throw OException.wrapException(new OCommandExecutionException(String.format("Cannot parse geometry {%s}", geom)), e);
     }
-    return null;
   }
 
   @Override
