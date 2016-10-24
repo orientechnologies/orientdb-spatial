@@ -21,6 +21,7 @@ package com.orientechnologies.spatial.engine;
 import com.orientechnologies.common.log.OLogManager;
 import com.orientechnologies.lucene.collections.LuceneResultSetFactory;
 import com.orientechnologies.lucene.query.QueryContext;
+import com.orientechnologies.orient.core.index.OIndexEngine;
 import com.orientechnologies.orient.core.storage.OStorage;
 import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.lucene.tx.OLuceneTxChanges;
@@ -109,6 +110,11 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
     } else {
 
     }
+  }
+
+  @Override
+  public boolean validatedPut(Object key, OIdentifiable value, Validator<Object, OIdentifiable> validator) {
+    throw new UnsupportedOperationException("Validated put is not supported by OLuceneGeoSpatialIndexEngine");
   }
 
   @Override

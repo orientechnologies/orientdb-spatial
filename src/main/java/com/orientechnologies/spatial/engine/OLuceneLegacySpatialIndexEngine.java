@@ -26,6 +26,7 @@ import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.id.OContextualRecordId;
 import com.orientechnologies.orient.core.index.OCompositeKey;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
+import com.orientechnologies.orient.core.index.OIndexEngine;
 import com.orientechnologies.orient.core.index.OIndexEngineException;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -163,6 +164,11 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
 
     }
 
+  }
+
+  @Override
+  public boolean validatedPut(Object key, OIdentifiable value, Validator<Object, OIdentifiable> validator) {
+    throw new UnsupportedOperationException("Validated put is not supported by OLuceneLegacySpatialIndexEngine");
   }
 
   @Override
