@@ -41,7 +41,7 @@ import java.util.Map;
 public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstract {
 
   public OLuceneGeoSpatialIndexEngine(OStorage storage, String name, OShapeBuilder factory) {
-    super(storage,name, factory);
+    super(storage, name, factory);
   }
 
   @Override
@@ -108,6 +108,11 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
     } else {
 
     }
+  }
+
+  @Override
+  public boolean validatedPut(Object key, OIdentifiable value, Validator<Object, OIdentifiable> validator) {
+    throw new UnsupportedOperationException("Validated put is not supported by OLuceneGeoSpatialIndexEngine");
   }
 
   @Override

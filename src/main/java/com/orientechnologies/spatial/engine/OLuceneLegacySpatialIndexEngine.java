@@ -36,13 +36,7 @@ import com.orientechnologies.spatial.shape.legacy.OShapeBuilderLegacy;
 import com.orientechnologies.spatial.shape.legacy.OShapeBuilderLegacyImpl;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queries.function.ValueSource;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.MatchAllDocsQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.*;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
@@ -63,7 +57,7 @@ import java.util.Set;
  */
 public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAbstract {
 
-  OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE;;
+  OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE;
 
   public OLuceneLegacySpatialIndexEngine(OStorage storage, String indexName, OShapeBuilder factory) {
     super(storage, indexName, factory);
@@ -174,6 +168,11 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
 
     }
 
+  }
+
+  @Override
+  public boolean validatedPut(Object key, OIdentifiable value, Validator<Object, OIdentifiable> validator) {
+    throw new UnsupportedOperationException("Validated put is not supported by OLuceneLegacySpatialIndexEngine");
   }
 
   @Override
