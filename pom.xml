@@ -46,6 +46,9 @@
             -Djava.util.logging.manager=com.orientechnologies.common.log.OLogManager$DebugLogManager
         </argLine>
 
+        <!--Overrides parent pom's location-->
+        <license.location>https://github.com/orientechnologies/orientdb/raw/develop/ODB-ASL-LICENSE.txt</license.location>
+
     </properties>
 
     <name>OrientDB Lucene spatial index</name>
@@ -140,11 +143,14 @@
                 </configuration>
             </plugin>
 
-            <plugin>
-                <groupId>com.mycila</groupId>
-                <artifactId>license-maven-plugin</artifactId>
-                <!--<version>3.0</version>-->
-            </plugin>
+            <!--<plugin>-->
+                <!--<groupId>com.mycila</groupId>-->
+                <!--<artifactId>license-maven-plugin</artifactId>-->
+                <!--<configuration>-->
+                    <!--<header>https://github.com/orientechnologies/orientdb/raw/develop/ODB-ASL-LICENSE.txt</header>-->
+                    <!--<strictCheck>true</strictCheck>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
         </plugins>
     </build>
 
