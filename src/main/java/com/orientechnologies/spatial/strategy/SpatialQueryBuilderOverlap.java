@@ -18,7 +18,7 @@
 package com.orientechnologies.spatial.strategy;
 
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
-import com.orientechnologies.spatial.query.SpatialQueryContext;
+import com.orientechnologies.spatial.query.OSpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -44,7 +44,7 @@ public class SpatialQueryBuilderOverlap extends SpatialQueryBuilderAbstract {
 
   // TODO check PGIS
   @Override
-  public SpatialQueryContext build(Map<String, Object> query) throws Exception {
+  public OSpatialQueryContext build(Map<String, Object> query) throws Exception {
     Shape shape = parseShape(query);
     SpatialStrategy strategy = manager.strategy();
     SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, shape.getBoundingBox());
@@ -52,7 +52,7 @@ public class SpatialQueryBuilderOverlap extends SpatialQueryBuilderAbstract {
     BooleanQuery q = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
-    return new SpatialQueryContext(null, manager.searcher(), q);
+    return new OSpatialQueryContext(null, manager.searcher(), q);
   }
 
   @Override

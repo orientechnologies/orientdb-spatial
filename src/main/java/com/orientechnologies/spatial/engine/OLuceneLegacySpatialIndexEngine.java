@@ -18,7 +18,7 @@
 package com.orientechnologies.spatial.engine;
 
 import com.orientechnologies.lucene.collections.OLuceneResultSetFactory;
-import com.orientechnologies.lucene.query.QueryContext;
+import com.orientechnologies.lucene.query.OLuceneQueryContext;
 import com.orientechnologies.lucene.tx.OLuceneTxChanges;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
@@ -30,7 +30,7 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.storage.OStorage;
 import com.orientechnologies.spatial.collections.OSpatialCompositeKey;
-import com.orientechnologies.spatial.query.SpatialQueryContext;
+import com.orientechnologies.spatial.query.OSpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import com.orientechnologies.spatial.shape.legacy.OShapeBuilderLegacy;
 import com.orientechnologies.spatial.shape.legacy.OShapeBuilderLegacyImpl;
@@ -100,7 +100,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
     BooleanQuery q = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
-    QueryContext queryContext = new SpatialQueryContext(context, searcher, q, distSort).setSpatialArgs(args).setChanges(changes);
+    OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, q, distSort).setSpatialArgs(args).setChanges(changes);
     return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
   }
 
@@ -119,15 +119,15 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
     BooleanQuery query = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
-    QueryContext queryContext = new SpatialQueryContext(context, searcher, query).setChanges(changes);
+    OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, query).setChanges(changes);
     return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
 
   }
 
   @Override
-  public void onRecordAddedToResultSet(QueryContext queryContext, OContextualRecordId recordId, Document doc, ScoreDoc score) {
+  public void onRecordAddedToResultSet(OLuceneQueryContext queryContext, OContextualRecordId recordId, Document doc, ScoreDoc score) {
 
-    SpatialQueryContext spatialContext = (SpatialQueryContext) queryContext;
+    OSpatialQueryContext spatialContext = (OSpatialQueryContext) queryContext;
     if (spatialContext.spatialArgs != null) {
       Point docPoint = (Point) ctx.readShape(doc.get(strategy.getFieldName()));
       double docDistDEG = ctx.getDistCalc().distance(spatialContext.spatialArgs.getShape().getCenter(), docPoint);

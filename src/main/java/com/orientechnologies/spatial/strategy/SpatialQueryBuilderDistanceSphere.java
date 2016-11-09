@@ -18,7 +18,7 @@
 package com.orientechnologies.spatial.strategy;
 
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
-import com.orientechnologies.spatial.query.SpatialQueryContext;
+import com.orientechnologies.spatial.query.OSpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import org.apache.lucene.queries.function.ValueSource;
 import org.apache.lucene.search.BooleanClause;
@@ -48,7 +48,7 @@ public class SpatialQueryBuilderDistanceSphere extends SpatialQueryBuilderAbstra
   }
 
   @Override
-  public SpatialQueryContext build(Map<String, Object> query) throws Exception {
+  public OSpatialQueryContext build(Map<String, Object> query) throws Exception {
     Shape shape = parseShape(query);
 
     SpatialStrategy strategy = manager.strategy();
@@ -58,7 +58,7 @@ public class SpatialQueryBuilderDistanceSphere extends SpatialQueryBuilderAbstra
     // SpatialArgs args1 = new SpatialArgs(SpatialOperation.Intersects, shape);
     //
     // Filter filter = strategy.makeFilter(args1);
-    // return new SpatialQueryContext(null, manager.searcher(), new MatchAllDocsQuery(), filter);
+    // return new OSpatialQueryContext(null, manager.searcher(), new MatchAllDocsQuery(), filter);
 
     SpatialArgs args = new SpatialArgs(SpatialOperation.Intersects, factory.context()
         .makeCircle((Point) shape, DistanceUtils.dist2Degrees(distance.doubleValue() / 1000, DistanceUtils.EARTH_MEAN_RADIUS_KM)));
@@ -73,7 +73,7 @@ public class SpatialQueryBuilderDistanceSphere extends SpatialQueryBuilderAbstra
     BooleanQuery q = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
-    return new SpatialQueryContext(null, searcher, q, distSort).setSpatialArgs(args);
+    return new OSpatialQueryContext(null, searcher, q, distSort).setSpatialArgs(args);
   }
 
   @Override

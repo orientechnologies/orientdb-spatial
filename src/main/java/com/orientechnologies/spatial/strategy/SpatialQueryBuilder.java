@@ -19,7 +19,7 @@ package com.orientechnologies.spatial.strategy;
 
 import com.orientechnologies.orient.core.index.OIndexEngineException;
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
-import com.orientechnologies.spatial.query.SpatialQueryContext;
+import com.orientechnologies.spatial.query.OSpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 
 import java.util.HashMap;
@@ -51,7 +51,7 @@ public class SpatialQueryBuilder extends SpatialQueryBuilderAbstract {
     operators.put(builder.getName(), builder);
   }
 
-  public SpatialQueryContext build(Map<String, Object> query) throws Exception {
+  public OSpatialQueryContext build(Map<String, Object> query) throws Exception {
 
     SpatialQueryBuilderAbstract operation = parseOperation(query);
 

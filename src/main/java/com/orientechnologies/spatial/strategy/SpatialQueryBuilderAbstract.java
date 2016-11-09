@@ -18,7 +18,7 @@
 package com.orientechnologies.spatial.strategy;
 
 import com.orientechnologies.spatial.engine.OLuceneSpatialIndexContainer;
-import com.orientechnologies.spatial.query.SpatialQueryContext;
+import com.orientechnologies.spatial.query.OSpatialQueryContext;
 import com.orientechnologies.orient.core.index.OIndexEngineException;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import org.locationtech.spatial4j.shape.Shape;
@@ -45,7 +45,7 @@ public abstract class SpatialQueryBuilderAbstract {
     this.factory = factory;
   }
 
-  public abstract SpatialQueryContext build(Map<String, Object> query) throws Exception;
+  public abstract OSpatialQueryContext build(Map<String, Object> query) throws Exception;
 
   protected Shape parseShape(Map<String, Object> query) {
 
