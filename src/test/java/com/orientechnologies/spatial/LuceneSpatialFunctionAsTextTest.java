@@ -40,9 +40,8 @@ public class LuceneSpatialFunctionAsTextTest extends BaseSpatialLuceneTest {
 
   @Before
   public void init() {
-    super.init();
 
-    OSchema schema = databaseDocumentTx.getMetadata().getSchema();
+    OSchema schema = db.getMetadata().getSchema();
     OClass v = schema.getClass("V");
     OClass oClass = schema.createClass("Location");
     oClass.setSuperClass(v);
@@ -69,7 +68,7 @@ public class LuceneSpatialFunctionAsTextTest extends BaseSpatialLuceneTest {
     ODocument doc = new ODocument("Location");
     doc.field("name", name);
     doc.field("geometry", geometry);
-    databaseDocumentTx.save(doc);
+    db.save(doc);
   }
 
   @Test
@@ -80,7 +79,7 @@ public class LuceneSpatialFunctionAsTextTest extends BaseSpatialLuceneTest {
   }
 
   protected void queryAndAssertGeom(String name, String wkt) {
-    List<ODocument> results = databaseDocumentTx.command(
+    List<ODocument> results = db.command(
         new OCommandSQL("select *, ST_AsText(geometry) as text from Location where name = ? ")).execute(name);
 
     Assert.assertEquals(1, results.size());

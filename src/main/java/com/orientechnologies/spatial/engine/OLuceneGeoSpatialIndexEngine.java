@@ -19,16 +19,15 @@
 package com.orientechnologies.spatial.engine;
 
 import com.orientechnologies.common.log.OLogManager;
-import com.orientechnologies.lucene.collections.LuceneResultSetFactory;
-import com.orientechnologies.lucene.query.QueryContext;
-import com.orientechnologies.orient.core.index.OIndexEngine;
-import com.orientechnologies.orient.core.storage.OStorage;
-import com.orientechnologies.spatial.query.SpatialQueryContext;
+import com.orientechnologies.lucene.collections.OLuceneResultSetFactory;
+import com.orientechnologies.lucene.query.OLuceneQueryContext;
 import com.orientechnologies.lucene.tx.OLuceneTxChanges;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.id.OContextualRecordId;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.storage.OStorage;
+import com.orientechnologies.spatial.query.SpatialQueryContext;
 import com.orientechnologies.spatial.shape.OShapeBuilder;
 import com.spatial4j.core.distance.DistanceUtils;
 import com.spatial4j.core.shape.Point;
@@ -54,6 +53,12 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
   }
 
   @Override
+  public Document buildDocument(Object key, OIdentifiable value) {
+    ODocument location = ((OIdentifiable) key).getRecord();
+    return newGeoDocument(value, factory.fromDoc(location));
+  }
+
+  @Override
   public Object get(Object key) {
     return getInTx(key, null);
   }
@@ -76,25 +81,9 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
 
   private Object newGeoSearch(Map<String, Object> key, OLuceneTxChanges changes) throws Exception {
 
-    QueryContext queryContext = queryStrategy.build(key).setChanges(changes);
-    return LuceneResultSetFactory.INSTANCE.create(this, queryContext);
+    OLuceneQueryContext queryContext = queryStrategy.build(key).setChanges(changes);
+    return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
 
-  }
-
-  @Override
-  public void onRecordAddedToResultSet(QueryContext queryContext, OContextualRecordId recordId, Document doc, ScoreDoc score) {
-
-    SpatialQueryContext spatialContext = (SpatialQueryContext) queryContext;
-    if (spatialContext.spatialArgs != null) {
-      Point docPoint = (Point) ctx.readShape(doc.get(strategy.getFieldName()));
-      double docDistDEG = ctx.getDistCalc().distance(spatialContext.spatialArgs.getShape().getCenter(), docPoint);
-      final double docDistInKM = DistanceUtils.degrees2Dist(docDistDEG, DistanceUtils.EARTH_EQUATORIAL_RADIUS_KM);
-      recordId.setContext(new HashMap<String, Object>() {
-        {
-          put("distance", docDistInKM);
-        }
-      });
-    }
   }
 
   @Override
@@ -118,8 +107,20 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
   }
 
   @Override
-  public Document buildDocument(Object key, OIdentifiable value) {
-    ODocument location = ((OIdentifiable) key).getRecord();
-    return newGeoDocument(value, factory.fromDoc(location));
+  public void onRecordAddedToResultSet(OLuceneQueryContext queryContext, OContextualRecordId recordId, Document doc,
+      ScoreDoc score) {
+
+    SpatialQueryContext spatialContext = (SpatialQueryContext) queryContext;
+    if (spatialContext.spatialArgs != null) {
+      Point docPoint = (Point) ctx.readShape(doc.get(strategy.getFieldName()));
+      double docDistDEG = ctx.getDistCalc().distance(spatialContext.spatialArgs.getShape().getCenter(), docPoint);
+      final double docDistInKM = DistanceUtils.degrees2Dist(docDistDEG, DistanceUtils.EARTH_EQUATORIAL_RADIUS_KM);
+      recordId.setContext(new HashMap<String, Object>() {
+        {
+          put("distance", docDistInKM);
+        }
+      });
+    }
   }
+
 }

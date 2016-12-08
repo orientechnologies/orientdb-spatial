@@ -18,15 +18,14 @@
 
 package com.orientechnologies.spatial.engine;
 
-import com.orientechnologies.lucene.collections.LuceneResultSetFactory;
-import com.orientechnologies.lucene.query.QueryContext;
+import com.orientechnologies.lucene.collections.OLuceneResultSetFactory;
+import com.orientechnologies.lucene.query.OLuceneQueryContext;
 import com.orientechnologies.lucene.tx.OLuceneTxChanges;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.id.OContextualRecordId;
 import com.orientechnologies.orient.core.index.OCompositeKey;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
-import com.orientechnologies.orient.core.index.OIndexEngine;
 import com.orientechnologies.orient.core.index.OIndexEngineException;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -41,7 +40,11 @@ import com.spatial4j.core.shape.Point;
 import com.spatial4j.core.shape.Shape;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queries.function.ValueSource;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.Filter;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Sort;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
@@ -59,10 +62,43 @@ import java.util.Set;
  */
 public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAbstract {
 
-  OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE;;
+  OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE;
+  ;
 
   public OLuceneLegacySpatialIndexEngine(OStorage storage, String indexName, OShapeBuilder factory) {
     super(storage, indexName, factory);
+  }
+
+  @Override
+  public void onRecordAddedToResultSet(OLuceneQueryContext queryContext, OContextualRecordId recordId, Document doc,
+      ScoreDoc score) {
+
+    SpatialQueryContext spatialContext = (SpatialQueryContext) queryContext;
+    if (spatialContext.spatialArgs != null) {
+      Point docPoint = (Point) ctx.readShape(doc.get(strategy.getFieldName()));
+      double docDistDEG = ctx.getDistCalc().distance(spatialContext.spatialArgs.getShape().getCenter(), docPoint);
+      final double docDistInKM = DistanceUtils.degrees2Dist(docDistDEG, DistanceUtils.EARTH_EQUATORIAL_RADIUS_KM);
+      recordId.setContext(new HashMap<String, Object>() {
+        {
+          put("distance", docDistInKM);
+        }
+      });
+    }
+  }
+
+  @Override
+  public Object get(Object key) {
+    return getInTx(key, null);
+  }
+
+  @Override
+  public Object getInTx(Object key, OLuceneTxChanges changes) {
+    try {
+      return legacySearch(key, changes);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return null;
   }
 
   private Object legacySearch(Object key, OLuceneTxChanges changes) throws IOException {
@@ -98,9 +134,9 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
     ValueSource valueSource = strategy.makeDistanceValueSource(p);
     Sort distSort = new Sort(valueSource.getSortField(false)).rewrite(searcher);
 
-    QueryContext queryContext = new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter, distSort)
+    OLuceneQueryContext queryContext = new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter, distSort)
         .setSpatialArgs(args).setChanges(changes);
-    return LuceneResultSetFactory.INSTANCE.create(this, queryContext);
+    return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
   }
 
   public Object searchWithin(OSpatialCompositeKey key, OCommandContext context, OLuceneTxChanges changes) throws IOException {
@@ -115,40 +151,10 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
 
     Filter filter = strategy.makeFilter(args);
 
-    QueryContext queryContext = new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter).setChanges(changes);
-    return LuceneResultSetFactory.INSTANCE.create(this, queryContext);
+    OLuceneQueryContext queryContext = new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter).setChanges(
+        changes);
+    return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
 
-  }
-
-  @Override
-  public void onRecordAddedToResultSet(QueryContext queryContext, OContextualRecordId recordId, Document doc, ScoreDoc score) {
-
-    SpatialQueryContext spatialContext = (SpatialQueryContext) queryContext;
-    if (spatialContext.spatialArgs != null) {
-      Point docPoint = (Point) ctx.readShape(doc.get(strategy.getFieldName()));
-      double docDistDEG = ctx.getDistCalc().distance(spatialContext.spatialArgs.getShape().getCenter(), docPoint);
-      final double docDistInKM = DistanceUtils.degrees2Dist(docDistDEG, DistanceUtils.EARTH_EQUATORIAL_RADIUS_KM);
-      recordId.setContext(new HashMap<String, Object>() {
-        {
-          put("distance", docDistInKM);
-        }
-      });
-    }
-  }
-
-  @Override
-  public Object getInTx(Object key, OLuceneTxChanges changes) {
-    try {
-      return legacySearch(key, changes);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return null;
-  }
-
-  @Override
-  public Object get(Object key) {
-    return getInTx(key, null);
   }
 
   @Override
@@ -172,12 +178,12 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
   }
 
   @Override
-  public Document buildDocument(Object key, OIdentifiable value) {
-    return newGeoDocument(value, legacyBuilder.makeShape((OCompositeKey) key, ctx));
+  protected SpatialStrategy createSpatialStrategy(OIndexDefinition indexDefinition, ODocument metadata) {
+    return new RecursivePrefixTreeStrategy(new GeohashPrefixTree(ctx, 11), "location");
   }
 
   @Override
-  protected SpatialStrategy createSpatialStrategy(OIndexDefinition indexDefinition, ODocument metadata) {
-    return new RecursivePrefixTreeStrategy(new GeohashPrefixTree(ctx, 11), "location");
+  public Document buildDocument(Object key, OIdentifiable value) {
+    return newGeoDocument(value, legacyBuilder.makeShape((OCompositeKey) key, ctx));
   }
 }

@@ -26,7 +26,6 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,44 +43,24 @@ public class LuceneSpatialPolygonTest extends BaseSpatialLuceneTest {
 
   @Before
   public void init() {
-    initDB();
 
-    databaseDocumentTx.set(ODatabase.ATTRIBUTES.CUSTOM, "strictSql=false");
-    OSchema schema = databaseDocumentTx.getMetadata().getSchema();
+    db.set(ODatabase.ATTRIBUTES.CUSTOM, "strictSql=false");
+    OSchema schema = db.getMetadata().getSchema();
     OClass v = schema.getClass("V");
     OClass oClass = schema.createClass("Place");
     oClass.setSuperClass(v);
     oClass.createProperty("location", OType.EMBEDDED, schema.getClass("OPolygon"));
     oClass.createProperty("name", OType.STRING);
 
-    databaseDocumentTx.command(new OCommandSQL("CREATE INDEX Place.location ON Place(location) SPATIAL ENGINE LUCENE")).execute();
+    db.command(new OCommandSQL("CREATE INDEX Place.location ON Place(location) SPATIAL ENGINE LUCENE")).execute();
 
-  }
-
-  @After
-  public void deInit() {
-    deInitDB();
   }
 
   @Test
   public void testPolygonWithoutIndex() throws IOException {
     testIndexingPolygon();
-    databaseDocumentTx.command(new OCommandSQL("drop index Place.location")).execute();
+    db.command(new OCommandSQL("drop index Place.location")).execute();
     queryPolygon();
-  }
-
-  protected void queryPolygon() {
-
-    String query = "select * from Place where location && 'POINT(13.383333 52.516667)'";
-    List<ODocument> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
-
-    Assert.assertEquals(docs.size(), 1);
-
-    query = "select * from Place where location && 'POINT(12.5 41.9)'";
-    docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
-
-    Assert.assertEquals(docs.size(), 0);
-
   }
 
   @Test
@@ -99,12 +78,26 @@ public class LuceneSpatialPolygonTest extends BaseSpatialLuceneTest {
     ODocument germany = new ODocument("Place");
     germany.field("name", "Germany");
     germany.field("location", location);
-    databaseDocumentTx.save(germany);
+    db.save(germany);
 
-    OIndex<?> index = databaseDocumentTx.getMetadata().getIndexManager().getIndex("Place.location");
+    OIndex<?> index = db.getMetadata().getIndexManager().getIndex("Place.location");
 
     Assert.assertEquals(index.getSize(), 1);
     queryPolygon();
+
+  }
+
+  protected void queryPolygon() {
+
+    String query = "select * from Place where location && 'POINT(13.383333 52.516667)'";
+    List<ODocument> docs = db.query(new OSQLSynchQuery<ODocument>(query));
+
+    Assert.assertEquals(docs.size(), 1);
+
+    query = "select * from Place where location && 'POINT(12.5 41.9)'";
+    docs = db.query(new OSQLSynchQuery<ODocument>(query));
+
+    Assert.assertEquals(docs.size(), 0);
 
   }
 }

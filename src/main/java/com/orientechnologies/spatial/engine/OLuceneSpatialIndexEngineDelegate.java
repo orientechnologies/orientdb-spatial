@@ -20,13 +20,12 @@ package com.orientechnologies.spatial.engine;
 
 import com.orientechnologies.common.serialization.types.OBinarySerializer;
 import com.orientechnologies.lucene.engine.OLuceneIndexEngine;
-import com.orientechnologies.lucene.query.QueryContext;
+import com.orientechnologies.lucene.query.OLuceneQueryContext;
 import com.orientechnologies.lucene.tx.OLuceneTxChanges;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.id.OContextualRecordId;
 import com.orientechnologies.orient.core.index.OIndexCursor;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
-import com.orientechnologies.orient.core.index.OIndexEngine;
 import com.orientechnologies.orient.core.index.OIndexKeyCursor;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
@@ -49,11 +48,11 @@ import java.util.Set;
 public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
 
   // private final String name;
-  private final Boolean      durableInNonTxMode;
-  private final OStorage     storage;
-  private final int          version;
-  private final String       indexName;
-  private OLuceneIndexEngine delegate;
+  private final Boolean            durableInNonTxMode;
+  private final OStorage           storage;
+  private final int                version;
+  private final String             indexName;
+  private       OLuceneIndexEngine delegate;
 
   public OLuceneSpatialIndexEngineDelegate(String name, Boolean durableInNonTxMode, OStorage storage, int version) {
 
@@ -227,7 +226,8 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine {
   }
 
   @Override
-  public void onRecordAddedToResultSet(QueryContext queryContext, OContextualRecordId recordId, Document ret, ScoreDoc score) {
+  public void onRecordAddedToResultSet(OLuceneQueryContext queryContext, OContextualRecordId recordId, Document ret,
+      ScoreDoc score) {
     delegate.onRecordAddedToResultSet(queryContext, recordId, ret, score);
   }
 

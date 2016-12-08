@@ -58,15 +58,6 @@ public abstract class BaseSpatialLuceneTest extends BaseLuceneTest {
 
   protected static final String GEOMETRYCOLLECTION = "GEOMETRYCOLLECTION (POINT (4 6), LINESTRING (4 6, 7 10))";
 
-  @Before
-  public void init() {
-    initDB();
-  }
-
-  @After
-  public void deInit() {
-    deInitDB();
-  }
 
   protected Polygon polygonTestHole() {
     List<Coordinate> outerRing = new ArrayList<Coordinate>();

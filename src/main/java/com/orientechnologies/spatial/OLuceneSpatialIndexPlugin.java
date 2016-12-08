@@ -17,7 +17,6 @@
 package com.orientechnologies.spatial;
 
 import com.orientechnologies.common.log.OLogManager;
-import com.orientechnologies.lucene.functions.OLuceneFunctionsFactory;
 import com.orientechnologies.orient.core.Orient;
 import com.orientechnologies.orient.core.db.ODatabaseInternal;
 import com.orientechnologies.orient.core.db.ODatabaseLifecycleListener;
@@ -84,13 +83,13 @@ public class OLuceneSpatialIndexPlugin extends OServerPluginAbstract implements 
   }
 
   @Override
-  public void config(OServer oServer, OServerParameterConfiguration[] iParams) {
-
+  public void shutdown() {
+    super.shutdown();
   }
 
   @Override
-  public void shutdown() {
-    super.shutdown();
+  public void config(OServer oServer, OServerParameterConfiguration[] iParams) {
+
   }
 
   @Override

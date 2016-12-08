@@ -39,9 +39,7 @@ import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
-import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -56,11 +54,6 @@ import java.util.List;
  */
 
 public class LuceneSpatialIOTest extends BaseSpatialLuceneTest {
-
-  @Before
-  public void init() {
-    initDB();
-  }
 
   // POINT
   @Test
@@ -280,8 +273,4 @@ public class LuceneSpatialIOTest extends BaseSpatialLuceneTest {
     Assert.assertEquals(m2, m1);
   }
 
-  @After
-  public void deInit() {
-    deInitDB();
-  }
 }

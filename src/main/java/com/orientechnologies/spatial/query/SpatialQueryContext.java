@@ -18,7 +18,7 @@
 
 package com.orientechnologies.spatial.query;
 
-import com.orientechnologies.lucene.query.QueryContext;
+import com.orientechnologies.lucene.query.OLuceneQueryContext;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
@@ -29,25 +29,24 @@ import org.apache.lucene.spatial.query.SpatialArgs;
 /**
  * Created by Enrico Risa on 08/01/15.
  */
-public class SpatialQueryContext extends QueryContext {
+public class SpatialQueryContext extends OLuceneQueryContext {
 
-    public SpatialArgs spatialArgs;
+  public SpatialArgs spatialArgs;
 
-    public SpatialQueryContext(OCommandContext context, IndexSearcher searcher, Query query) {
-        super(context, searcher, query);
-    }
+  public SpatialQueryContext(OCommandContext context, IndexSearcher searcher, Query query) {
+    super(context, searcher, query);
+  }
 
-    public SpatialQueryContext(OCommandContext context, IndexSearcher searcher, Query query, Filter filter) {
-        super(context, searcher, query, filter);
-    }
+  public SpatialQueryContext(OCommandContext context, IndexSearcher searcher, Query query, Filter filter) {
+    super(context, searcher, query, filter);
+  }
 
-    public SpatialQueryContext(OCommandContext context, IndexSearcher searcher, Query query, Filter filter, Sort sort) {
-        super(context, searcher, query, filter, sort);
-    }
+  public SpatialQueryContext(OCommandContext context, IndexSearcher searcher, Query query, Filter filter, Sort sort) {
+    super(context, searcher, query, filter, sort);
+  }
 
-
-    public SpatialQueryContext setSpatialArgs(SpatialArgs spatialArgs) {
-        this.spatialArgs = spatialArgs;
-        return this;
-    }
+  public SpatialQueryContext setSpatialArgs(SpatialArgs spatialArgs) {
+    this.spatialArgs = spatialArgs;
+    return this;
+  }
 }

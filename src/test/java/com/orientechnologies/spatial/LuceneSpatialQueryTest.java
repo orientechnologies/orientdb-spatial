@@ -28,7 +28,10 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.InputStream;
@@ -47,8 +50,7 @@ public class LuceneSpatialQueryTest extends BaseLuceneTest {
 
   @Before
   public void init() {
-    initDB();
-    OSchema schema = databaseDocumentTx.getMetadata().getSchema();
+    OSchema schema = db.getMetadata().getSchema();
     OClass v = schema.getClass("V");
 
     OClass oClass = schema.createClass("Place");
@@ -57,13 +59,13 @@ public class LuceneSpatialQueryTest extends BaseLuceneTest {
     oClass.createProperty("longitude", OType.DOUBLE);
     oClass.createProperty("name", OType.STRING);
 
-    databaseDocumentTx.command(new OCommandSQL("CREATE INDEX Place.l_lon ON Place(latitude,longitude) SPATIAL ENGINE LUCENE"))
+    db.command(new OCommandSQL("CREATE INDEX Place.l_lon ON Place(latitude,longitude) SPATIAL ENGINE LUCENE"))
         .execute();
 
     try {
       ZipFile zipFile = new ZipFile(new File(ClassLoader.getSystemResource("location.csv.zip").getPath()));
       Enumeration<? extends ZipEntry> entries = zipFile.entries();
-      databaseDocumentTx.declareIntent(new OIntentMassiveInsert());
+      db.declareIntent(new OIntentMassiveInsert());
       while (entries.hasMoreElements()) {
         ZipEntry entry = entries.nextElement();
 
@@ -107,16 +109,16 @@ public class LuceneSpatialQueryTest extends BaseLuceneTest {
             doc.save();
             if (i % 100000 == 0) {
               OLogManager.instance().info(this, "Imported: [%d] records", i);
-              databaseDocumentTx.commit();
-              databaseDocumentTx.begin();
+              db.commit();
+              db.begin();
             }
             i++;
           }
           lnr.close();
           stream.close();
-          databaseDocumentTx.commit();
+          db.commit();
         }
-        databaseDocumentTx.declareIntent(null);
+        db.declareIntent(null);
       }
 
     } catch (Exception e) {
@@ -127,17 +129,12 @@ public class LuceneSpatialQueryTest extends BaseLuceneTest {
 
   }
 
-  @After
-  public void deInit() {
-    deInitDB();
-  }
-
   @Test
   @Ignore
   public void testNearQuery() {
 
     String query = "select *,$distance from Place where [latitude,longitude,$spatial] NEAR [41.893056,12.482778,{\"maxDistance\": 0.5}]";
-    List<ODocument> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+    List<ODocument> docs = db.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(1, docs.size());
 
@@ -150,7 +147,7 @@ public class LuceneSpatialQueryTest extends BaseLuceneTest {
   @Ignore
   public void testWithinQuery() {
     String query = "select * from Place where [latitude,longitude] WITHIN [[51.507222,-0.1275],[55.507222,-0.1275]]";
-    List<ODocument> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+    List<ODocument> docs = db.query(new OSQLSynchQuery<ODocument>(query));
     Assert.assertEquals(238, docs.size());
   }
 }

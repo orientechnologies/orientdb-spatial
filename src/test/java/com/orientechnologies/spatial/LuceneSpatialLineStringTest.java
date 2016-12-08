@@ -45,15 +45,15 @@ public class LuceneSpatialLineStringTest extends BaseSpatialLuceneTest {
 
   @Before
   public void initMore() {
-    databaseDocumentTx.set(ODatabase.ATTRIBUTES.CUSTOM, "strictSql=false");
-    OSchema schema = databaseDocumentTx.getMetadata().getSchema();
+    db.set(ODatabase.ATTRIBUTES.CUSTOM, "strictSql=false");
+    OSchema schema = db.getMetadata().getSchema();
     OClass v = schema.getClass("V");
     OClass oClass = schema.createClass("Place");
     oClass.setSuperClass(v);
     oClass.createProperty("location", OType.EMBEDDED, schema.getClass("OLineString"));
     oClass.createProperty("name", OType.STRING);
 
-    databaseDocumentTx.command(new OCommandSQL("CREATE INDEX Place.location ON Place(location) SPATIAL ENGINE LUCENE")).execute();
+    db.command(new OCommandSQL("CREATE INDEX Place.location ON Place(location) SPATIAL ENGINE LUCENE")).execute();
 
     ODocument linestring1 = new ODocument("Place");
     linestring1.field("name", "LineString1");
@@ -72,10 +72,10 @@ public class LuceneSpatialLineStringTest extends BaseSpatialLuceneTest {
         add(Arrays.asList(0d, 5d));
       }
     }));
-    databaseDocumentTx.save(linestring1);
-    databaseDocumentTx.save(linestring2);
+    db.save(linestring1);
+    db.save(linestring2);
 
-    databaseDocumentTx
+    db
         .command(new OCommandSQL("insert into Place set name = 'LineString3' , location = ST_GeomFromText('" + LINEWKT + "')"))
         .execute();
   }
@@ -93,28 +93,28 @@ public class LuceneSpatialLineStringTest extends BaseSpatialLuceneTest {
 
   @Test
   public void testLineStringWithoutIndex() throws IOException {
-    databaseDocumentTx.command(new OCommandSQL("drop index Place.location")).execute();
+    db.command(new OCommandSQL("drop index Place.location")).execute();
     queryLineString();
   }
 
   protected void queryLineString() {
     String query = "select * from Place where location && { 'shape' : { 'type' : 'OLineString' , 'coordinates' : [[1,2],[4,6]]} } ";
-    List<ODocument> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+    List<ODocument> docs = db.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(docs.size(), 1);
 
     query = "select * from Place where location && 'LINESTRING(1 2, 4 6)' ";
-    docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+    docs = db.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(docs.size(), 1);
 
     query = "select * from Place where location && ST_GeomFromText('LINESTRING(1 2, 4 6)') ";
-    docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+    docs = db.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(docs.size(), 1);
 
     query = "select * from Place where location && 'POLYGON((-150.205078125 61.40723633876356,-149.2657470703125 61.40723633876356,-149.2657470703125 61.05562700886678,-150.205078125 61.05562700886678,-150.205078125 61.40723633876356))' ";
-    docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+    docs = db.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(docs.size(), 1);
   }
@@ -122,7 +122,7 @@ public class LuceneSpatialLineStringTest extends BaseSpatialLuceneTest {
   @Test
   public void testIndexingLineString() throws IOException {
 
-    OIndex<?> index = databaseDocumentTx.getMetadata().getIndexManager().getIndex("Place.location");
+    OIndex<?> index = db.getMetadata().getIndexManager().getIndex("Place.location");
 
     //    Assert.assertEquals(index.getSize(), 2);
 
