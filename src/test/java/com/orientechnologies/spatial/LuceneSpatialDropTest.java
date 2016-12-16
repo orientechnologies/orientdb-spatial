@@ -65,7 +65,8 @@ public class LuceneSpatialDropTest {
     db = new ODatabaseDocumentTx(dbName).open("admin", "admin");
 
     db.drop();
-    File dbFolder = new File(dbName);
+
+    File dbFolder = new File("./target/databases/" + this.getClass().getSimpleName());
     Assert.assertEquals(false, dbFolder.exists());
 
   }
