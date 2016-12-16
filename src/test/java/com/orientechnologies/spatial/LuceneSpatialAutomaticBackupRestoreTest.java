@@ -30,31 +30,38 @@ import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.orient.server.OServer;
 import com.orientechnologies.orient.server.config.OServerParameterConfiguration;
 import com.orientechnologies.orient.server.handler.OAutomaticBackup;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.zip.GZIPInputStream;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Created by Enrico Risa on 07/07/15.
  */
 public class LuceneSpatialAutomaticBackupRestoreTest {
 
+  private final static String          DBNAME     = "LuceneAutomaticBackupRestoreTest";
   @Rule
-  public TemporaryFolder      tempFolder = new TemporaryFolder();
-
-  private final static String DBNAME     = "LuceneAutomaticBackupRestoreTest";
-  private String              URL        = null;
-  private String              BACKUPDIR  = null;
-  private String              BACKUFILE  = null;
+  public               TemporaryFolder tempFolder = new TemporaryFolder();
+  private              String          URL        = null;
+  private              String          BACKUPDIR  = null;
+  private              String          BACKUFILE  = null;
 
   private OServer             server;
   private ODatabaseDocumentTx databaseDocumentTx;
@@ -109,6 +116,20 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
     }
   }
 
+  protected ODocument newCity(String name, final Double longitude, final Double latitude) {
+
+    ODocument city = new ODocument("City")
+        .field("name", name)
+        .field("location", new ODocument("OPoint")
+            .field("coordinates", new ArrayList<Double>() {
+              {
+                add(longitude);
+                add(latitude);
+              }
+            }));
+    return city;
+  }
+
   @After
   public void tearDown() throws Exception {
     dropIfExists();
@@ -117,43 +138,25 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
 
   }
 
-  protected ODocument newCity(String name, final Double longitude, final Double latitude) {
-
-    ODocument location = new ODocument("OPoint");
-    location.field("coordinates", new ArrayList<Double>() {
-      {
-        add(longitude);
-        add(latitude);
-      }
-    });
-
-    ODocument city = new ODocument("City");
-    city.field("name", name);
-    city.field("location", location);
-    return city;
-  }
-
   @Test
   public void shouldBackupAndRestore() throws IOException, InterruptedException {
 
-    String query = "select * from City where  ST_WITHIN(location,'POLYGON ((12.314015 41.8262816, 12.314015 41.963125, 12.6605063 41.963125, 12.6605063 41.8262816, 12.314015 41.8262816))')"
-        + " = true";
+    String query =
+        "select * from City where  ST_WITHIN(location,'POLYGON ((12.314015 41.8262816, 12.314015 41.963125, 12.6605063 41.963125, 12.6605063 41.8262816, 12.314015 41.8262816))')"
+            + " = true";
     List<?> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(docs.size(), 1);
 
     String jsonConfig = OIOUtils.readStreamAsString(getClass().getClassLoader().getResourceAsStream("automatic-backup.json"));
 
-    ODocument doc = new ODocument().fromJSON(jsonConfig);
-
-    doc.field("enabled", true);
-    doc.field("targetFileName", "${DBNAME}.zip");
-
-    doc.field("targetDirectory", BACKUPDIR);
-
-    doc.field("dbInclude", new String[] { "LuceneAutomaticBackupRestoreTest" });
-
-    doc.field("firstTime", new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis() + 2000)));
+    ODocument doc = new ODocument()
+        .fromJSON(jsonConfig)
+        .field("enabled", true)
+        .field("targetFileName", "${DBNAME}.zip")
+        .field("targetDirectory", BACKUPDIR)
+        .field("dbInclude", new String[] { "LuceneAutomaticBackupRestoreTest" })
+        .field("firstTime", new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis() + 2000)));
 
     OIOUtils.writeFile(new File(tempFolder.getRoot().getAbsolutePath() + "/config/automatic-backup.json"), doc.toJSON());
 
@@ -203,25 +206,23 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
   @Test
   public void shouldExportImport() throws IOException, InterruptedException {
 
-    String query = "select * from City where  ST_WITHIN(location,'POLYGON ((12.314015 41.8262816, 12.314015 41.963125, 12.6605063 41.963125, 12.6605063 41.8262816, 12.314015 41.8262816))')"
-        + " = true";
+    String query =
+        "select * from City where  ST_WITHIN(location,'POLYGON ((12.314015 41.8262816, 12.314015 41.963125, 12.6605063 41.963125, 12.6605063 41.8262816, 12.314015 41.8262816))')"
+            + " = true";
     List<?> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(docs.size(), 1);
 
     String jsonConfig = OIOUtils.readStreamAsString(getClass().getClassLoader().getResourceAsStream("automatic-backup.json"));
 
-    ODocument doc = new ODocument().fromJSON(jsonConfig);
-
-    doc.field("enabled", true);
-    doc.field("targetFileName", "${DBNAME}.json");
-
-    doc.field("targetDirectory", BACKUPDIR);
-    doc.field("mode", "EXPORT");
-
-    doc.field("dbInclude", new String[] { "LuceneAutomaticBackupRestoreTest" });
-
-    doc.field("firstTime", new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis() + 2000)));
+    ODocument doc = new ODocument()
+        .fromJSON(jsonConfig)
+        .field("enabled", true)
+        .field("targetFileName", "${DBNAME}.json")
+        .field("targetDirectory", BACKUPDIR)
+        .field("mode", "EXPORT")
+        .field("dbInclude", new String[] { "LuceneAutomaticBackupRestoreTest" })
+        .field("firstTime", new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis() + 2000)));
 
     OIOUtils.writeFile(new File(tempFolder.getRoot().getAbsolutePath() + "/config/automatic-backup.json"), doc.toJSON());
 
