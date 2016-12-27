@@ -1,18 +1,18 @@
 /**
  * Copyright 2010-2016 OrientDB LTD (http://orientdb.com)
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- * 	http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ * <p>
  * For more information: http://www.orientdb.com
  */
 package com.orientechnologies.spatial.engine;
@@ -46,11 +46,11 @@ import java.util.Set;
  */
 public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine {
 
-  private final Boolean      durableInNonTxMode;
-  private final OStorage     storage;
-  private final int          version;
-  private final String       indexName;
-  private OLuceneIndexEngine delegate;
+  private final Boolean            durableInNonTxMode;
+  private final OStorage           storage;
+  private final int                version;
+  private final String             indexName;
+  private       OLuceneIndexEngine delegate;
 
   public OLuceneSpatialIndexEngineDelegator(String name, Boolean durableInNonTxMode, OStorage storage, int version) {
 
@@ -102,8 +102,8 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine {
   public void load(String indexName, OBinarySerializer valueSerializer, boolean isAutomatic, OBinarySerializer keySerializer,
       OType[] keyTypes, boolean nullPointerSupport, int keySize, Map<String, String> engineProperties) {
     if (delegate != null)
-      delegate.load(indexName, valueSerializer, isAutomatic, keySerializer, keyTypes, nullPointerSupport, keySize,
-          engineProperties);
+      delegate
+          .load(indexName, valueSerializer, isAutomatic, keySerializer, keyTypes, nullPointerSupport, keySize, engineProperties);
 
   }
 
@@ -213,7 +213,8 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine {
   }
 
   @Override
-  public void onRecordAddedToResultSet(OLuceneQueryContext queryContext, OContextualRecordId recordId, Document ret, ScoreDoc score) {
+  public void onRecordAddedToResultSet(OLuceneQueryContext queryContext, OContextualRecordId recordId, Document ret,
+      ScoreDoc score) {
     delegate.onRecordAddedToResultSet(queryContext, recordId, ret, score);
   }
 

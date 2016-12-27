@@ -8,6 +8,7 @@ import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
@@ -18,12 +19,16 @@ import java.util.List;
  */
 public class LuceneSpatialDropTest {
 
-  @Test
-  public void testDeleteLuceneIndex1() {
+  private int    insertcount;
+  private String dbName;
 
-    String dbName = "plocal:./playground/db/db.2.2.13";
+  @Before
+  public void setUp() throws Exception {
 
-    int INSERTCOUNT = 100; // @maggiolo00 set cont to 0 and the test will not fail anymore
+    dbName = "plocal:./target/databases/" + this.getClass().getSimpleName();
+
+    // @maggiolo00 set cont to 0 and the test will not fail anymore
+    insertcount = 100;
 
     ODatabaseDocumentTx db = new ODatabaseDocumentTx(dbName);
 
@@ -36,10 +41,15 @@ public class LuceneSpatialDropTest {
     db.command(new OCommandSQL("create index test.ll on test (latitude,longitude) SPATIAL ENGINE LUCENE")).execute();
     db.close();
 
+  }
+
+  @Test
+  public void testDeleteLuceneIndex1() {
+
     OPartitionedDatabasePool dbPool = new OPartitionedDatabasePool(dbName, "admin", "admin");
 
-    db = dbPool.acquire();
-    fillDb(db, INSERTCOUNT);
+    ODatabaseDocumentTx db = dbPool.acquire();
+    fillDb(db, insertcount);
     db.close();
 
     db = dbPool.acquire();
@@ -47,18 +57,17 @@ public class LuceneSpatialDropTest {
     OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(
         "select from test where [latitude,longitude] WITHIN [[50.0,8.0],[51.0,9.0]]");
     List<ODocument> result = db.command(query).execute();
-    Assert.assertEquals(INSERTCOUNT, result.size());
+    Assert.assertEquals(insertcount, result.size());
     db.close();
+    dbPool.close();
 
-    db = dbPool.acquire();
+    //reopen to drop
+    db = new ODatabaseDocumentTx(dbName).open("admin", "admin");
+
     db.drop();
-
-    File dbFolder = new File("./playground/db/db.2.2.13");
+    File dbFolder = new File(dbName);
     Assert.assertEquals(false, dbFolder.exists());
 
-    File dbFolderRoot = new File("./playground/db");
-    dbFolderRoot.delete();
-    Assert.assertEquals(false, dbFolderRoot.exists());
   }
 
   private void fillDb(ODatabaseDocumentTx db, int count) {
