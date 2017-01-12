@@ -3,6 +3,7 @@ package com.orientechnologies.spatial;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.Assert;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
@@ -28,8 +29,12 @@ public class GeometryCollectionTest extends BaseSpatialLuceneTest {
 				.command(new OCommandSQL(
 						"select * from Test where ST_WITHIN(geometry,'POLYGON ((0 0, 15 0, 15 15, 0 15, 0 0))') = true"))
 				.execute();
+		Assert.assertEquals(1, qResult.size());
 
 		db.command(new OCommandSQL("DELETE VERTEX Test")).execute();
+		
+		List<ODocument> qResult2 = db.command(new OCommandSQL("select * from Test")).execute();
+		Assert.assertEquals(0, qResult2.size());
 	}
 
 }
