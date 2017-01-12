@@ -28,6 +28,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 public class OShapeFactory extends OComplexShapeBuilder {
 
