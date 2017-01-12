@@ -189,7 +189,18 @@ public class OShapeFactory extends OComplexShapeBuilder {
   }
 
   public Geometry toGeometry(Shape shape) {
-    return SPATIAL_CONTEXT.getGeometryFrom(shape);
+	if(shape instanceof ShapeCollection){
+		ShapeCollection<Shape> shapes = (ShapeCollection<Shape>) shape;
+		Geometry[] geometries = new Geometry[shapes.size()];
+	    int i = 0;
+	    for (Shape shapeItem : shapes) {
+	      geometries[i] = SPATIAL_CONTEXT.getGeometryFrom(shapeItem);
+	      i++;
+	    }
+	    return GEOMETRY_FACTORY.createGeometryCollection(geometries);
+	} else {
+		return SPATIAL_CONTEXT.getGeometryFrom(shape);
+	}
   }
 
   public ODocument toDoc(Geometry geometry) {
@@ -197,6 +208,16 @@ public class OShapeFactory extends OComplexShapeBuilder {
       com.vividsolutions.jts.geom.Point point = (com.vividsolutions.jts.geom.Point) geometry;
       Point point1 = context().makePoint(point.getX(), point.getY());
       return toDoc(point1);
+    }
+    if(geometry instanceof com.vividsolutions.jts.geom.GeometryCollection){
+    	com.vividsolutions.jts.geom.GeometryCollection gc = (com.vividsolutions.jts.geom.GeometryCollection) geometry;
+    	List<Shape> shapes = new ArrayList<Shape>();
+    	for(int i = 0; i < gc.getNumGeometries(); i++){
+    		Geometry geo = gc.getGeometryN(i);
+    		Shape shape = SPATIAL_CONTEXT.makeShape(geo);
+    		shapes.add(shape);
+    	}
+    	return toDoc(new ShapeCollection<Shape>(shapes, SPATIAL_CONTEXT));
     }
     return toDoc(SPATIAL_CONTEXT.makeShape(geometry));
   }
