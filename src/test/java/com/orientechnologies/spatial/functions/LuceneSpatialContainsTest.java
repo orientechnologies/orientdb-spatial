@@ -87,4 +87,37 @@ public class LuceneSpatialContainsTest {
     }
   }
 
+  @Test
+  public void testContainsIndex_GeometryCollection() {
+
+    OrientGraphNoTx graph = new OrientGraphNoTx("memory:functionsTestWithIndex");
+    try {
+      ODatabaseDocumentTx db = graph.getRawGraph();
+
+      db.command(new OCommandSQL("create class Test extends v")).execute();
+		db.command(new OCommandSQL("create property Test.geometry EMBEDDED OGeometryCollection")).execute();
+
+		db.command(new OCommandSQL(
+				"insert into Test set geometry = {'@type':'d','@class':'OGeometryCollection','geometries':[{'@type':'d','@class':'OPolygon','coordinates':[[[0,0],[10,0],[10,10],[0,10],[0,0]]]}]}"))
+				.execute();
+		db.command(new OCommandSQL(
+				"insert into Test set geometry = {'@type':'d','@class':'OGeometryCollection','geometries':[{'@type':'d','@class':'OPolygon','coordinates':[[[11,11],[21,11],[21,21],[11,21],[11,11]]]}]}"))
+				.execute();
+
+		db.command(new OCommandSQL("create index Test.geometry on Test (geometry) SPATIAL engine lucene"))
+				.execute();
+
+		String testGeometry = "{'@type':'d','@class':'OGeometryCollection','geometries':[{'@type':'d','@class':'OPolygon','coordinates':[[[1,1],[2,1],[2,2],[1,2],[1,1]]]}]}";
+		List<ODocument> execute = db
+				.command(new OCommandSQL(
+						"SELECT from Test where ST_Contains(geometry, " + testGeometry + ") = true"))
+          .execute();
+
+      Assert.assertEquals(execute.size(), 1);
+
+    } finally {
+      graph.drop();
+    }
+  }
+
 }

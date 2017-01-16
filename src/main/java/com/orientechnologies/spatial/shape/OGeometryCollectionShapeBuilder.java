@@ -29,6 +29,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Enrico Risa on 17/08/15.
@@ -49,6 +50,13 @@ public class OGeometryCollectionShapeBuilder extends OComplexShapeBuilder<ShapeC
   @Override
   public OShapeType getType() {
     return OShapeType.GEOMETRYCOLLECTION;
+  }
+
+  @Override
+  public ShapeCollection<Shape> fromMapGeoJson(Map<String, Object> geoJsonMap) {
+    ODocument doc = new ODocument(getName());
+    doc.field("geometries", geoJsonMap.get("geometries"));
+    return fromDoc(doc);
   }
 
   @Override

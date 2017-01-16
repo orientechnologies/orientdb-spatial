@@ -51,12 +51,11 @@ import java.io.IOException;
  */
 public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngineAbstract implements OLuceneSpatialIndexContainer {
 
-  protected final OShapeBuilder     factory;
-  protected SpatialContext          ctx;
-  protected SpatialStrategy         strategy;
-
-  protected OSpatialStrategyFactory strategyFactory;
-  protected SpatialQueryBuilder     queryStrategy;
+  protected final OShapeBuilder           factory;
+  protected final SpatialContext          ctx;
+  protected final OSpatialStrategyFactory strategyFactory;
+  protected final SpatialQueryBuilder     queryStrategy;
+  protected       SpatialStrategy         strategy;
 
   public OLuceneSpatialIndexEngineAbstract(OStorage storage, String indexName, OShapeBuilder factory) {
     super(storage, indexName);
