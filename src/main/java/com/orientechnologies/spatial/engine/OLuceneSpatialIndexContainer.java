@@ -30,4 +30,6 @@ public interface OLuceneSpatialIndexContainer {
   IndexSearcher searcher() throws IOException;
 
   SpatialStrategy strategy();
+
+  boolean isLegacy();
 }
