@@ -123,4 +123,8 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
     }
   }
 
+  @Override
+  public boolean isLegacy() {
+    return false;
+  }
 }

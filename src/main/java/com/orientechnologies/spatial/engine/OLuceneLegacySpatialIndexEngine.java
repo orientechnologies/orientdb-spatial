@@ -151,8 +151,8 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
 
     Filter filter = strategy.makeFilter(args);
 
-    OLuceneQueryContext queryContext = new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter).setChanges(
-        changes);
+    OLuceneQueryContext queryContext = new SpatialQueryContext(context, searcher, new MatchAllDocsQuery(), filter)
+        .setChanges(changes);
     return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
 
   }
@@ -185,5 +185,10 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
   @Override
   public Document buildDocument(Object key, OIdentifiable value) {
     return newGeoDocument(value, legacyBuilder.makeShape((OCompositeKey) key, ctx));
+  }
+
+  @Override
+  public boolean isLegacy() {
+    return true;
   }
 }
