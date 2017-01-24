@@ -18,7 +18,7 @@
 package com.orientechnologies.spatial.engine;
 
 import com.orientechnologies.common.log.OLogManager;
-import com.orientechnologies.lucene.OLuceneIndexType;
+import com.orientechnologies.lucene.builder.OLuceneIndexType;
 import com.orientechnologies.lucene.engine.OLuceneIndexEngineAbstract;
 import com.orientechnologies.lucene.engine.OLuceneIndexWriterFactory;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;

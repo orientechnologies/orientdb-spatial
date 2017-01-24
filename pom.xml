@@ -198,12 +198,6 @@
             <version>${orientdb.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.orientechnologies</groupId>
-            <artifactId>orientdb-graphdb</artifactId>
-            <version>${orientdb.version}</version>
-            <scope>provided</scope>
-        </dependency>
 
         <dependency>
             <groupId>com.google.code.gson</groupId>

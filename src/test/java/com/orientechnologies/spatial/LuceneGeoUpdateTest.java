@@ -17,43 +17,33 @@
  */
 package com.orientechnologies.spatial;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
-import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * Created by Enrico Risa on 26/09/15.
  */
-public class LuceneGeoUpdateTest {
+public class LuceneGeoUpdateTest extends BaseSpatialLuceneTest {
 
   @Test
   public void testUpdate() {
 
-    OrientGraphNoTx graph = new OrientGraphNoTx("memory:doubleLucene");
-    try {
-      ODatabaseDocumentTx db = graph.getRawGraph();
+    db.command(new OCommandSQL("create class City extends V")).execute();
 
-      db.command(new OCommandSQL("create class City extends V")).execute();
+    db.command(new OCommandSQL("create property City.location embedded OPoint")).execute();
 
-      db.command(new OCommandSQL("create property City.location embedded OPoint")).execute();
+    db.command(new OCommandSQL("CREATE INDEX City.location ON City(location) SPATIAL ENGINE LUCENE")).execute();
+    db.command(
+        new OCommandSQL("insert into City set name = 'Test' , location = ST_GeomFromText('POINT(-160.2075374 21.9029803)')"))
+        .execute();
 
-      db.command(new OCommandSQL("CREATE INDEX City.location ON City(location) SPATIAL ENGINE LUCENE")).execute();
-      db.command(
-          new OCommandSQL("insert into City set name = 'Test' , location = ST_GeomFromText('POINT(-160.2075374 21.9029803)')"))
-          .execute();
+    OIndex<?> index = db.getMetadata().getIndexManager().getIndex("City.location");
 
-      OIndex<?> index = db.getMetadata().getIndexManager().getIndex("City.location");
+    db.command(new OCommandSQL("update City set name = 'Test' , location = ST_GeomFromText('POINT(12.5 41.9)')")).execute();
 
-      db.command(new OCommandSQL("update City set name = 'Test' , location = ST_GeomFromText('POINT(12.5 41.9)')")).execute();
-
-      Assert.assertEquals(index.getSize(), 1);
-
-    } finally {
-      graph.drop();
-    }
+    Assert.assertEquals(index.getSize(), 1);
 
   }
 
