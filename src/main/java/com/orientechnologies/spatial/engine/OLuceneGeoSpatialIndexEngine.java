@@ -121,4 +121,9 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
     ODocument location = ((OIdentifiable) key).getRecord();
     return newGeoDocument(value, factory.fromDoc(location));
   }
+
+  @Override
+  public boolean isLegacy() {
+    return false;
+  }
 }

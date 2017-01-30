@@ -121,6 +121,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
     OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, query).setChanges(changes);
+
     return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
 
   }
@@ -185,5 +186,10 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
   @Override
   protected SpatialStrategy createSpatialStrategy(OIndexDefinition indexDefinition, ODocument metadata) {
     return new RecursivePrefixTreeStrategy(new GeohashPrefixTree(ctx, 11), "location");
+  }
+
+  @Override
+  public boolean isLegacy() {
+    return true;
   }
 }

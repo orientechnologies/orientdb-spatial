@@ -17,10 +17,9 @@
  */
 package com.orientechnologies.spatial.functions;
 
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
-import com.tinkerpop.blueprints.impls.orient.OrientGraphNoTx;
+import com.orientechnologies.spatial.BaseSpatialLuceneTest;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,59 +28,45 @@ import java.util.List;
 /**
  * Created by Enrico Risa on 28/09/15.
  */
-public class LuceneSpatialWithinTest {
+public class LuceneSpatialWithinTest extends BaseSpatialLuceneTest {
 
   @Test
   public void testWithinNoIndex() {
 
-    OrientGraphNoTx graph = new OrientGraphNoTx("memory:functionsTest");
-    try {
-      ODatabaseDocumentTx db = graph.getRawGraph();
+    List<ODocument> execute = db.command(new OCommandSQL(
+        "select ST_Within(smallc,smallc) as smallinsmall,ST_Within(smallc, bigc) As smallinbig, ST_Within(bigc,smallc) As biginsmall "
+            + "from (SELECT ST_Buffer(ST_GeomFromText('POINT(50 50)'), 20) As smallc,ST_Buffer(ST_GeomFromText('POINT(50 50)'), 40) As bigc)"))
+        .execute();
+    ODocument next = execute.iterator().next();
 
-      List<ODocument> execute = db.command(new OCommandSQL(
-          "select ST_Within(smallc,smallc) as smallinsmall,ST_Within(smallc, bigc) As smallinbig, ST_Within(bigc,smallc) As biginsmall "
-              + "from (SELECT ST_Buffer(ST_GeomFromText('POINT(50 50)'), 20) As smallc,ST_Buffer(ST_GeomFromText('POINT(50 50)'), 40) As bigc)"))
-          .execute();
-      ODocument next = execute.iterator().next();
+    Assert.assertEquals(next.field("smallinsmall"), false);
+    Assert.assertEquals(next.field("smallinbig"), true);
+    Assert.assertEquals(next.field("biginsmall"), false);
 
-      Assert.assertEquals(next.field("smallinsmall"), false);
-      Assert.assertEquals(next.field("smallinbig"), true);
-      Assert.assertEquals(next.field("biginsmall"), false);
-
-    } finally {
-      graph.drop();
-    }
   }
 
   @Test
   public void testWithinIndex() {
 
-    OrientGraphNoTx graph = new OrientGraphNoTx("memory:functionsTest");
-    try {
-      ODatabaseDocumentTx db = graph.getRawGraph();
+    db.command(new OCommandSQL("create class Polygon extends v")).execute();
+    db.command(new OCommandSQL("create property Polygon.geometry EMBEDDED OPolygon")).execute();
 
-      db.command(new OCommandSQL("create class Polygon extends v")).execute();
-      db.command(new OCommandSQL("create property Polygon.geometry EMBEDDED OPolygon")).execute();
+    db.command(new OCommandSQL("insert into Polygon set geometry = ST_Buffer(ST_GeomFromText('POINT(50 50)'), 20)")).execute();
+    db.command(new OCommandSQL("insert into Polygon set geometry = ST_Buffer(ST_GeomFromText('POINT(50 50)'), 40)")).execute();
 
-      db.command(new OCommandSQL("insert into Polygon set geometry = ST_Buffer(ST_GeomFromText('POINT(50 50)'), 20)")).execute();
-      db.command(new OCommandSQL("insert into Polygon set geometry = ST_Buffer(ST_GeomFromText('POINT(50 50)'), 40)")).execute();
+    db.command(new OCommandSQL("create index Polygon.g on Polygon (geometry) SPATIAL engine lucene")).execute();
+    List<ODocument> execute = db.command(
+        new OCommandSQL("SELECT from Polygon where ST_Within(geometry, ST_Buffer(ST_GeomFromText('POINT(50 50)'), 50)) = true"))
+        .execute();
 
-      db.command(new OCommandSQL("create index Polygon.g on Polygon (geometry) SPATIAL engine lucene")).execute();
-      List<ODocument> execute = db.command(
-          new OCommandSQL("SELECT from Polygon where ST_Within(geometry, ST_Buffer(ST_GeomFromText('POINT(50 50)'), 50)) = true"))
-          .execute();
+    Assert.assertEquals(execute.size(), 2);
 
-      Assert.assertEquals(execute.size(), 2);
+    execute = db.command(
+        new OCommandSQL("SELECT from Polygon where ST_Within(geometry, ST_Buffer(ST_GeomFromText('POINT(50 50)'), 30)) = true"))
+        .execute();
 
-      execute = db.command(
-          new OCommandSQL("SELECT from Polygon where ST_Within(geometry, ST_Buffer(ST_GeomFromText('POINT(50 50)'), 30)) = true"))
-          .execute();
+    Assert.assertEquals(execute.size(), 1);
 
-      Assert.assertEquals(execute.size(), 1);
-
-    } finally {
-      graph.drop();
-    }
   }
 
 }

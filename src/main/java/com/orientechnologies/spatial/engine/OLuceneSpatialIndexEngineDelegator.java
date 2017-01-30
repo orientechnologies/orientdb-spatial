@@ -36,6 +36,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.spatial.SpatialStrategy;
 
 import java.io.IOException;
 import java.util.Map;
@@ -44,13 +45,13 @@ import java.util.Set;
 /**
  * Created by Enrico Risa on 04/09/15.
  */
-public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine {
+public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine , OLuceneSpatialIndexContainer {
 
   private final Boolean            durableInNonTxMode;
   private final OStorage           storage;
   private final int                version;
   private final String             indexName;
-  private       OLuceneIndexEngine delegate;
+  private       OLuceneSpatialIndexEngineAbstract delegate;
 
   public OLuceneSpatialIndexEngineDelegator(String name, Boolean durableInNonTxMode, OStorage storage, int version) {
 
@@ -249,6 +250,16 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine {
   }
 
   @Override
+  public SpatialStrategy strategy() {
+    return delegate.strategy();
+  }
+
+  @Override
+  public boolean isLegacy() {
+    return delegate.isLegacy();
+  }
+
+  @Override
   public Object getInTx(Object key, OLuceneTxChanges changes) {
     return delegate.getInTx(key, changes);
   }
@@ -286,5 +297,8 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine {
   @Override
   public String getIndexNameByKey(Object key) {
     return delegate.getIndexNameByKey(key);
+  }
+  public OLuceneIndexEngine getDelegate() {
+    return delegate;
   }
 }
