@@ -92,5 +92,5 @@ public class LuceneSpatialContainsTest extends BaseSpatialLuceneTest {
     Assert.assertEquals(1, execute.size());
 
   }
-  
+
 }
