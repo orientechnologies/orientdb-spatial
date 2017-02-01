@@ -216,7 +216,13 @@ public class OShapeFactory extends OComplexShapeBuilder {
     	List<Shape> shapes = new ArrayList<Shape>();
     	for(int i = 0; i < gc.getNumGeometries(); i++){
     		Geometry geo = gc.getGeometryN(i);
-    		Shape shape = SPATIAL_CONTEXT.makeShape(geo);
+    		Shape shape = null;
+    		if (geo instanceof com.vividsolutions.jts.geom.Point) {
+				com.vividsolutions.jts.geom.Point point = (com.vividsolutions.jts.geom.Point) geo;
+				shape = context().makePoint(point.getX(), point.getY());
+			} else {
+				shape = SPATIAL_CONTEXT.makeShape(geo);
+			}
     		shapes.add(shape);
     	}
     	return toDoc(new ShapeCollection<Shape>(shapes, SPATIAL_CONTEXT));
