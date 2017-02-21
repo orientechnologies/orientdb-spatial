@@ -1,12 +1,11 @@
 package com.orientechnologies.spatial;
 
-import java.util.List;
-
-import org.junit.Test;
-import org.junit.Assert;
-
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.List;
 
 public class GeometryCollectionTest extends BaseSpatialLuceneTest {
 

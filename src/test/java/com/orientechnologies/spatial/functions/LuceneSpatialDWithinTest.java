@@ -19,6 +19,8 @@ package com.orientechnologies.spatial.functions;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.core.sql.executor.OResultSet;
+import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import com.orientechnologies.spatial.BaseSpatialLuceneTest;
 import org.junit.Assert;
 import org.junit.Test;
@@ -56,12 +58,19 @@ public class LuceneSpatialDWithinTest extends BaseSpatialLuceneTest {
         .execute();
 
     db.command(new OCommandSQL("create index Polygon.g on Polygon (geometry) SPATIAL engine lucene")).execute();
-    List<ODocument> execute = db.command(new OCommandSQL(
-        "SELECT from Polygon where ST_DWithin(geometry, ST_GeomFromText('POLYGON((12 0, 14 0, 14 6, 12 6, 12 0))'), 2.0) = true"))
-        .execute();
+
+    List<ODocument> execute = db.query(new OSQLSynchQuery<ODocument>(
+        "SELECT from Polygon where ST_DWithin(geometry, ST_GeomFromText('POLYGON((12 0, 14 0, 14 6, 12 6, 12 0))'), 2.0) = true"));
 
     Assert.assertEquals(1, execute.size());
 
+    OResultSet resultSet = db.query(
+        "SELECT from Polygon where ST_DWithin(geometry, ST_GeomFromText('POLYGON((12 0, 14 0, 14 6, 12 6, 12 0))'), 2.0) = true");
+
+//    Assert.assertEquals(1, resultSet.estimateSize());
+
+    resultSet.stream().forEach(r -> System.out.println("r = " + r));
+    resultSet.close();
   }
 
 }
