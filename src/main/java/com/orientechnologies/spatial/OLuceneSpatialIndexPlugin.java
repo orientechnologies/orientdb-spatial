@@ -112,14 +112,23 @@ public class OLuceneSpatialIndexPlugin extends OServerPluginAbstract implements 
   }
 
   @Override
-  public void onDrop(final ODatabaseInternal iDatabase) {
-    OLogManager.instance().info(this, "Dropping spatial indexes...");
-    for (OIndex idx : iDatabase.getMetadata().getIndexManager().getIndexes()) {
-      if (idx.getInternal() instanceof OLuceneSpatialIndex) {
-        OLogManager.instance().info(this, "- index '%s'", idx.getName());
-        idx.delete();
+  public void onDrop(final ODatabaseInternal db) {
+    try {
+      if (db.isClosed())
+        return;
+
+      OLogManager.instance().debug(this, "Dropping spatial indexes...");
+      for (OIndex idx : db.getMetadata().getIndexManager().getIndexes()) {
+
+        if (idx.getInternal() instanceof OLuceneSpatialIndex) {
+          OLogManager.instance().debug(this, "- index '%s'", idx.getName());
+          idx.delete();
+        }
       }
+    } catch (Exception e) {
+      OLogManager.instance().warn(this, "Error on dropping spatial indexes", e);
     }
+
   }
 
   @Override

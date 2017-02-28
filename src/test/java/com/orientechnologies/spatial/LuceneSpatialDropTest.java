@@ -1,5 +1,6 @@
 package com.orientechnologies.spatial;
 
+import com.orientechnologies.common.io.OFileUtils;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
@@ -7,6 +8,7 @@ import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,13 +35,19 @@ public class LuceneSpatialDropTest {
     ODatabaseDocumentTx db = new ODatabaseDocumentTx(dbName);
 
     db.create();
-    OClass test = db.getMetadata().getSchema().createClass("test");
+    OClass test = db.getMetadata().getSchema().createClass("Person");
     test.createProperty("name", OType.STRING);
     test.createProperty("latitude", OType.DOUBLE).setMandatory(false);
     test.createProperty("longitude", OType.DOUBLE).setMandatory(false);
-    db.command(new OCommandSQL("create index test.name on test (name) FULLTEXT ENGINE LUCENE")).execute();
-    db.command(new OCommandSQL("create index test.ll on test (latitude,longitude) SPATIAL ENGINE LUCENE")).execute();
+    db.command(new OCommandSQL("create index Person.aaa on Person (latitude,longitude) SPATIAL ENGINE LUCENE")).execute();
+    db.command(new OCommandSQL("create index Person.name on Person (name) FULLTEXT ENGINE LUCENE")).execute();
     db.close();
+
+  }
+
+  @After
+  public void tearDown() throws Exception {
+    OFileUtils.deleteRecursively(new File(dbName));
 
   }
 
@@ -55,11 +63,11 @@ public class LuceneSpatialDropTest {
     db = dbPool.acquire();
     // @maggiolo00 Remove the next three lines and the test will not fail anymore
     OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>(
-        "select from test where [latitude,longitude] WITHIN [[50.0,8.0],[51.0,9.0]]");
+        "select from Person where [latitude,longitude] WITHIN [[50.0,8.0],[51.0,9.0]]");
     List<ODocument> result = db.command(query).execute();
     Assert.assertEquals(insertcount, result.size());
     db.close();
-    dbPool.close();
+    dbPool.onShutdown();
 
     //reopen to drop
     db = new ODatabaseDocumentTx(dbName).open("admin", "admin");
@@ -67,19 +75,20 @@ public class LuceneSpatialDropTest {
     db.drop();
 
     File dbFolder = new File("./target/databases/" + this.getClass().getSimpleName());
+
     Assert.assertEquals(false, dbFolder.exists());
 
   }
 
   private void fillDb(ODatabaseDocumentTx db, int count) {
     for (int i = 0; i < count; i++) {
-      ODocument doc = new ODocument("test");
+      ODocument doc = new ODocument("Person");
       doc.field("name", "Test" + i);
       doc.field("latitude", 50.0 + (i * 0.000001));
       doc.field("longitude", 8.0 + (i * 0.000001));
       db.save(doc);
     }
-    OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>("select * from test");
+    OSQLSynchQuery<ODocument> query = new OSQLSynchQuery<ODocument>("select * from Person");
     List<ODocument> result = db.command(query).execute();
     Assert.assertEquals(count, result.size());
   }

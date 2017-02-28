@@ -92,7 +92,8 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine , O
 
   @Override
   public void delete() {
-    delegate.delete();
+    if (delegate != null)
+      delegate.delete();
   }
 
   @Override
@@ -300,6 +301,11 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine , O
   @Override
   public void release() {
     delegate.release();
+  }
+
+  @Override
+  public boolean isFrozen() {
+    return false;
   }
 
   public OLuceneIndexEngine getDelegate() {

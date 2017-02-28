@@ -92,11 +92,11 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
 
   @Override
   public OIndexInternal<?> createIndex(String name, ODatabaseDocumentInternal database, String indexType, String algorithm,
-                                       String valueContainerAlgorithm, ODocument metadata, int version)
+      String valueContainerAlgorithm, ODocument metadata, int version)
       throws OConfigurationException {
 
     OAbstractPaginatedStorage storage = (OAbstractPaginatedStorage) database.getStorage()
-                                                                            .getUnderlying();
+        .getUnderlying();
 
     OBinarySerializer<?> objectSerializer = storage.getComponentsFactory().binarySerializerFactory
         .getObjectSerializer(OLuceneMockSpatialSerializer.INSTANCE.getId());
@@ -110,7 +110,7 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
       metadata = new ODocument().field("analyzer", StandardAnalyzer.class.getName());
 
     if (OClass.INDEX_TYPE.SPATIAL.toString()
-                                 .equals(indexType)) {
+        .equals(indexType)) {
 
       return new OLuceneSpatialIndex(name, indexType, LUCENE_ALGORITHM, version, storage, valueContainerAlgorithm, metadata);
     }
@@ -119,7 +119,7 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
 
   @Override
   public OIndexEngine createIndexEngine(String algorithm, String name, Boolean durableInNonTxMode, OStorage storage, int version,
-                                        Map<String, String> engineProperties) {
+      Map<String, String> engineProperties) {
 
     return new OLuceneSpatialIndexEngineDelegate(name, durableInNonTxMode, storage, version);
 
@@ -146,10 +146,13 @@ public class OLuceneSpatialIndexFactory implements OIndexFactory, ODatabaseLifec
   }
 
   @Override
-  public void onDrop(final ODatabaseInternal iDatabase) {
+  public void onDrop(final ODatabaseInternal db) {
     try {
+      if (db.isClosed())
+        return;
+
       OLogManager.instance().debug(this, "Dropping spatial indexes...");
-      for (OIndex idx : iDatabase.getMetadata().getIndexManager().getIndexes()) {
+      for (OIndex idx : db.getMetadata().getIndexManager().getIndexes()) {
 
         if (idx.getInternal() instanceof OLuceneSpatialIndex) {
           OLogManager.instance().debug(this, "- index '%s'", idx.getName());
