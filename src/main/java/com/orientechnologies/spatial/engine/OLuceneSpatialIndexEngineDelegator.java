@@ -290,6 +290,11 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine , 
   }
 
   @Override
+  public boolean isFrozen() {
+    return false;
+  }
+
+  @Override
   public boolean acquireAtomicExclusiveLock(Object key) {
     return true; // do nothing
   }
