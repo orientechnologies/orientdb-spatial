@@ -20,7 +20,9 @@ package com.orientechnologies.spatial;
 
 import com.orientechnologies.common.io.OIOUtils;
 import com.orientechnologies.orient.core.command.OCommandOutputListener;
-import com.orientechnologies.orient.core.db.document.ODatabaseDocumentTx;
+import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
+import com.orientechnologies.orient.core.db.ODatabaseType;
+import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.tool.ODatabaseImport;
 import com.orientechnologies.orient.core.index.OIndex;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
@@ -32,7 +34,6 @@ import com.orientechnologies.orient.server.config.OServerParameterConfiguration;
 import com.orientechnologies.orient.server.handler.OAutomaticBackup;
 import org.junit.*;
 import org.junit.rules.TemporaryFolder;
-import org.junit.rules.TestName;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -49,67 +50,60 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class LuceneSpatialAutomaticBackupRestoreTest {
 
+  private final static String          DBNAME     = "OLuceneAutomaticBackupRestoreTest";
   @Rule
-  public TemporaryFolder tempFolder = new TemporaryFolder();
-
-  @Rule
-  public TestName name = new TestName();
-
+  public               TemporaryFolder tempFolder = new TemporaryFolder();
+  private OrientDB orientDB;
   private String URL       = null;
   private String BACKUPDIR = null;
   private String BACKUFILE = null;
 
-  private OServer             server;
-  private ODatabaseDocumentTx databaseDocumentTx;
+  private OServer                   server;
+  private ODatabaseDocumentInternal db;
 
   @Before
   public void setUp() throws Exception {
-
-    System.setProperty("ORIENTDB_HOME", tempFolder.getRoot().getAbsolutePath());
-
-    URL = "plocal:" + tempFolder.getRoot().getAbsolutePath() + File.separator + "databases" + File.separator + name.getMethodName();
-
-    BACKUPDIR = tempFolder.getRoot().getAbsolutePath() + File.separator + "backups";
-
-    BACKUFILE = BACKUPDIR + File.separator + name.getMethodName();
-
-    tempFolder.newFolder("config");
 
     server = new OServer() {
       @Override
       public Map<String, String> getAvailableStorageNames() {
         HashMap<String, String> result = new HashMap<String, String>();
-        result.put(name.getMethodName(), URL);
+        result.put(DBNAME, URL);
         return result;
       }
     };
-
     server.startup();
 
-    databaseDocumentTx = new ODatabaseDocumentTx(URL);
+    System.setProperty("ORIENTDB_HOME", tempFolder.getRoot().getAbsolutePath());
+
+    String path = tempFolder.getRoot().getAbsolutePath() + File.separator + "databases";
+    orientDB = server.getContext();
+
+    URL = "plocal:" + path + File.separator + DBNAME;
+
+    BACKUPDIR = tempFolder.getRoot().getAbsolutePath() + File.separator + "backups";
+
+    BACKUFILE = BACKUPDIR + File.separator + DBNAME;
+
+    tempFolder.newFolder("config");
 
     dropIfExists();
 
-    databaseDocumentTx.create();
+    orientDB.create(DBNAME, ODatabaseType.PLOCAL);
 
-    databaseDocumentTx.command(new OCommandSQL("create class City ")).execute();
+    db = (ODatabaseDocumentInternal) orientDB.open(DBNAME, "admin", "admin");
 
-    databaseDocumentTx.command(new OCommandSQL("create property City.name string")).execute();
-    databaseDocumentTx.command(new OCommandSQL("create property City.location EMBEDDED OPOINT")).execute();
+    db.command(new OCommandSQL("create class City ")).execute();
+    db.command(new OCommandSQL("create property City.name string")).execute();
+    db.command(new OCommandSQL("create index City.name on City (name) FULLTEXT ENGINE LUCENE")).execute();
 
-    databaseDocumentTx.command(new OCommandSQL("CREATE INDEX City.location ON City(location) SPATIAL ENGINE LUCENE")).execute();
+    db.command(new OCommandSQL("create property City.location EMBEDDED OPOINT")).execute();
+
+    db.command(new OCommandSQL("CREATE INDEX City.location ON City(location) SPATIAL ENGINE LUCENE")).execute();
 
     ODocument rome = newCity("Rome", 12.5, 41.9);
 
-    databaseDocumentTx.save(rome);
-  }
-
-  private void dropIfExists() {
-    if (databaseDocumentTx.exists()) {
-      if (databaseDocumentTx.isClosed())
-        databaseDocumentTx.open("admin", "admin");
-      databaseDocumentTx.drop();
-    }
+    db.save(rome);
   }
 
   protected ODocument newCity(String name, final Double longitude, final Double latitude) {
@@ -122,6 +116,13 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
           }
         }));
     return city;
+  }
+
+  private void dropIfExists() {
+
+    if (orientDB.exists(DBNAME)) {
+      orientDB.drop(DBNAME);
+    }
   }
 
   @After
@@ -138,7 +139,7 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
     String query =
         "select * from City where  ST_WITHIN(location,'POLYGON ((12.314015 41.8262816, 12.314015 41.963125, 12.6605063 41.963125, 12.6605063 41.8262816, 12.314015 41.8262816))')"
             + " = true";
-    List<?> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+    List<?> docs = db.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(docs.size(), 1);
 
@@ -149,7 +150,7 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
         .field("enabled", true)
         .field("targetFileName", "${DBNAME}.zip")
         .field("targetDirectory", BACKUPDIR)
-        .field("dbInclude", new String[] { name.getMethodName() })
+        .field("dbInclude", new String[] { DBNAME })
         .field("firstTime", new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis() + 2000)));
 
     OIOUtils.writeFile(new File(tempFolder.getRoot().getAbsolutePath() + "/config/automatic-backup.json"), doc.toJSON());
@@ -182,27 +183,27 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
     aBackup.sendShutdown();
 
     // RESTORE
-    databaseDocumentTx.drop();
+    dropIfExists();
 
-    databaseDocumentTx.create();
+    db = createAndOpen();
 
     FileInputStream stream = new FileInputStream(new File(BACKUFILE + ".zip"));
 
-    databaseDocumentTx.restore(stream, null, null, null);
+    db.restore(stream, null, null, null);
 
-    databaseDocumentTx.close();
+    db.close();
 
     // VERIFY
-    databaseDocumentTx.open("admin", "admin");
+    db = open();
 
-    assertThat(databaseDocumentTx.countClass("City")).isEqualTo(1);
+    assertThat(db.countClass("City")).isEqualTo(1);
 
-    OIndex<?> index = databaseDocumentTx.getMetadata().getIndexManager().getIndex("City.location");
+    OIndex<?> index = db.getMetadata().getIndexManager().getIndex("City.location");
 
     assertThat(index).isNotNull();
     assertThat(index.getType()).isEqualTo(OClass.INDEX_TYPE.SPATIAL.name());
 
-    assertThat(databaseDocumentTx.<List>query(new OSQLSynchQuery<Object>(query))).hasSize(1);
+    assertThat(db.<List>query(new OSQLSynchQuery<Object>(query))).hasSize(1);
   }
 
   @Test
@@ -211,7 +212,7 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
     String query =
         "select * from City where  ST_WITHIN(location,'POLYGON ((12.314015 41.8262816, 12.314015 41.963125, 12.6605063 41.963125, 12.6605063 41.8262816, 12.314015 41.8262816))')"
             + " = true";
-    List<?> docs = databaseDocumentTx.query(new OSQLSynchQuery<ODocument>(query));
+    List<?> docs = db.query(new OSQLSynchQuery<ODocument>(query));
 
     Assert.assertEquals(docs.size(), 1);
 
@@ -222,7 +223,7 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
         .field("enabled", true)
         .field("targetFileName", "${DBNAME}.json")
         .field("targetDirectory", BACKUPDIR).field("mode", "EXPORT")
-        .field("dbInclude", new String[] { name.getMethodName() })
+        .field("dbInclude", new String[] { DBNAME })
         .field("firstTime", new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis() + 2000)));
 
     OIOUtils.writeFile(new File(tempFolder.getRoot().getAbsolutePath() + "/config/automatic-backup.json"), doc.toJSON());
@@ -242,37 +243,47 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
 
       @Override
       public void onBackupError(String database, Exception e) {
-
+        latch.countDown();
       }
     });
     latch.await();
     aBackup.sendShutdown();
 
-    // RESTORE
-    databaseDocumentTx.drop();
+    db.close();
 
-    databaseDocumentTx.create();
+    dropIfExists();
+    // RESTORE
+
+    db = createAndOpen();
 
     GZIPInputStream stream = new GZIPInputStream(new FileInputStream(BACKUFILE + ".json.gz"));
-    new ODatabaseImport(databaseDocumentTx, stream, new OCommandOutputListener() {
+    new ODatabaseImport(db, stream, new OCommandOutputListener() {
       @Override
       public void onMessage(String s) {
       }
     }).importDatabase();
 
-    databaseDocumentTx.close();
+    db.close();
 
     // VERIFY
-    databaseDocumentTx.open("admin", "admin");
+    db = open();
 
-    assertThat(databaseDocumentTx.countClass("City")).isEqualTo(1);
+    assertThat(db.countClass("City")).isEqualTo(1);
 
-    OIndex<?> index = databaseDocumentTx.getMetadata().getIndexManager().getIndex("City.location");
+    OIndex<?> index = db.getMetadata().getIndexManager().getIndex("City.location");
 
     assertThat(index).isNotNull();
     assertThat(index.getType()).isEqualTo(OClass.INDEX_TYPE.SPATIAL.name());
 
-    assertThat(databaseDocumentTx.<List>query(new OSQLSynchQuery<Object>(query))).hasSize(1);
+    assertThat(db.<List>query(new OSQLSynchQuery<Object>(query))).hasSize(1);
   }
 
+  private ODatabaseDocumentInternal createAndOpen() {
+    orientDB.create(DBNAME, ODatabaseType.PLOCAL);
+    return open();
+  }
+
+  private ODatabaseDocumentInternal open() {
+    return (ODatabaseDocumentInternal) orientDB.open(DBNAME, "admin", "admin");
+  }
 }
