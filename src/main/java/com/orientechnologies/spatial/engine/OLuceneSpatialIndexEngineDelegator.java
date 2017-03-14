@@ -70,10 +70,10 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine , 
         } else {
           delegate = new OLuceneGeoSpatialIndexEngine(storage, indexName, OShapeFactory.INSTANCE);
         }
-
+      }
         delegate.init(indexName, indexType, indexDefinition, isAutomatic, metadata);
       }
-    }
+
   }
 
   @Override
@@ -90,6 +90,7 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine , 
 
   @Override
   public void delete() {
+    if (delegate != null)
     delegate.delete();
   }
 

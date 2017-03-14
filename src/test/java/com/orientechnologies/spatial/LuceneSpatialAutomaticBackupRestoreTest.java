@@ -128,7 +128,7 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
   public void tearDown() throws Exception {
     dropIfExists();
 
-//    tempFolder.delete();
+    tempFolder.delete();
 
   }
 
@@ -144,8 +144,12 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
 
     String jsonConfig = OIOUtils.readStreamAsString(getClass().getClassLoader().getResourceAsStream("automatic-backup.json"));
 
-    ODocument doc = new ODocument().fromJSON(jsonConfig).field("enabled", true).field("targetFileName", "${DBNAME}.zip")
-        .field("targetDirectory", BACKUPDIR).field("dbInclude", new String[] { name.getMethodName() })
+    ODocument doc = new ODocument()
+        .fromJSON(jsonConfig)
+        .field("enabled", true)
+        .field("targetFileName", "${DBNAME}.zip")
+        .field("targetDirectory", BACKUPDIR)
+        .field("dbInclude", new String[] { name.getMethodName() })
         .field("firstTime", new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis() + 2000)));
 
     OIOUtils.writeFile(new File(tempFolder.getRoot().getAbsolutePath() + "/config/automatic-backup.json"), doc.toJSON());
@@ -213,7 +217,10 @@ public class LuceneSpatialAutomaticBackupRestoreTest {
 
     String jsonConfig = OIOUtils.readStreamAsString(getClass().getClassLoader().getResourceAsStream("automatic-backup.json"));
 
-    ODocument doc = new ODocument().fromJSON(jsonConfig).field("enabled", true).field("targetFileName", "${DBNAME}.json")
+    ODocument doc = new ODocument()
+        .fromJSON(jsonConfig)
+        .field("enabled", true)
+        .field("targetFileName", "${DBNAME}.json")
         .field("targetDirectory", BACKUPDIR).field("mode", "EXPORT")
         .field("dbInclude", new String[] { name.getMethodName() })
         .field("firstTime", new SimpleDateFormat("HH:mm:ss").format(new Date(System.currentTimeMillis() + 2000)));

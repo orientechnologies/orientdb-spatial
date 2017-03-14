@@ -92,7 +92,6 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
       }
       indexes.add(oIndex.getName());
       OLuceneAbstractResultSet resultSet = (OLuceneAbstractResultSet) oIndex.get(queryParams);
-      System.out.println("resultSet.size() = " + resultSet.size());
       return resultSet;
     }
     return null;
