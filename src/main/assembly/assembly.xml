@@ -11,9 +11,10 @@
             <includes>
                 <include>${groupId}:${artifactId}</include>
                 <include>org.apache.lucene:lucene-spatial</include>
+                <include>org.apache.lucene:lucene-spatial-extras</include>
                 <include>org.apache.lucene:lucene-spatial3d</include>
-                <include>org.locationtech.spatial4j:*</include>
-                <include>com.vividsolutions:*</include>
+                <include>org.locationtech.spatial4j:spatial4j</include>
+                <include>com.vividsolutions:jts</include>
             </includes>
 
         </dependencySet>
