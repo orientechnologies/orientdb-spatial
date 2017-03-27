@@ -116,7 +116,8 @@
                                 <argument>-classpath</argument>
                                 <classpath/>
                                 <argument>com.orientechnologies.orient.console.OConsoleDatabaseApp</argument>
-                                <argument>./src/test/resources/locationData.osql</argument>
+                                <argument>CONNECT plocal:./target/orientdb-community-${project.parent.version}/databases/demodb admin admin;</argument>
+                                <argument>LOAD SCRIPT ./src/test/resources/locationData.osql</argument>
                             </arguments>
                         </configuration>
                     </execution>

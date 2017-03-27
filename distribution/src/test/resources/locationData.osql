@@ -1,6 +1,6 @@
 # SQL to add spatial data to the SocialTravelAgency DemoDB - Generated on: Wed Mar 15 12:31:40 CET 2017
 
-CONNECT  plocal:./target/orientdb-community-3.0.0-SNAPSHOT/databases/demodb admin admin
+#CONNECT  plocal:./target/orientdb-community-3.0.0-SNAPSHOT/databases/demodb admin admin
 
 SET echo FALSE
 SET verbose 0
