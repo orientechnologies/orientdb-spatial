@@ -13,7 +13,7 @@ node("master") {
             try {
 
                 sh "${mvnHome}/bin/mvn  --batch-mode -V -U  clean deploy -Dmaven.test.failure.ignore=true -Dsurefire.useFile=false"
-                sh "${mvnHome}/bin/mvn  -f distribution/pom.xml--batch-mode -V -U  clean install -Pqa"
+                sh "${mvnHome}/bin/mvn  -f ./distribution/pom.xml --batch-mode  clean install -Pqa"
 
 
                 if (currentBuild.previousBuild == null || currentBuild.previousBuild.result != currentBuild.result) {
