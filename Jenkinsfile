@@ -13,6 +13,8 @@ node("master") {
             try {
 
                 sh "${mvnHome}/bin/mvn  --batch-mode -V -U  clean deploy -Dmaven.test.failure.ignore=true -Dsurefire.useFile=false"
+                sh "${mvnHome}/bin/mvn  -f distribution/pom.xml--batch-mode -V -U  clean install -Pqa"
+
 
                 if (currentBuild.previousBuild == null || currentBuild.previousBuild.result != currentBuild.result) {
                     slackSend(color: '#00FF00', message: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
@@ -25,7 +27,9 @@ node("master") {
                 }
                 throw e;
             } finally {
-                step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
+                junit allowEmptyResults: true, testResults: '**/target/surefire-reports/TEST-*.xml'
+
+                junit allowEmptyResults: true, testResults: '**/target/failsafe-reports/TEST-*.xml'
             }
         }
     }
