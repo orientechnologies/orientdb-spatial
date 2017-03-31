@@ -63,13 +63,6 @@ public class OSTIntersectsFunction extends OSpatialFunctionAbstractIndexable {
     return results(target, args, ctx, rightValue);
   }
 
-  @Override
-  public long estimate(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
-      OExpression... args) {
-
-    Collection resultSet = results(target, args, ctx, rightValue);
-    return resultSet == null ? -1 : resultSet.size();
-  }
 
   @Override
   protected String operator() {

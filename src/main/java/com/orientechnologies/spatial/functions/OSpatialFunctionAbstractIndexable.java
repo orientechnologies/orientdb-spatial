@@ -23,6 +23,7 @@ import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.index.OIndex;
+import com.orientechnologies.orient.core.metadata.OMetadata;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.functions.OIndexableSQLFunction;
 import com.orientechnologies.orient.core.sql.parser.*;
@@ -30,10 +31,8 @@ import com.orientechnologies.spatial.index.OLuceneSpatialIndex;
 import com.orientechnologies.spatial.shape.OShapeFactory;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilderAbstract;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by Enrico Risa on 31/08/15.
@@ -46,7 +45,32 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
     super(iName, iMinParams, iMaxParams);
   }
 
-  protected OIndex searchForIndex(OFromClause target, OExpression[] args) {
+  protected OLuceneSpatialIndex searchForIndex(OFromClause target, OExpression[] args) {
+    OMetadata dbMetadata = getDb().getMetadata();
+
+    OFromItem item = target.getItem();
+    OIdentifier identifier = item.getIdentifier();
+    String fieldName = args[0].toString();
+
+    String className = identifier.getStringValue();
+    List<OLuceneSpatialIndex> indices = dbMetadata
+        .getSchema()
+        .getClass(className)
+        .getIndexes()
+        .stream()
+        .filter(idx -> idx instanceof OLuceneSpatialIndex)
+        .map(idx -> (OLuceneSpatialIndex) idx)
+        .filter(idx -> intersect(idx.getDefinition().getFields(), Arrays.asList(fieldName)))
+        .collect(Collectors.toList());
+
+    if (indices.size() > 1) {
+      throw new IllegalArgumentException("too many indices matching given field name: " + String.join(",", fieldName));
+    }
+
+    return indices.size() == 0 ? null : indices.get(0);
+  }
+
+  protected OIndex searchForIndexOLD(OFromClause target, OExpression[] args) {
 
     // TODO Check if target is a class otherwise exception
 
@@ -62,6 +86,7 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
       }
     }
     return null;
+
   }
 
   protected ODatabaseDocumentInternal getDb() {
@@ -107,13 +132,17 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
   @Override
   public boolean canExecuteWithoutIndex(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
       OExpression... args) {
-    return true;
+
+    return allowsIndexedExecution(target,operator,rightValue,ctx,args);
   }
 
   @Override
   public boolean allowsIndexedExecution(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
       OExpression... args) {
-    return true;
+
+    OLuceneSpatialIndex index = searchForIndex(target, args);
+
+    return index != null;
   }
 
   @Override
@@ -121,4 +150,26 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
       OCommandContext ctx, OExpression... args) {
     return true;
   }
+
+  @Override
+  public long estimate(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
+      OExpression... args) {
+
+    OLuceneSpatialIndex index = searchForIndex(target, args);
+
+    return index == null ? -1 : index.getSize();
+  }
+
+
+  public <T> boolean intersect(List<T> list1, List<T> list2) {
+
+    for (T t : list1) {
+      if (list2.contains(t)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 }

@@ -22,11 +22,10 @@ import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.sql.parser.OBinaryCompareOperator;
 import com.orientechnologies.orient.core.sql.parser.OExpression;
 import com.orientechnologies.orient.core.sql.parser.OFromClause;
+import com.orientechnologies.spatial.index.OLuceneSpatialIndex;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilderWithin;
 import org.locationtech.spatial4j.shape.Shape;
 import org.locationtech.spatial4j.shape.SpatialRelation;
-
-import java.util.Collection;
 
 /**
  * Created by Enrico Risa on 12/08/15.
@@ -64,13 +63,6 @@ public class OSTWithinFunction extends OSpatialFunctionAbstractIndexable {
     return results(target, args, ctx, rightValue);
   }
 
-  @Override
-  public long estimate(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
-      OExpression... args) {
-
-    Collection resultSet = results(target, args, ctx, rightValue);
-    return resultSet == null ? -1 : resultSet.size();
-  }
 
   @Override
   protected String operator() {

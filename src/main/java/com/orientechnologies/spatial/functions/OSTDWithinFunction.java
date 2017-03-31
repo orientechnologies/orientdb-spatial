@@ -67,13 +67,6 @@ public class OSTDWithinFunction extends OSpatialFunctionAbstractIndexable {
     return results(target, args, ctx, rightValue);
   }
 
-  @Override
-  public long estimate(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
-      OExpression... args) {
-
-    Collection resultSet = results(target, args, ctx, rightValue);
-    return resultSet == null ? -1 : resultSet.size();
-  }
 
   @Override
   protected void onAfterParsing(Map<String, Object> params, OExpression[] args, OCommandContext ctx, Object rightValue) {

@@ -25,7 +25,6 @@ import com.orientechnologies.spatial.strategy.SpatialQueryBuilderDistanceSphere;
 import org.locationtech.spatial4j.distance.DistanceUtils;
 import org.locationtech.spatial4j.shape.Shape;
 
-import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -78,8 +77,8 @@ public class OSTDistanceSphereFunction extends OSpatialFunctionAbstractIndexable
     if (rightValue == null || !isValidBinaryOperator(operator)) {
       return -1;
     }
-    Collection resultSet = results(target, args, ctx, rightValue);
-    return resultSet == null ? -1 : resultSet.size();
+
+    return super.estimate(target, operator, rightValue, ctx, args);
   }
 
   private boolean isValidBinaryOperator(OBinaryCompareOperator operator) {
