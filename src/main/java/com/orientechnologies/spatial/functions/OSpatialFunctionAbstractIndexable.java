@@ -70,7 +70,7 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
     return indices.size() == 0 ? null : indices.get(0);
   }
 
-  protected OIndex searchForIndexOLD(OFromClause target, OExpression[] args) {
+  protected OLuceneSpatialIndex searchForIndexOLd(OFromClause target, OExpression[] args) {
 
     // TODO Check if target is a class otherwise exception
 
@@ -82,7 +82,7 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
         .getClassInvolvedIndexes(identifier.getStringValue(), fieldName);
     for (OIndex<?> index : indexes) {
       if (index.getInternal() instanceof OLuceneSpatialIndex) {
-        return index;
+        return (OLuceneSpatialIndex) index;
       }
     }
     return null;
@@ -95,6 +95,7 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
 
   protected OLuceneAbstractResultSet results(OFromClause target, OExpression[] args, OCommandContext ctx, Object rightValue) {
     OIndex oIndex = searchForIndex(target, args);
+
     if (oIndex != null) {
       Map<String, Object> queryParams = new HashMap<String, Object>();
       queryParams.put(SpatialQueryBuilderAbstract.GEO_FILTER, operator());
@@ -133,7 +134,7 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
   public boolean canExecuteWithoutIndex(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
       OExpression... args) {
 
-    return allowsIndexedExecution(target,operator,rightValue,ctx,args);
+    return allowsIndexedExecution(target, operator, rightValue, ctx, args);
   }
 
   @Override
@@ -148,7 +149,7 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
   @Override
   public boolean shouldExecuteAfterSearch(OFromClause target, OBinaryCompareOperator operator, Object rightValue,
       OCommandContext ctx, OExpression... args) {
-    return true;
+    return false;
   }
 
   @Override
@@ -159,7 +160,6 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
 
     return index == null ? -1 : index.getSize();
   }
-
 
   public <T> boolean intersect(List<T> list1, List<T> list2) {
 

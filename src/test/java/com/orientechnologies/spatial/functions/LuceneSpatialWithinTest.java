@@ -19,11 +19,14 @@ package com.orientechnologies.spatial.functions;
 
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.OCommandSQL;
+import com.orientechnologies.orient.core.sql.executor.OResultSet;
 import com.orientechnologies.spatial.BaseSpatialLuceneTest;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created by Enrico Risa on 28/09/15.
@@ -69,4 +72,24 @@ public class LuceneSpatialWithinTest extends BaseSpatialLuceneTest {
 
   }
 
+  @Test
+  public void testWithinNewExecutor() throws Exception {
+    db.command("create class Polygon extends v");
+    db.command("create property Polygon.geometry EMBEDDED OPolygon");
+
+    db.command("insert into Polygon set geometry = ST_Buffer(ST_GeomFromText('POINT(50 50)'), 20)");
+    db.command("insert into Polygon set geometry = ST_Buffer(ST_GeomFromText('POINT(50 50)'), 40)");
+
+    db.command("create index Polygon.g on Polygon(geometry) SPATIAL ENGINE LUCENE");
+    OResultSet execute = db.query(
+        "SELECT from Polygon where ST_Within(geometry, ST_Buffer(ST_GeomFromText('POINT(50 50)'), 50)) = true");
+
+    assertThat(execute).hasSize(2);
+
+    execute = db.query(
+        "SELECT from Polygon where ST_Within(geometry, ST_Buffer(ST_GeomFromText('POINT(50 50)'), 30)) = true");
+
+    assertThat(execute).hasSize(1);
+
+  }
 }
