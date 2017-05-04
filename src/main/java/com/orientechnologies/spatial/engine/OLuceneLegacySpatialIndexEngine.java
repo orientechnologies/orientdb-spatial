@@ -63,7 +63,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
     super(storage, indexName, factory);
   }
 
-  private Object legacySearch(Object key, OLuceneTxChanges changes) throws IOException {
+  private Set<OIdentifiable> legacySearch(Object key, OLuceneTxChanges changes) throws IOException {
     if (key instanceof OSpatialCompositeKey) {
       final OSpatialCompositeKey newKey = (OSpatialCompositeKey) key;
 
@@ -81,7 +81,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
 
   }
 
-  public Object searchIntersect(OCompositeKey key, double distance, OCommandContext context, OLuceneTxChanges changes)
+  public Set<OIdentifiable> searchIntersect(OCompositeKey key, double distance, OCommandContext context, OLuceneTxChanges changes)
       throws IOException {
 
     double lat = ((Double) OType.convert(((OCompositeKey) key).getKeys().get(0), Double.class)).doubleValue();
@@ -101,11 +101,12 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
     OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, q, distSort).setSpatialArgs(args)
-        .setChanges(changes);
+        .withChanges(changes);
     return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
   }
 
-  public Object searchWithin(OSpatialCompositeKey key, OCommandContext context, OLuceneTxChanges changes) throws IOException {
+  public Set<OIdentifiable> searchWithin(OSpatialCompositeKey key, OCommandContext context, OLuceneTxChanges changes)
+      throws IOException {
 
     Set<OIdentifiable> result = new HashSet<OIdentifiable>();
 
@@ -120,7 +121,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
     BooleanQuery query = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
-    OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, query).setChanges(changes);
+    OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, query).withChanges(changes);
 
     return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
 
@@ -144,7 +145,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
   }
 
   @Override
-  public Object getInTx(Object key, OLuceneTxChanges changes) {
+  public Set<OIdentifiable> getInTx(Object key, OLuceneTxChanges changes) {
     try {
       return legacySearch(key, changes);
     } catch (IOException e) {

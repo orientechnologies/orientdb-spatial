@@ -261,7 +261,7 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine , 
   }
 
   @Override
-  public Object getInTx(Object key, OLuceneTxChanges changes) {
+  public Set<OIdentifiable> getInTx(Object key, OLuceneTxChanges changes) {
     return delegate.getInTx(key, changes);
   }
 

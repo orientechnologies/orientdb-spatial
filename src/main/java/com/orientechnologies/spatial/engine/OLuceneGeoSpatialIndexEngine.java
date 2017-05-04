@@ -37,6 +37,7 @@ import org.locationtech.spatial4j.shape.Point;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstract {
 
@@ -57,7 +58,7 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
   }
 
   @Override
-  public Object getInTx(Object key, OLuceneTxChanges changes) {
+  public Set<OIdentifiable> getInTx(Object key, OLuceneTxChanges changes) {
     try {
       if (key instanceof Map) {
         return newGeoSearch((Map<String, Object>) key, changes);
@@ -72,9 +73,9 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
     return null;
   }
 
-  private Object newGeoSearch(Map<String, Object> key, OLuceneTxChanges changes) throws Exception {
+  private Set<OIdentifiable> newGeoSearch(Map<String, Object> key, OLuceneTxChanges changes) throws Exception {
 
-    OLuceneQueryContext queryContext = queryStrategy.build(key).setChanges(changes);
+    OLuceneQueryContext queryContext = queryStrategy.build(key).withChanges(changes);
     return OLuceneResultSetFactory.INSTANCE.create(this, queryContext);
 
   }
