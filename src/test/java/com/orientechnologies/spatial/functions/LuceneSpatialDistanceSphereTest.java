@@ -73,7 +73,7 @@ public class LuceneSpatialDistanceSphereTest extends BaseSpatialLuceneTest {
         "insert into Place set name = 'Museo Di Roma in Trastevere',location = ST_GeomFromText('POINT(12.4689762 41.8898916)')"))
         .execute();
 
-    db.command(new OCommandSQL("create index Place.l on Place (Location) SPATIAL engine lucene")).execute();
+    db.command(new OCommandSQL("create index Place.l on Place (location) SPATIAL engine lucene")).execute();
     List<ODocument> execute = db.command(new OCommandSQL(
         "SELECT from Place where ST_Distance_Sphere(location, ST_GeomFromText('POINT(12.468933 41.890303)')) < 50")).execute();
 
