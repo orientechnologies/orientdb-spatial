@@ -17,7 +17,7 @@
  */
 package com.orientechnologies.spatial.functions;
 
-import com.orientechnologies.lucene.collections.OLuceneAbstractResultSet;
+import com.orientechnologies.lucene.collections.OLuceneResultSet;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.ODatabaseDocumentInternal;
 import com.orientechnologies.orient.core.db.ODatabaseRecordThreadLocal;
@@ -93,7 +93,7 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
     return ODatabaseRecordThreadLocal.INSTANCE.get();
   }
 
-  protected OLuceneAbstractResultSet results(OFromClause target, OExpression[] args, OCommandContext ctx, Object rightValue) {
+  protected OLuceneResultSet results(OFromClause target, OExpression[] args, OCommandContext ctx, Object rightValue) {
     OIndex oIndex = searchForIndex(target, args);
 
     if (oIndex != null) {
@@ -117,7 +117,7 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
         ctx.setVariable("involvedIndexes", indexes);
       }
       indexes.add(oIndex.getName());
-      OLuceneAbstractResultSet resultSet = (OLuceneAbstractResultSet) oIndex.get(queryParams);
+      OLuceneResultSet resultSet = (OLuceneResultSet) oIndex.get(queryParams);
       return resultSet;
     }
     return null;
@@ -128,7 +128,6 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
 
   protected abstract String operator();
 
-  // TODO implement for 3.0
 
   @Override
   public boolean canExecuteWithoutIndex(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,

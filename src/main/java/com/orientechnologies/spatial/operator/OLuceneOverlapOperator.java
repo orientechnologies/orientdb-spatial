@@ -17,7 +17,7 @@
  */
 package com.orientechnologies.spatial.operator;
 
-import com.orientechnologies.lucene.collections.OLuceneAbstractResultSet;
+import com.orientechnologies.lucene.collections.OLuceneResultSet;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.ODatabase;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
@@ -61,7 +61,7 @@ public class OLuceneOverlapOperator extends OLuceneSpatialOperator {
     queryParams.put(SpatialQueryBuilderAbstract.SHAPE, key);
 
     long start = System.currentTimeMillis();
-    OLuceneAbstractResultSet indexResult = (OLuceneAbstractResultSet) index.get(queryParams);
+    OLuceneResultSet indexResult = (OLuceneResultSet) index.get(queryParams);
     if (indexResult != null)
       indexResult.sendLookupTime(iContext, start);
 

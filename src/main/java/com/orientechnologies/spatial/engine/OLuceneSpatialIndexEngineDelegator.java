@@ -45,12 +45,12 @@ import java.util.Set;
 /**
  * Created by Enrico Risa on 04/09/15.
  */
-public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine , OLuceneSpatialIndexContainer {
+public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine, OLuceneSpatialIndexContainer {
 
-  private final Boolean            durableInNonTxMode;
-  private final OStorage           storage;
-  private final int                version;
-  private final String             indexName;
+  private final Boolean                           durableInNonTxMode;
+  private final OStorage                          storage;
+  private final int                               version;
+  private final String                            indexName;
   private       OLuceneSpatialIndexEngineAbstract delegate;
 
   public OLuceneSpatialIndexEngineDelegator(String name, Boolean durableInNonTxMode, OStorage storage, int version) {
@@ -71,8 +71,8 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine , 
           delegate = new OLuceneGeoSpatialIndexEngine(storage, indexName, OShapeFactory.INSTANCE);
         }
       }
-        delegate.init(indexName, indexType, indexDefinition, isAutomatic, metadata);
-      }
+      delegate.init(indexName, indexType, indexDefinition, isAutomatic, metadata);
+    }
 
   }
 
@@ -91,7 +91,7 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine , 
   @Override
   public void delete() {
     if (delegate != null)
-    delegate.delete();
+      delegate.delete();
   }
 
   @Override
@@ -246,8 +246,13 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine , 
   }
 
   @Override
-  public IndexSearcher searcher() throws IOException {
+  public IndexSearcher searcher(){
     return delegate.searcher();
+  }
+
+  @Override
+  public void release(IndexSearcher searcher) {
+    delegate.release(searcher);
   }
 
   @Override
@@ -304,6 +309,7 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine , 
   public String getIndexNameByKey(Object key) {
     return delegate.getIndexNameByKey(key);
   }
+
   public OLuceneIndexEngine getDelegate() {
     return delegate;
   }
