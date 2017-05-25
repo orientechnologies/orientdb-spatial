@@ -17,21 +17,11 @@
  */
 package com.orientechnologies.spatial.functions;
 
-import com.orientechnologies.common.exception.OException;
-import com.orientechnologies.orient.core.exception.OCommandExecutionException;
-import com.orientechnologies.orient.core.sql.functions.OSQLFunction;
-import com.orientechnologies.orient.core.sql.functions.OSQLFunctionAbstract;
-import com.orientechnologies.orient.core.sql.functions.OSQLFunctionFactory;
+import com.orientechnologies.orient.core.sql.functions.OSQLFunctionFactoryTemplate;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+public class OSpatialFunctionsFactory extends OSQLFunctionFactoryTemplate {
 
-public class OSpatialFunctionsFactory implements OSQLFunctionFactory {
-
-  public static final Map<String, Object> FUNCTIONS = new HashMap<String, Object>();
-
-  static {
+  public OSpatialFunctionsFactory() {
     register(new OSTGeomFromTextFunction());
     register(new OSTAsTextFunction());
     register(new OSTWithinFunction());
@@ -46,47 +36,6 @@ public class OSpatialFunctionsFactory implements OSQLFunctionFactory {
     register(new OSTIntersectsFunction());
     register(new OSTContainsFunction());
     register(new OSTSrid());
-
   }
 
-  private static void register(final OSQLFunctionAbstract function) {
-    FUNCTIONS.put(function.getName().toLowerCase(), function);
-  }
-
-  @Override
-  public boolean hasFunction(String iName) {
-    return FUNCTIONS.containsKey(iName);
-  }
-
-  @Override
-  public Set<String> getFunctionNames() {
-    return FUNCTIONS.keySet();
-  }
-
-  @Override
-  public OSQLFunction createFunction(String name) throws OCommandExecutionException {
-    final Object obj = FUNCTIONS.get(name);
-
-    if (obj == null) {
-      throw new OCommandExecutionException("Unknown function name :" + name);
-    }
-
-    if (obj instanceof OSQLFunction) {
-      return (OSQLFunction) obj;
-    } else {
-      // it's a class
-      final Class<?> clazz = (Class<?>) obj;
-      try {
-        return (OSQLFunction) clazz.newInstance();
-      } catch (Exception e) {
-        throw OException.wrapException(new OCommandExecutionException("Error in creation of function " + name
-            + "(). Probably there is not an empty constructor or the constructor generates errors"), e);
-      }
-    }
-
-  }
-
-  public Map<String, Object> getFunctions() {
-    return FUNCTIONS;
-  }
 }
