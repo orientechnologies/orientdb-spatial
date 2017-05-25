@@ -128,9 +128,8 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
 
   protected abstract String operator();
 
-
   @Override
-  public boolean canExecuteWithoutIndex(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
+  public boolean canExecuteInline(OFromClause target, OBinaryCompareOperator operator, Object rightValue, OCommandContext ctx,
       OExpression... args) {
 
     return allowsIndexedExecution(target, operator, rightValue, ctx, args);
