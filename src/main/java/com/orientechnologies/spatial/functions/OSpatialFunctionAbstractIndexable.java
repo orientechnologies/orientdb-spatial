@@ -96,31 +96,31 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
   protected OLuceneResultSet results(OFromClause target, OExpression[] args, OCommandContext ctx, Object rightValue) {
     OIndex oIndex = searchForIndex(target, args);
 
-    if (oIndex != null) {
-      Map<String, Object> queryParams = new HashMap<String, Object>();
-      queryParams.put(SpatialQueryBuilderAbstract.GEO_FILTER, operator());
-      Object shape;
-      if (args[1].getValue() instanceof OJson) {
-        OJson json = (OJson) args[1].getValue();
-        ODocument doc = new ODocument().fromJSON(json.toString());
-        shape = doc.toMap();
-      } else {
-        shape = args[1].execute((OIdentifiable) null, ctx);
-      }
-      queryParams.put(SpatialQueryBuilderAbstract.SHAPE, shape);
-
-      onAfterParsing(queryParams, args, ctx, rightValue);
-
-      Set<String> indexes = (Set<String>) ctx.getVariable("involvedIndexes");
-      if (indexes == null) {
-        indexes = new HashSet<String>();
-        ctx.setVariable("involvedIndexes", indexes);
-      }
-      indexes.add(oIndex.getName());
-      OLuceneResultSet resultSet = (OLuceneResultSet) oIndex.get(queryParams);
-      return resultSet;
+    if (oIndex == null) {
+      return null;
     }
-    return null;
+
+    Map<String, Object> queryParams = new HashMap<>();
+    queryParams.put(SpatialQueryBuilderAbstract.GEO_FILTER, operator());
+    Object shape;
+    if (args[1].getValue() instanceof OJson) {
+      OJson json = (OJson) args[1].getValue();
+      ODocument doc = new ODocument().fromJSON(json.toString());
+      shape = doc.toMap();
+    } else {
+      shape = args[1].execute((OIdentifiable) null, ctx);
+    }
+    queryParams.put(SpatialQueryBuilderAbstract.SHAPE, shape);
+
+    onAfterParsing(queryParams, args, ctx, rightValue);
+
+    Set<String> indexes = (Set<String>) ctx.getVariable("involvedIndexes");
+    if (indexes == null) {
+      indexes = new HashSet<>();
+      ctx.setVariable("involvedIndexes", indexes);
+    }
+    indexes.add(oIndex.getName());
+    return (OLuceneResultSet) oIndex.get(queryParams);
   }
 
   protected void onAfterParsing(Map<String, Object> params, OExpression[] args, OCommandContext ctx, Object rightValue) {
