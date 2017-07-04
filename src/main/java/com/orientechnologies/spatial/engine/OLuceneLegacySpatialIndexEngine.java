@@ -52,6 +52,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import static com.orientechnologies.lucene.builder.OLuceneQueryBuilder.EMPTY_METADATA;
+
 /**
  * Created by Enrico Risa on 26/09/15.
  */
@@ -102,7 +104,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
 
     OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, q, distSort).setSpatialArgs(args)
         .withChanges(changes);
-    return new OLuceneResultSet(this, queryContext);
+    return new OLuceneResultSet(this, queryContext, EMPTY_METADATA);
   }
 
   public Set<OIdentifiable> searchWithin(OSpatialCompositeKey key, OCommandContext context, OLuceneTxChanges changes)
@@ -123,7 +125,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
 
     OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, query).withChanges(changes);
 
-    return new OLuceneResultSet(this, queryContext);
+    return new OLuceneResultSet(this, queryContext, EMPTY_METADATA);
 
   }
 

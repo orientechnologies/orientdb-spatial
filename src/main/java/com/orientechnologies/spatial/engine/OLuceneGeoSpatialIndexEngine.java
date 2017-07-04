@@ -39,6 +39,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static com.orientechnologies.lucene.builder.OLuceneQueryBuilder.EMPTY_METADATA;
+
 public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstract {
 
   public OLuceneGeoSpatialIndexEngine(OStorage storage, String name, OShapeBuilder factory) {
@@ -76,7 +78,7 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
   private Set<OIdentifiable> newGeoSearch(Map<String, Object> key, OLuceneTxChanges changes) throws Exception {
 
     OLuceneQueryContext queryContext = queryStrategy.build(key).withChanges(changes);
-    return new OLuceneResultSet(this, queryContext);
+    return new OLuceneResultSet(this, queryContext, EMPTY_METADATA);
 
   }
 
