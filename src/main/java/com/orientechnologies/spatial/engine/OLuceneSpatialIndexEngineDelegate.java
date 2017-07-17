@@ -264,6 +264,11 @@ public class OLuceneSpatialIndexEngineDelegate implements OLuceneIndexEngine , O
   }
 
   @Override
+  public boolean isCollectionIndex() {
+    return delegate.isCollectionIndex();
+  }
+
+  @Override
   public SpatialStrategy strategy() {
     return delegate.strategy();
   }
