@@ -297,7 +297,7 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine, O
 
   @Override
   public boolean isFrozen() {
-    return false;
+    return delegate.isFrozen();
   }
 
   @Override

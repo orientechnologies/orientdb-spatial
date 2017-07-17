@@ -61,6 +61,8 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
 
   @Override
   public Set<OIdentifiable> getInTx(Object key, OLuceneTxChanges changes) {
+    openIfClosed();
+    updateLastAccess();
     try {
       if (key instanceof Map) {
         return newGeoSearch((Map<String, Object>) key, changes);
@@ -103,10 +105,11 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
   public void put(Object key, Object value) {
 
     if (key instanceof OIdentifiable) {
-
+      openIfClosed();
       ODocument location = ((OIdentifiable) key).getRecord();
       Collection<OIdentifiable> container = (Collection<OIdentifiable>) value;
       for (OIdentifiable oIdentifiable : container) {
+        updateLastAccess();
         addDocument(newGeoDocument(oIdentifiable, factory.fromDoc(location)));
       }
     } else {
