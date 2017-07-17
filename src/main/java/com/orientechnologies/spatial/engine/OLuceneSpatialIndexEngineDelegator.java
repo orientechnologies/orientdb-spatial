@@ -286,6 +286,11 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine, O
   }
 
   @Override
+  public boolean isCollectionIndex() {
+    return delegate.isCollectionIndex();
+  }
+
+  @Override
   public void freeze(boolean throwException) {
     delegate.freeze(throwException);
   }
