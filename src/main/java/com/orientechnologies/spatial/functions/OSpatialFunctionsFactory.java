@@ -23,6 +23,7 @@ import com.orientechnologies.orient.core.sql.functions.OSQLFunction;
 import com.orientechnologies.orient.core.sql.functions.OSQLFunctionFactory;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -48,7 +49,7 @@ public class OSpatialFunctionsFactory implements OSQLFunctionFactory {
   }
 
   public static void register(final String iName, final Object iImplementation) {
-    FUNCTIONS.put(iName.toLowerCase(), iImplementation);
+    FUNCTIONS.put(iName.toLowerCase(Locale.ENGLISH), iImplementation);
   }
 
   @Override
