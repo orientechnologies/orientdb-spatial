@@ -85,7 +85,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>com.orientechnologies</groupId>
-                                    <artifactId>orientdb-community-tp3</artifactId>
+                                    <artifactId>orientdb-community-gremlin</artifactId>
                                     <version>${project.parent.version}</version>
                                     <overWrite>true</overWrite>
                                     <type>zip</type>
