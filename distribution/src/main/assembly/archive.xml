@@ -14,7 +14,7 @@
          | copy benchmarks scripts
         -->
         <fileSet>
-            <directory>${project.build.directory}/orientdb-community-tp3-${project.version}</directory>
+            <directory>${project.build.directory}/orientdb-community-gremlin-${project.version}</directory>
             <outputDirectory></outputDirectory>
         </fileSet>
     </fileSets>
