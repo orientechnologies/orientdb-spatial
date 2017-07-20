@@ -65,8 +65,8 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
 
   @Override
   public Object getInTx(Object key, OLuceneTxChanges changes) {
-    openIfClosed();
     updateLastAccess();
+    openIfClosed();
 
     try {
       if (key instanceof Map) {
@@ -93,6 +93,7 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
   public void put(Object key, Object value) {
 
     if (key instanceof OIdentifiable) {
+      updateLastAccess();
       openIfClosed();
 
       ODocument location = ((OIdentifiable) key).getRecord();
