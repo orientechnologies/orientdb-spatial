@@ -1,4 +1,4 @@
-package com.orientechnologies.spatial;
+package com.orientechnologies.spatial.legacy;
 
 import com.orientechnologies.common.io.OFileUtils;
 import com.orientechnologies.orient.core.db.OPartitionedDatabasePool;

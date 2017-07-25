@@ -40,11 +40,7 @@ import com.spatial4j.core.shape.Point;
 import com.spatial4j.core.shape.Shape;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queries.function.ValueSource;
-import org.apache.lucene.search.Filter;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.MatchAllDocsQuery;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.*;
 import org.apache.lucene.spatial.SpatialStrategy;
 import org.apache.lucene.spatial.prefix.RecursivePrefixTreeStrategy;
 import org.apache.lucene.spatial.prefix.tree.GeohashPrefixTree;
@@ -63,7 +59,6 @@ import java.util.Set;
 public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAbstract {
 
   OShapeBuilderLegacy legacyBuilder = OShapeBuilderLegacyImpl.INSTANCE;
-  ;
 
   public OLuceneLegacySpatialIndexEngine(OStorage storage, String indexName, OShapeBuilder factory) {
     super(storage, indexName, factory);
@@ -72,7 +67,8 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
   @Override
   public void onRecordAddedToResultSet(OLuceneQueryContext queryContext, OContextualRecordId recordId, Document doc,
       ScoreDoc score) {
-
+    updateLastAccess();
+    openIfClosed();
     SpatialQueryContext spatialContext = (SpatialQueryContext) queryContext;
     if (spatialContext.spatialArgs != null) {
       Point docPoint = (Point) ctx.readShape(doc.get(strategy.getFieldName()));
@@ -94,6 +90,8 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
   @Override
   public Object getInTx(Object key, OLuceneTxChanges changes) {
     try {
+      updateLastAccess();
+      openIfClosed();
       return legacySearch(key, changes);
     } catch (IOException e) {
       e.printStackTrace();
@@ -161,6 +159,8 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
   public void put(Object key, Object value) {
 
     if (key instanceof OCompositeKey) {
+      updateLastAccess();
+      openIfClosed();
       OCompositeKey compositeKey = (OCompositeKey) key;
       Collection<OIdentifiable> container = (Collection<OIdentifiable>) value;
       for (OIdentifiable oIdentifiable : container) {

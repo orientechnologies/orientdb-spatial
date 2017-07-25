@@ -16,7 +16,7 @@
  *  
  */
 
-package com.orientechnologies.spatial;
+package com.orientechnologies.spatial.legacy;
 
 import com.orientechnologies.common.log.OLogManager;
 import com.orientechnologies.lucene.test.BaseLuceneTest;
@@ -30,7 +30,6 @@ import com.orientechnologies.orient.core.sql.OCommandSQL;
 import com.orientechnologies.orient.core.sql.query.OSQLSynchQuery;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -130,7 +129,6 @@ public class LuceneSpatialQueryTest extends BaseLuceneTest {
   }
 
   @Test
-  @Ignore
   public void testNearQuery() {
 
     String query = "select *,$distance from Place where [latitude,longitude,$spatial] NEAR [41.893056,12.482778,{\"maxDistance\": 0.5}]";
@@ -144,10 +142,9 @@ public class LuceneSpatialQueryTest extends BaseLuceneTest {
   }
 
   @Test
-  @Ignore
   public void testWithinQuery() {
-    String query = "select * from Place where [latitude,longitude] WITHIN [[51.507222,-0.1275],[55.507222,-0.1275]]";
+    String query = "select * from Place where [latitude,longitude] WITHIN [[51.507222,-0.1275],[55.507222,0.1275]]";
     List<ODocument> docs = db.query(new OSQLSynchQuery<ODocument>(query));
-    Assert.assertEquals(238, docs.size());
+    Assert.assertEquals(665, docs.size());
   }
 }
