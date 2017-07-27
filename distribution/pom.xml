@@ -90,9 +90,15 @@
                                     <overWrite>true</overWrite>
                                     <type>zip</type>
                                 </artifactItem>
+                                <artifactItem>
+                                    <groupId>com.orientechnologies</groupId>
+                                    <artifactId>orientdb-teleporter</artifactId>
+                                    <version>${project.parent.version}</version>
+                                    <overWrite>true</overWrite>
+                                    <type>zip</type>
+                                </artifactItem>
+
                             </artifactItems>
-                            <!--<includes>**/databases/demodb</includes>-->
-                            <!--<outputDirectory>${project.build.directory}/databases</outputDirectory>-->
                         </configuration>
                     </execution>
                 </executions>
@@ -116,7 +122,8 @@
                                 <argument>-classpath</argument>
                                 <classpath/>
                                 <argument>com.orientechnologies.orient.console.OConsoleDatabaseApp</argument>
-                                <argument>CONNECT plocal:./target/orientdb-community-gremlin-${project.parent.version}/databases/demodb admin admin;</argument>
+                                <argument>CONNECT plocal:./target/orientdb-community-gremlin-${project.parent.version}/databases/demodb admin admin;
+                                </argument>
                                 <argument>LOAD SCRIPT ./src/test/resources/locationData.osql</argument>
                             </arguments>
                         </configuration>
