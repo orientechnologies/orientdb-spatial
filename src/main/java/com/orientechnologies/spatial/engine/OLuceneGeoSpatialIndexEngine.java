@@ -61,8 +61,8 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
 
   @Override
   public Set<OIdentifiable> getInTx(Object key, OLuceneTxChanges changes) {
-    openIfClosed();
     updateLastAccess();
+    openIfClosed();
     try {
       if (key instanceof Map) {
         return newGeoSearch((Map<String, Object>) key, changes);
@@ -90,6 +90,8 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
 
     OSpatialQueryContext spatialContext = (OSpatialQueryContext) queryContext;
     if (spatialContext.spatialArgs != null) {
+      updateLastAccess();
+      openIfClosed();
       Point docPoint = (Point) ctx.readShape(doc.get(strategy.getFieldName()));
       double docDistDEG = ctx.getDistCalc().distance(spatialContext.spatialArgs.getShape().getCenter(), docPoint);
       final double docDistInKM = DistanceUtils.degrees2Dist(docDistDEG, DistanceUtils.EARTH_EQUATORIAL_RADIUS_KM);

@@ -124,7 +124,7 @@ public class LuceneSpatialLineStringTest extends BaseSpatialLuceneTest {
 
     //    Assert.assertEquals(index.getSize(), 2);
 
-    Assert.assertEquals(index.getSize(), 3);
+    Assert.assertEquals(4, index.getSize());
     queryLineString();
 
   }

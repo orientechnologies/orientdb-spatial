@@ -149,6 +149,8 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
   @Override
   public Set<OIdentifiable> getInTx(Object key, OLuceneTxChanges changes) {
     try {
+      updateLastAccess();
+      openIfClosed();
       return legacySearch(key, changes);
     } catch (IOException e) {
       e.printStackTrace();
@@ -165,6 +167,8 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
   public void put(Object key, Object value) {
 
     if (key instanceof OCompositeKey) {
+      updateLastAccess();
+      openIfClosed();
       OCompositeKey compositeKey = (OCompositeKey) key;
       Collection<OIdentifiable> container = (Collection<OIdentifiable>) value;
       for (OIdentifiable oIdentifiable : container) {

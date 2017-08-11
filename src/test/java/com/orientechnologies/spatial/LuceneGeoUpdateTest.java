@@ -43,7 +43,7 @@ public class LuceneGeoUpdateTest extends BaseSpatialLuceneTest {
 
     db.command(new OCommandSQL("update City set name = 'Test' , location = ST_GeomFromText('POINT(12.5 41.9)')")).execute();
 
-    Assert.assertEquals(index.getSize(), 1);
+    Assert.assertEquals(2, index.getSize());
 
   }
 
