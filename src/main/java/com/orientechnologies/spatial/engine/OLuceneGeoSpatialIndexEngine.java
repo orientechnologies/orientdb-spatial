@@ -92,9 +92,9 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
   @Override
   public void put(Object key, Object value) {
 
+    updateLastAccess();
+    openIfClosed();
     if (key instanceof OIdentifiable) {
-      updateLastAccess();
-      openIfClosed();
 
       ODocument location = ((OIdentifiable) key).getRecord();
       Collection<OIdentifiable> container = (Collection<OIdentifiable>) value;
@@ -115,10 +115,10 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
   public void onRecordAddedToResultSet(OLuceneQueryContext queryContext, OContextualRecordId recordId, Document doc,
       ScoreDoc score) {
 
+    updateLastAccess();
+    openIfClosed();
     SpatialQueryContext spatialContext = (SpatialQueryContext) queryContext;
     if (spatialContext.spatialArgs != null) {
-      updateLastAccess();
-      openIfClosed();
       Point docPoint = (Point) ctx.readShape(doc.get(strategy.getFieldName()));
       double docDistDEG = ctx.getDistCalc().distance(spatialContext.spatialArgs.getShape().getCenter(), docPoint);
       final double docDistInKM = DistanceUtils.degrees2Dist(docDistDEG, DistanceUtils.EARTH_EQUATORIAL_RADIUS_KM);
