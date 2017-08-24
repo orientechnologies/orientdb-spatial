@@ -36,6 +36,8 @@ public class OSpatialFunctionsFactory extends OSQLFunctionFactoryTemplate {
     register(new OSTIntersectsFunction());
     register(new OSTContainsFunction());
     register(new OSTSrid());
+    register(new OSTAsGeoJSONFunction());
+    register(new OSTGeomFromGeoJSONFunction());
   }
 
 }

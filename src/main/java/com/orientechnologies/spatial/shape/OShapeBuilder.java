@@ -34,6 +34,7 @@ import org.locationtech.spatial4j.shape.Shape;
 import org.locationtech.spatial4j.shape.jts.JtsGeometry;
 import org.locationtech.spatial4j.shape.jts.JtsShapeFactory;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,11 +111,17 @@ public abstract class OShapeBuilder<T extends Shape> {
   }
 
   public String asGeoJson(T shape) {
-    return null;
+    return SPATIAL_CONTEXT.getFormats().getGeoJsonWriter().toString(shape);
   }
 
   public String asGeoJson(ODocument document) {
-    return asText(fromDoc(document));
+    return asGeoJson(fromDoc(document));
+  }
+
+
+  public ODocument fromGeoJson(String geoJson) throws IOException, ParseException {
+    Shape shape = SPATIAL_CONTEXT.getFormats().getGeoJsonReader().read(geoJson);
+    return toDoc((T) shape);
   }
 
   public void validate(ODocument doc) {

@@ -17,33 +17,39 @@
  */
 package com.orientechnologies.spatial.functions;
 
+import com.orientechnologies.common.exception.OException;
 import com.orientechnologies.orient.core.command.OCommandContext;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
-import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.exception.OCommandExecutionException;
 import com.orientechnologies.orient.core.sql.functions.OSQLFunctionAbstract;
 import com.orientechnologies.spatial.shape.OShapeFactory;
 
 /**
- * Created by Enrico Risa on 06/08/15.
+ * Created by Enrico Risa on 13/08/15.
  */
-public class OToGeoJsonFunction extends OSQLFunctionAbstract {
+public class OSTGeomFromGeoJSONFunction extends OSQLFunctionAbstract {
 
-  public static final String NAME = "asgeojson";
+  public static final String NAME = "ST_GeomFromGeoJSON";
 
   OShapeFactory factory = OShapeFactory.INSTANCE;
 
-  public OToGeoJsonFunction() {
+  public OSTGeomFromGeoJSONFunction() {
     super(NAME, 1, 1);
   }
 
   @Override
   public Object execute(Object iThis, OIdentifiable iCurrentRecord, Object iCurrentResult, Object[] iParams,
       OCommandContext iContext) {
-    return factory.asText((ODocument) iParams[0]);
+    String geom = (String) iParams[0];
+    try {
+      return factory.fromGeoJson(geom);
+    } catch (Exception e) {
+      throw OException.wrapException(new OCommandExecutionException(String.format("Cannot parse geometry {%s}", geom)), e);
+    }
   }
 
   @Override
   public String getSyntax() {
-    return "asGeoJson(<doc>)";
+    return null;
   }
 }
