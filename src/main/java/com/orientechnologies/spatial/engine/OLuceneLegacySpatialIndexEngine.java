@@ -47,10 +47,7 @@ import org.locationtech.spatial4j.shape.Point;
 import org.locationtech.spatial4j.shape.Shape;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static com.orientechnologies.lucene.builder.OLuceneQueryBuilder.EMPTY_METADATA;
 
@@ -102,7 +99,7 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
     BooleanQuery q = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
-    OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, q, distSort).setSpatialArgs(args)
+    OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, q, Arrays.asList(distSort.getSort())).setSpatialArgs(args)
         .withChanges(changes);
     return new OLuceneResultSet(this, queryContext, EMPTY_METADATA);
   }
