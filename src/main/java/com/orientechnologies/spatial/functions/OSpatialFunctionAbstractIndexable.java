@@ -90,7 +90,7 @@ public abstract class OSpatialFunctionAbstractIndexable extends OSpatialFunction
   }
 
   protected ODatabaseDocumentInternal getDb() {
-    return ODatabaseRecordThreadLocal.INSTANCE.get();
+    return ODatabaseRecordThreadLocal.instance().get();
   }
 
   protected OLuceneResultSet results(OFromClause target, OExpression[] args, OCommandContext ctx, Object rightValue) {
