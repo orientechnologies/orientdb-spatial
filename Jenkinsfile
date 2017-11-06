@@ -1,6 +1,10 @@
 #!groovy
 node("master") {
-    ansiColor('xterm') {
+        properties([[$class: 'BuildDiscarderProperty', 
+                 strategy: [$class: 'LogRotator', artifactDaysToKeepStr: '', 
+                            artifactNumToKeepStr: '', daysToKeepStr: '', numToKeepStr: '10']]])
+    
+        ansiColor('xterm') {
 
         def mvnHome = tool 'mvn'
         def mvnJdk8Image = "orientdb/mvn-gradle-zulu-jdk-8"
