@@ -65,10 +65,7 @@ public abstract class OLuceneSpatialIndexEngineAbstract extends OLuceneIndexEngi
     this.queryStrategy = new SpatialQueryBuilder(this, factory);
   }
 
-  @Override
-  public IndexWriter openIndexWriter(Directory directory) throws IOException {
-    return createIndexWriter(directory);
-  }
+
 
   @Override
   public void init(String indexName, String indexType, OIndexDefinition indexDefinition, boolean isAutomatic, ODocument metadata) {
