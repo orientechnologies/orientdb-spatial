@@ -13,7 +13,7 @@ node("master") {
     }
 
     stage('Run tests on Java7') {
-        docker.image("${mvnJdk7Image}").inside("${env.VOLUMES}") {
+        docker.image("${mvnJdk7Image}").inside("--memory=5g ${env.VOLUMES}") {
             try {
 
                 sh "${mvnHome}/bin/mvn  --batch-mode -V -U  clean deploy -Dsurefire.useFile=false"
