@@ -29,6 +29,7 @@
         <VERSION>${project.version}</VERSION>
         <BUILD>${implementation.build}; ${maven.build.timestamp}</BUILD>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <argLine>-Xmx1024m -Xms1024m -XX:MaxDirectMemorySize=512g</argLine>
     </properties>
 
     <dependencies>
@@ -57,9 +58,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.orientechnologies</groupId>
-            <artifactId>orientdb-test-commons</artifactId>
-            <version>${project.parent.version}</version>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.9.8</version>
             <scope>test</scope>
         </dependency>
 
@@ -119,12 +120,15 @@
                             <workingDirectory>${project.basedir}</workingDirectory>
                             <arguments>
                                 <argument>-XX:MaxDirectMemorySize=512g</argument>
+                                <argument>-Xmx1024m</argument>
                                 <argument>-classpath</argument>
                                 <classpath/>
                                 <argument>com.orientechnologies.orient.console.OConsoleDatabaseApp</argument>
-                                <argument>CONNECT plocal:./target/orientdb-community-gremlin-${project.parent.version}/databases/demodb admin admin;
+                                <argument>CONNECT
+                                    plocal:./target/orientdb-community-gremlin-${project.parent.version}/databases/demodb admin
+                                    admin;
                                 </argument>
-                                <argument>LOAD SCRIPT ./src/test/resources/locationData.osql</argument>
+                                <argument>LOAD SCRIPT ./src/main/resources/locationData.osql</argument>
                             </arguments>
                         </configuration>
                     </execution>
@@ -154,6 +158,17 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <buildDirectory>${project.build.directory}</buildDirectory>
+                        <buildName>${project.build.finalName}</buildName>
+                        <loadScriptPath>${basedir}/src/main/resources/locationData.osql</loadScriptPath>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -166,6 +181,13 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
+                        <configuration>
+                            <systemPropertyVariables>
+                                <buildDirectory>${project.build.directory}</buildDirectory>
+                                <buildName>${project.build.finalName}</buildName>
+                                <loadScriptPath>${basedir}/src/main/resources/locationData.osql</loadScriptPath>
+                            </systemPropertyVariables>
+                        </configuration>
                         <executions>
                             <execution>
                                 <goals>
@@ -175,45 +197,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>1.8</version>
-                        <executions>
-                            <execution>
-                                <id>start-orient</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target name="start OrientDB server on localhost">
-                                        <exec executable="${project.build.directory}/${project.build.finalName}.dir/${project.build.finalName}/bin/server.sh"
-                                              spawn="true">
-                                            <env key="ORIENTDB_ROOT_PASSWORD" value="root"/>
-                                        </exec>
-                                    </target>
-                                </configuration>
-                            </execution>
-
-                            <execution>
-                                <id>stop-orient</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target name="stop the running OrientDB server on localhost">
-                                        <exec executable="${project.build.directory}/${project.build.finalName}.dir/${project.build.finalName}/bin/shutdown.sh"
-                                              spawn="false">
-                                        </exec>
-                                    </target>
-                                </configuration>
-
-                            </execution>
-                        </executions>
-                    </plugin>
-
                 </plugins>
             </build>
 
