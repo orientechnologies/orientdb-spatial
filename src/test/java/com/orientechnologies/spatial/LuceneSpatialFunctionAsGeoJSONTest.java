@@ -21,10 +21,8 @@ import com.orientechnologies.orient.core.db.ODatabaseType;
 import com.orientechnologies.orient.core.db.OrientDB;
 import com.orientechnologies.orient.core.db.OrientDBConfig;
 import com.orientechnologies.orient.core.db.document.ODatabaseDocument;
-import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.sql.executor.OResult;
 import com.orientechnologies.orient.core.sql.executor.OResultSet;
-import com.orientechnologies.spatial.shape.legacy.OPointLegecyBuilder;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -72,18 +70,18 @@ public class LuceneSpatialFunctionAsGeoJSONTest {
       put("wkt", wkt);
     }});
     OResult result = query.stream().findFirst().get();
-    ODocument jsonGeom = result.getProperty("geoJson");
-    ODocument wktGeom = result.getProperty("wkt");
+    OResult jsonGeom = result.getProperty("geoJson");
+    OResult wktGeom = result.getProperty("wkt");
     assertGeometry(wktGeom, jsonGeom);
   }
 
-  private void assertGeometry(ODocument source, ODocument geom) {
+  private void assertGeometry(OResult source, OResult geom) {
     Assert.assertNotNull(geom);
 
-    Assert.assertNotNull(geom.field("coordinates"));
+    Assert.assertNotNull(geom.getProperty("coordinates"));
 
-    Assert.assertEquals(source.getClassName(), geom.getClassName());
-    Assert.assertEquals(geom.<OPointLegecyBuilder>field("coordinates"), source.field("coordinates"));
+    Assert.assertEquals((String)source.getProperty("@class"), (String)geom.getProperty("@class"));
+    Assert.assertEquals((Object)geom.getProperty("coordinates"), (Object)source.getProperty("coordinates"));
 
   }
 }
