@@ -26,6 +26,7 @@ import com.orientechnologies.orient.core.index.OIndexCursor;
 import com.orientechnologies.orient.core.index.OIndexCursorCollectionValue;
 import com.orientechnologies.orient.core.index.OIndexCursorSingleValue;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.serialization.serializer.record.binary.ODocumentSerializer;
 import com.orientechnologies.orient.core.sql.filter.OSQLFilterCondition;
 import com.orientechnologies.spatial.collections.OSpatialCompositeKey;
 import com.orientechnologies.spatial.strategy.SpatialQueryBuilderAbstract;
@@ -74,7 +75,7 @@ public class OLuceneOverlapOperator extends OLuceneSpatialOperator {
 
   @Override
   public Object evaluateRecord(OIdentifiable iRecord, ODocument iCurrentResult, OSQLFilterCondition iCondition, Object iLeft,
-      Object iRight, OCommandContext iContext) {
+      Object iRight, OCommandContext iContext, final ODocumentSerializer serializer) {
     Shape shape = factory.fromDoc((ODocument) iLeft);
 
     // TODO { 'shape' : { 'type' : 'LineString' , 'coordinates' : [[1,2],[4,6]]} }
