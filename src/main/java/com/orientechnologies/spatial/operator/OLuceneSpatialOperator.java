@@ -23,6 +23,7 @@ import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.id.ORID;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.serialization.serializer.record.binary.ODocumentSerializer;
 import com.orientechnologies.orient.core.sql.OIndexSearchResult;
 import com.orientechnologies.orient.core.sql.OSQLEngine;
 import com.orientechnologies.orient.core.sql.filter.OSQLFilterCondition;
@@ -55,7 +56,7 @@ public abstract class OLuceneSpatialOperator extends OQueryTargetOperator {
   // TODO HANDLE EVALUATE RECORD
   @Override
   public Object evaluateRecord(OIdentifiable iRecord, ODocument iCurrentResult, OSQLFilterCondition iCondition, Object iLeft,
-      Object iRight, OCommandContext iContext) {
+      Object iRight, OCommandContext iContext, final ODocumentSerializer serializer) {
 
     OSQLFunction function = OSQLEngine.getInstance().getFunction(keyword);
     return function.execute(this, iRecord, iCurrentResult, new Object[] { iLeft, iCondition.getRight() }, iContext);
