@@ -70,23 +70,23 @@ public class LuceneSpatialContainsTest extends BaseSpatialLuceneTest {
   @Test
   public void testContainsIndex_GeometryCollection() {
 
-    db.command(new OCommandSQL("create class Test extends v")).execute();
-    db.command(new OCommandSQL("create property Test.geometry EMBEDDED OGeometryCollection")).execute();
+    db.command(new OCommandSQL("create class TestInsert extends v")).execute();
+    db.command(new OCommandSQL("create property TestInsert.geometry EMBEDDED OGeometryCollection")).execute();
 
     db.command(new OCommandSQL(
-        "insert into Test set geometry = {'@type':'d','@class':'OGeometryCollection','geometries':[{'@type':'d','@class':'OPolygon','coordinates':[[[0,0],[10,0],[10,10],[0,10],[0,0]]]}]}"))
+        "insert into TestInsert set geometry = {'@type':'d','@class':'OGeometryCollection','geometries':[{'@type':'d','@class':'OPolygon','coordinates':[[[0,0],[10,0],[10,10],[0,10],[0,0]]]}]}"))
         .execute();
     db.command(new OCommandSQL(
-        "insert into Test set geometry = {'@type':'d','@class':'OGeometryCollection','geometries':[{'@type':'d','@class':'OPolygon','coordinates':[[[11,11],[21,11],[21,21],[11,21],[11,11]]]}]}"))
+        "insert into TestInsert set geometry = {'@type':'d','@class':'OGeometryCollection','geometries':[{'@type':'d','@class':'OPolygon','coordinates':[[[11,11],[21,11],[21,21],[11,21],[11,11]]]}]}"))
         .execute();
 
-    db.command(new OCommandSQL("create index Test.geometry on Test (geometry) SPATIAL engine lucene"))
+    db.command(new OCommandSQL("create index TestInsert.geometry on TestInsert (geometry) SPATIAL engine lucene"))
         .execute();
 
     String testGeometry = "{'@type':'d','@class':'OGeometryCollection','geometries':[{'@type':'d','@class':'OPolygon','coordinates':[[[1,1],[2,1],[2,2],[1,2],[1,1]]]}]}";
     List<ODocument> execute = db
         .command(new OCommandSQL(
-            "SELECT from Test where ST_Contains(geometry, " + testGeometry + ") = true"))
+            "SELECT from TestInsert where ST_Contains(geometry, " + testGeometry + ") = true"))
         .execute();
 
     Assert.assertEquals(1, execute.size());

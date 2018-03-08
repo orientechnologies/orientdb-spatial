@@ -107,7 +107,7 @@ public class LuceneSpatialMultiPolygonTest extends BaseSpatialLuceneTest {
 
     OIOUtils.copyStream(systemResourceAsStream, outputStream, -1);
     db.command(
-        new OCommandSQL("insert into Place set name = 'Test' , location = ST_GeomFromText('" + outputStream.toString() + "')"))
+        new OCommandSQL("insert into Place set name = 'TestInsert' , location = ST_GeomFromText('" + outputStream.toString() + "')"))
         .execute();
 
     db.command(new OCommandSQL("insert into Place set name = 'Test1' , location = ST_GeomFromText('" + MULTIWKT + "')")).execute();

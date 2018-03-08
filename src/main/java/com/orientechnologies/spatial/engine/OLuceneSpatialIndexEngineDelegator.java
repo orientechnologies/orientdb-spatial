@@ -26,6 +26,7 @@ import com.orientechnologies.orient.core.id.OContextualRecordId;
 import com.orientechnologies.orient.core.index.OIndexCursor;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.index.OIndexKeyCursor;
+import com.orientechnologies.orient.core.index.OIndexKeyUpdater;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
@@ -143,6 +144,11 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine, O
   }
 
   @Override
+  public void update(Object key, OIndexKeyUpdater<Object> updater) {
+    delegate.update(key, updater);
+  }
+
+  @Override
   public boolean validatedPut(Object key, OIdentifiable value, Validator<Object, OIdentifiable> validator) {
     return delegate.validatedPut(key, value, validator);
   }
@@ -246,7 +252,7 @@ public class OLuceneSpatialIndexEngineDelegator implements OLuceneIndexEngine, O
   }
 
   @Override
-  public IndexSearcher searcher(){
+  public IndexSearcher searcher() {
     return delegate.searcher();
   }
 

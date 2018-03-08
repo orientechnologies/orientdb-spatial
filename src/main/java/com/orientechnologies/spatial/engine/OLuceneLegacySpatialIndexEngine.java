@@ -26,6 +26,7 @@ import com.orientechnologies.orient.core.id.OContextualRecordId;
 import com.orientechnologies.orient.core.index.OCompositeKey;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
 import com.orientechnologies.orient.core.index.OIndexEngineException;
+import com.orientechnologies.orient.core.index.OIndexKeyUpdater;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.storage.OStorage;
@@ -99,8 +100,8 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
     BooleanQuery q = new BooleanQuery.Builder().add(filterQuery, BooleanClause.Occur.MUST)
         .add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD).build();
 
-    OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, q, Arrays.asList(distSort.getSort())).setSpatialArgs(args)
-        .withChanges(changes);
+    OLuceneQueryContext queryContext = new OSpatialQueryContext(context, searcher, q, Arrays.asList(distSort.getSort()))
+        .setSpatialArgs(args).withChanges(changes);
     return new OLuceneResultSet(this, queryContext, EMPTY_METADATA);
   }
 
@@ -175,6 +176,11 @@ public class OLuceneLegacySpatialIndexEngine extends OLuceneSpatialIndexEngineAb
 
     }
 
+  }
+
+  @Override
+  public void update(Object key, OIndexKeyUpdater<Object> updater) {
+    throw new UnsupportedOperationException();
   }
 
   @Override

@@ -60,7 +60,7 @@ public class LuceneSpatialMultiLineStringTest extends BaseSpatialLuceneTest {
   @Test
   public void testWithIndex() {
 
-    db.command(new OCommandSQL("insert into Place set name = 'Test' , location = ST_GeomFromText('" + WKT + "')")).execute();
+    db.command(new OCommandSQL("insert into Place set name = 'TestInsert' , location = ST_GeomFromText('" + WKT + "')")).execute();
 
     OIndex<?> index = db.getMetadata().getIndexManager().getIndex("Place.location");
 

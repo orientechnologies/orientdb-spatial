@@ -71,7 +71,7 @@ public class LuceneSpatialPointTest extends BaseSpatialLuceneTest {
     db.save(rome);
     db.save(london);
 
-    db.command(new OCommandSQL("insert into City set name = 'Test' , location = ST_GeomFromText('" + PWKT + "')")).execute();
+    db.command(new OCommandSQL("insert into City set name = 'TestInsert' , location = ST_GeomFromText('" + PWKT + "')")).execute();
   }
 
   @Test

@@ -24,6 +24,7 @@ import com.orientechnologies.lucene.tx.OLuceneTxChanges;
 import com.orientechnologies.orient.core.db.record.OIdentifiable;
 import com.orientechnologies.orient.core.id.OContextualRecordId;
 import com.orientechnologies.orient.core.index.OIndexDefinition;
+import com.orientechnologies.orient.core.index.OIndexKeyUpdater;
 import com.orientechnologies.orient.core.record.impl.ODocument;
 import com.orientechnologies.orient.core.storage.OStorage;
 import com.orientechnologies.spatial.query.OSpatialQueryContext;
@@ -117,6 +118,11 @@ public class OLuceneGeoSpatialIndexEngine extends OLuceneSpatialIndexEngineAbstr
     } else {
 
     }
+  }
+
+  @Override
+  public void update(Object key, OIndexKeyUpdater<Object> updater) {
+    throw new UnsupportedOperationException();
   }
 
   @Override

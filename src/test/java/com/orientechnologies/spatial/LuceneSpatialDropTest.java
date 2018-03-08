@@ -73,7 +73,7 @@ public class LuceneSpatialDropTest {
   private void fillDb(ODatabaseDocumentTx db, int count) {
     for (int i = 0; i < count; i++) {
       ODocument doc = new ODocument("test");
-      doc.field("name", "Test" + i);
+      doc.field("name", "TestInsert" + i);
       doc.field("latitude", 50.0 + (i * 0.000001));
       doc.field("longitude", 8.0 + (i * 0.000001));
       db.save(doc);
