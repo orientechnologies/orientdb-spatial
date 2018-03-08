@@ -28,6 +28,7 @@ import com.orientechnologies.orient.core.index.OIndexCursorCollectionValue;
 import com.orientechnologies.orient.core.index.OIndexCursorSingleValue;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.serialization.serializer.record.binary.ODocumentSerializer;
 import com.orientechnologies.orient.core.sql.OIndexSearchResult;
 import com.orientechnologies.orient.core.sql.filter.OSQLFilterCondition;
 import com.orientechnologies.orient.core.sql.operator.OIndexReuseType;
@@ -59,7 +60,7 @@ public class OLuceneWithinOperator extends OQueryTargetOperator {
 
   @Override
   public Object evaluateRecord(OIdentifiable iRecord, ODocument iCurrentResult, OSQLFilterCondition iCondition, Object iLeft,
-      Object iRight, OCommandContext iContext) {
+      Object iRight, OCommandContext iContext, final ODocumentSerializer serializer) {
     List<Number> left = (List<Number>) iLeft;
 
     double lat = left.get(0).doubleValue();

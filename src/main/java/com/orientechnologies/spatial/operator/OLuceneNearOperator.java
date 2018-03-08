@@ -26,6 +26,7 @@ import com.orientechnologies.orient.core.index.*;
 import com.orientechnologies.orient.core.metadata.schema.OClass;
 import com.orientechnologies.orient.core.metadata.schema.OType;
 import com.orientechnologies.orient.core.record.impl.ODocument;
+import com.orientechnologies.orient.core.serialization.serializer.record.binary.ODocumentSerializer;
 import com.orientechnologies.orient.core.sql.OIndexSearchResult;
 import com.orientechnologies.orient.core.sql.filter.OSQLFilterCondition;
 import com.orientechnologies.orient.core.sql.filter.OSQLFilterItemField;
@@ -53,7 +54,7 @@ public class OLuceneNearOperator extends OQueryTargetOperator {
 
   @Override
   public Object evaluateRecord(OIdentifiable iRecord, ODocument iCurrentResult, OSQLFilterCondition iCondition, Object iLeft,
-      Object iRight, OCommandContext iContext) {
+      Object iRight, OCommandContext iContext, final ODocumentSerializer serializer) {
 
     List<Number> left = (List<Number>) iLeft;
 
