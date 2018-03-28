@@ -21,7 +21,7 @@
         <relativePath>../</relativePath>
     </parent>
 
-    <artifactId>orientdb-community-spatial</artifactId>
+    <artifactId>orientdb-full</artifactId>
 
     <name>OrientDB Community Distribution with Spatial support</name>
 
